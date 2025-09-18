@@ -3,7 +3,12 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', redirect: '/dashboard' },
+      { path: 'login', component: () => import('pages/LoginPage.vue') },
+      { path: 'dashboard', component: () => import('pages/DashboardPage.vue') },
+      { path: 'chamados', component: () => import('pages/ChamadosPage.vue') },
+      { path: 'relatorios', component: () => import('pages/RelatoriosPage.vue') },
+      { path: 'test', component: () => import('pages/TestPage.vue') }
     ]
   },
 
