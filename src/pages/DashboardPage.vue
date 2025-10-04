@@ -3,10 +3,10 @@
     <div class="container">
       <!-- Header -->
       <div class="header-section">
-        <div class="text-h4 text-weight-bold text-white">
+        <div class="text-h6 text-weight-bold text-white">
           Painel de Acompanhamento de Chamados
         </div>
-        <div class="text-subtitle1 text-grey-3">
+        <div class="text-subtitle3 text-grey-3">
           Atualizado em: {{ lastUpdate }}
         </div>
       </div>
@@ -116,16 +116,31 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, ChartDataLabels)
 const chamadosStore = useChamadosStore()
 const $q = useQuasar()
 
+
+
 const chamadosPorStatus = ref({})
 const loading = ref(true)
 const error = ref(null)
 const lastUpdate = ref('')
 let intervalId = null
+var teste = ref(null)
 
 // Ícones por status — ATUALIZADOS
 const getIconForStatus = (status) => {
+teste = 'handshake'
+
+console.log("aa ",chamadosPorStatus.value)  ;
+
+if (chamadosPorStatus.value['Aberto'] > 0) {
+  teste = 'warning'
+}else{
+  teste ='handshake'
+}
+
+
+
   const icons = {
-    'Aberto': 'report_problem',
+    'Aberto': teste,
     'Em Atendimento': 'headset',
     'Feedback': 'feedback',
     'Encaminhado Nível 2': 'call_made',
@@ -143,20 +158,33 @@ const orderedStatusList = computed(() => [
   'Feedback',
   'Encaminhado Nível 2',
   'Encaminhado Nível 3'
-].filter(status => chamadosPorStatus.value[status] !== undefined)) // só mostra se existir
+])
+// .filter(status => chamadosPorStatus.value[status] !== null)) // só mostra se existir
 
 // Classes de cor por status
+var cor = ref(null)
 const getStatusClass = (status) => {
+
+  console.log(chamadosPorStatus.value['Aberto']);
+
+  if (chamadosPorStatus.value['Aberto'] == null) {
+    cor ='bg-green-8'
+  }else{
+  cor = 'bg-red-7'
+}
   const classes = {
-    'Aberto': 'bg-red-6',
-    'Em Atendimento': 'bg-orange-6',
+
+    'Aberto': cor,
+    'Em Atendimento': 'bg-orange-5',
     'Feedback': 'bg-blue-7',
     'Encaminhado Nível 2': 'bg-indigo-7',
     'Encaminhado Nível 3': 'bg-purple-7',
-    'Em Análise': 'bg-amber-6'
+    'Em Análise': 'bg-amber-10'
   }
   return classes[status] || 'bg-grey-8'
 }
+
+
 
 // Formata data/hora
 const formatDateTime = () => {
@@ -315,6 +343,7 @@ onUnmounted(() => {
   min-height: 140px; /* aumentado para dar espaço ao texto centralizado */
   position: relative;
   overflow: hidden;
+  /* color: red; */
 }
 
 .stat-card:hover {
@@ -393,7 +422,7 @@ onUnmounted(() => {
 }
 
 .header-section {
-  margin-bottom: 36px;
+  margin-bottom: 26px;
   padding: 24px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.05);
@@ -420,7 +449,7 @@ onUnmounted(() => {
 }
 
 .stat-card {
-  border-radius: 16px;
+  border-radius: 25px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;

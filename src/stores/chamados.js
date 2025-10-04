@@ -38,6 +38,8 @@ export const useChamadosStore = defineStore('chamados', {
         const response = await api.get('/chamadosPorStatus')
         console.log('Status response:', response)
         this.chamadosPorStatus = response.data || {}
+        console.log("direto da api: ",response.data);
+
         return { success: true, data: response.data || {} }
       } catch (error) {
         this.error = error.response?.data?.message || 'Erro ao buscar status'
