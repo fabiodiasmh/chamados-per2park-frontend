@@ -8,6 +8,7 @@ const routes = [
       { path: 'dashboard', component: () => import('pages/DashboardPage.vue') },
       { path: 'chamados', component: () => import('pages/ChamadosPage.vue') },
       { path: 'relatorios', component: () => import('pages/RelatoriosPage.vue') },
+      { path: 'replicacao', component: () => import('pages/ReplicacaoPendente.vue') },
       { path: 'test', component: () => import('pages/TestPage.vue') }
     ]
   },

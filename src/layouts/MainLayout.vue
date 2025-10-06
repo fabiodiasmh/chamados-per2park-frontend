@@ -1,6 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="bg-primary text-white">
+    <q-header elevated class=" text-black"
+    style="background-color: silver">
       <q-toolbar>
         <q-btn
           flat
@@ -11,9 +12,14 @@
           @click="toggleLeftDrawer"
         />
 
+            <!-- Logo ou ícone de imagem -->
+    <q-avatar size="50px" class="q-mr-sm">
+      <img src="wpsicone.png" alt="Logo" />
+    </q-avatar>
+
         <q-toolbar-title class="row items-center">
           <!-- <q-icon name="support_agent" class="q-mr-sm" /> -->
-          Per2Park - Suporte
+        Analistas de suporte
         </q-toolbar-title>
 
         <div class="row items-center q-gutter-sm">
@@ -40,7 +46,7 @@
     >
       <q-list>
         <q-item-label header class="text-grey-8">
-          Navegação
+          WPS-Per2park
         </q-item-label>
 
         <q-item
@@ -70,8 +76,8 @@
             <q-icon name="assignment" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Chamados</q-item-label>
-            <q-item-label caption>Gerenciar chamados</q-item-label>
+            <q-item-label>Chamados Abertos</q-item-label>
+            <q-item-label caption></q-item-label>
           </q-item-section>
         </q-item>
 
@@ -86,8 +92,24 @@
             <q-icon name="analytics" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Relatórios</q-item-label>
-            <q-item-label caption>Análises e gráficos</q-item-label>
+            <q-item-label>Ranking Top 10</q-item-label>
+            <q-item-label caption>Unidades com mais chamados</q-item-label>
+          </q-item-section>
+        </q-item>
+
+              <q-item
+          clickable
+          v-ripple
+          to="/replicacao"
+          exact
+          v-if="authStore.isLoggedIn"
+        >
+          <q-item-section avatar>
+            <q-icon name="computer" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Replicacao</q-item-label>
+            <q-item-label caption>Pendentes</q-item-label>
           </q-item-section>
         </q-item>
 

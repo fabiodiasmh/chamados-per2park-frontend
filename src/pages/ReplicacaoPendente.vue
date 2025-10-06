@@ -1,0 +1,347 @@
+<template>
+  <q-page class="dashboard-page">
+    <div class="container">
+      <!-- Header -->
+      <div class="header-section">
+        <div class="text-h6 text-weight-bold text-white">
+          Pendências de Replicação
+        </div>
+        <div class="text-subtitle3 text-grey-3">
+          Atualizado em: {{ lastUpdate }}
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div v-if="loading" class="loading-container flex flex-center">
+        <q-spinner-hourglass color="primary" size="3em" />
+        <div class="q-mt-md text-subtitle1 text-grey-7">Carregando dados...</div>
+      </div>
+
+      <!-- Error -->
+      <q-banner v-if="error" class="bg-negative text-white q-mb-lg">
+        <template v-slot:avatar>
+          <q-icon name="error" color="white" />
+        </template>
+        Falha ao carregar os dados: {{ error }}
+        <template v-slot:action>
+          <q-btn flat color="white" label="Tentar novamente" @click="fetchData" />
+        </template>
+      </q-banner>
+
+      <!-- Empty State -->
+      <div
+        v-if="!loading && !error && (!replicacaoData || replicacaoData.length === 0)"
+        class="empty-state text-center q-pa-xl"
+      >
+        <q-icon name="sync_problem" size="5em" color="grey-5" />
+        <div class="text-h6 text-grey-5 q-mt-md">Nenhuma pendência encontrada</div>
+      </div>
+
+      <!-- Replicação List -->
+      <div
+        v-if="!loading && !error && replicacaoData && replicacaoData.length > 0"
+        class="ranking-list"
+      >
+        <q-card
+          v-for="(item, index) in replicacaoComPendencias"
+
+          :key="index"
+          class="ranking-item"
+          :class="getCardClassByStatus(item.ReplicationQueue.error, item.ReplicationQueue.Pendencies)"
+
+          >
+          <q-card-section  class="ranking-content flex items-center">
+            <!-- Ícone de status -->
+            <div class="position-container flex flex-center">
+
+
+
+            </div>
+
+            <!-- Detalhes -->
+            <div  class="details flex column justify-center q-pl-md">
+              <div class="text-subtitle1 text-black text-weight-medium">
+                {{ item.ClientName }} — {{ item.Name }}
+              </div>
+              <div class="text-caption text-black q-mt-xs">
+                Upload: {{ formatDate(item.UploadDate) }}
+              </div>
+              <div class="q-mt-xs">
+
+                <div  class="text-h6 text-red">
+                  <strong>Pendente:</strong> {{ item.ReplicationQueue.Pendencies }}
+                  <!-- <strong>Pendências:</strong> {{ item.replicacao.error }} -->
+                </div>
+
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+
+<!-- <div class="q-mt-xl">
+
+  <q-card
+  v-for="(item, index) in ServidorOffline"
+  :key="index"
+class="row"
+  >
+  <div class="col-2 ">
+
+    <q-card-section >
+      {{ item.ClientName }}
+    </q-card-section>
+
+  </div>
+
+  <div class="col-3">
+<q-card-section >
+  — {{ item.Name }}
+</q-card-section>
+
+  </div>
+
+    <div class="col">
+<q-card-section >
+   {{ formatDate(item.UploadDate) }}
+</q-card-section>
+
+  </div>
+
+
+</q-card>
+</div> -->
+ <div class="q-mt-md">
+    <q-table
+      title="Servidores Offline"
+      :rows="ServidorOffline"
+      :columns="columns"
+      row-key="id"
+      :pagination="{ rowsPerPage: 30 }"
+      flat
+      bordered
+    >
+      <!-- Formatação da coluna de data -->
+      <template v-slot:body-cell-UploadDate="props">
+        <q-td :props="props">
+          {{ formatDate(props.row.UploadDate) }}
+        </q-td>
+      </template>
+
+      <!-- Se quiser personalizar a linha inteira ou outra coluna, pode usar outros slots -->
+    </q-table>
+  </div>
+
+      </div>
+
+  </q-page>
+</template>
+
+<script setup>
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useQuasar } from 'quasar'
+import { date } from 'quasar'
+import { useMonitorServerStore } from 'stores/monitoramentoServidor'
+
+const store = useMonitorServerStore()
+// const $q = useQuasar()
+
+const replicacaoData = ref([])
+const loading = ref(true)
+const error = ref(null)
+const lastUpdate = ref('')
+let intervalId = null
+
+const columns = [
+  {
+    name: 'ClientName',
+    label: 'Cliente',
+    field: 'ClientName',
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'Name',
+    label: 'Unidade',
+    field: 'Name',
+    align: 'left',
+    sortable: true
+  },
+  {
+    name: 'UploadDate',
+    label: 'Data Ultimo Upload',
+    field: 'UploadDate',
+    align: 'left',
+    sortable: true
+  }
+]
+
+const formatDate = (isoString) => {
+  return date.formatDate(isoString, 'DD/MM/YYYY HH:mm:ss')
+}
+
+const getCardClassByStatus = (errors, pendencies) => {
+  if (errors > 0) return 'bg-orange-4'
+  if (pendencies > 0) return 'bg-light-blue-5'
+  return 'bg-green-9'
+}
+
+const replicacaoComPendencias = computed(() => {
+  return replicacaoData.value.filter(item =>
+    item.ReplicationQueue?.Pendencies > 1
+  )
+})
+
+const ServidorOffline = computed(() => {
+  return replicacaoData.value.filter(item =>
+    item.Status == 0
+  )
+})
+
+const fetchData = async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const result = await store.fetchReplicacao()
+
+    if (!result.success) {
+      throw new Error(result.message || 'Falha ao carregar dados de replicação')
+    }
+
+    replicacaoData.value = result.data || []
+    lastUpdate.value = new Date().toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    })
+  } catch (err) {
+    error.value = err.message || 'Erro desconhecido ao buscar replicação'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchData()
+  intervalId = setInterval(fetchData, 180000) // 3 minutos
+})
+
+onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId)
+})
+</script>
+
+<style scoped>
+/* Estilos reutilizados do seu template original */
+.dashboard-page {
+  background: linear-gradient(135deg, #1C2B36 0%, #2C3E50 100%);
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header-section {
+  margin-bottom: 36px;
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.loading-container {
+  min-height: 300px;
+}
+
+.empty-state {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.ranking-list {
+  /* color: red; */
+  margin-top: 14px;
+  display: flex;
+  /* flex-direction: column; */
+  gap: 12px;
+}
+
+.ranking-item {
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.ranking-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.ranking-content {
+  /* width: 100%; */
+  /* display: flex; */
+  /* align-items: center; */
+  /* gap: 12px; */
+}
+
+.position-container {
+  /* width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2); */
+}
+
+.details {
+  /* flex: 1; */
+  /* overflow: hidden; */
+}
+
+.text-subtitle1 {
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+}
+
+.text-caption {
+  font-size: 0.8rem;
+}
+
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .ranking-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+
+  .position-container {
+    margin-bottom: 12px;
+  }
+
+  .details {
+    align-items: center;
+    text-align: center;
+  }
+}
+</style>

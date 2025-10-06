@@ -3,7 +3,7 @@
     <div class="container">
       <!-- Header -->
       <div class="header-section">
-        <div class="text-h6 text-weight-bold text-white">
+        <div class="text-h6 text-weight text-white">
           Painel de Acompanhamento de Chamados
         </div>
         <div class="text-subtitle3 text-grey-3">
@@ -37,31 +37,7 @@
         <div class="text-h6 text-grey-5 q-mt-md">Nenhum dado disponível</div>
       </div>
 
-      <!-- Stats Cards Grid
-      <div
-        v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0"
-        class="stats-grid"
-      >
-        <q-card
-          v-for="(count, status) in chamadosPorStatus"
-          :key="status"
-          class="stat-card"
-          :class="getStatusClass(status)"
-        >
-          <q-card-section class="stat-content">
-            <div class="text-h4 text-weight-bold text-white">
-              {{ count }}
-            </div>
-            <div class="text-subtitle1 text-white text-weight-medium">
-              {{ status }}
-            </div>
-          </q-card-section>
-          <q-card-section class="icon-section">
-            <q-icon :name="getIconForStatus(status)" size="2.5em" color="white" />
-          </q-card-section>
-        </q-card>
-      </div> -->
-<!-- Stats Cards Grid - Ordenado e centralizado -->
+
 <div
   v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0"
   class="stats-grid"
@@ -85,33 +61,73 @@
     </q-card-section>
   </q-card>
 </div>
-      <!-- Pie Chart -->
-      <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
-        <q-card class="chart-card">
-          <q-card-section class="text-center">
-            <div class="text-h6 text-white q-mb-sm">Distribuição dos Chamados</div>
-            <div style="height: 300px; max-width: 800px; margin: 0 auto;">
-              <Pie :data="chartData" :options="chartOptions" />
-            </div>
-          </q-card-section>
-        </q-card>
+   <!-- Gráfico 1: Chamados com Alto Volume -->
+    <div class="row ">
+
+
+
+      <div class="col">
+
+        <!-- Gráfico 2: Demais Chamados -->
+        <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
+          <q-card class="chart-card">
+            <q-card-section class="text-center">
+              <div class="text-h6 text-white q-mb-sm">Em Atendimento</div>
+              <div style="height: 250px; max-width: 500px; margin: 0 auto;">
+                <Doughnut :data="lowVolumeData" :options="chartOptionsLow" />
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
       </div>
+
+       <div class="col q-mx-md">
+
+        <!-- Gráfico 1: Chamados com Alto Volume -->
+        <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
+          <q-card class="chart-card">
+            <q-card-section class="text-center">
+              <div class="text-h6 text-white q-mb-sm">Aguardando</div>
+              <div style="height: 250px; max-width: 500px; margin: 0 auto;">
+                <Doughnut :data="highVolumeData" :options="chartOptionsHigh" />
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+ </div>
     </div>
   </q-page>
 </template>
 
 <script setup>
+
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,        // ← necessário para doughnut/pie
+  CategoryScale,
+  LinearScale
+} from 'chart.js'
+import { Doughnut } from 'vue-chartjs' // ← use Doughnut, não Bar
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,        // ← registrado
+  ChartDataLabels
+)
+
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useChamadosStore } from 'stores/chamados'
 
-// chart.js + vue-chartjs
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
-import { Pie } from 'vue-chartjs'
-import ChartDataLabels from 'chartjs-plugin-datalabels' // ✅ Plugin de labels
 
-// Registrar módulos do Chart.js + plugin
-ChartJS.register(Title, Tooltip, Legend, ArcElement, ChartDataLabels)
 
 const chamadosStore = useChamadosStore()
 const $q = useQuasar()
@@ -145,7 +161,9 @@ if (chamadosPorStatus.value['Aberto'] > 0) {
     'Feedback': 'feedback',
     'Encaminhado Nível 2': 'call_made',
     'Encaminhado Nível 3': 'call_received',
-    'Em Análise': 'analytics'
+    'Em Análise': 'analytics',
+     'Aguardando assistencia': 'build',
+  'Aguardando Resposta': 'hotel'
   }
   return icons[status] || 'help_outline'
 }
@@ -157,7 +175,9 @@ const orderedStatusList = computed(() => [
   'Em Análise',
   'Feedback',
   'Encaminhado Nível 2',
-  'Encaminhado Nível 3'
+  'Encaminhado Nível 3',
+  'Aguardando assistencia',
+  'Aguardando Resposta'
 ])
 // .filter(status => chamadosPorStatus.value[status] !== null)) // só mostra se existir
 
@@ -179,7 +199,8 @@ const getStatusClass = (status) => {
     'Feedback': 'bg-blue-7',
     'Encaminhado Nível 2': 'bg-indigo-7',
     'Encaminhado Nível 3': 'bg-purple-7',
-    'Em Análise': 'bg-amber-10'
+    'Em Análise': 'bg-amber-10',
+    'Aguardando assistencia': 'bg-blue-grey-6',
   }
   return classes[status] || 'bg-grey-8'
 }
@@ -195,7 +216,7 @@ const formatDateTime = () => {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    // second: '2-digit'
   })
 }
 
@@ -212,6 +233,7 @@ const fetchData = async () => {
     }
 
     chamadosPorStatus.value = result.data || {}
+
     lastUpdate.value = formatDateTime()
   } catch (err) {
     error.value = err.message || 'Erro desconhecido'
@@ -225,24 +247,6 @@ const totalChamados = computed(() => {
   return Object.values(chamadosPorStatus.value).reduce((sum, val) => sum + val, 0)
 })
 
-const chartData = computed(() => {
-  const labels = Object.keys(chamadosPorStatus.value)
-  const values = Object.values(chamadosPorStatus.value)
-  const colors = labels.map((status) => getStatusColor(status))
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: 'Chamados',
-        data: values,
-        backgroundColor: colors,
-        borderWidth: 2,
-        borderColor: '#1C2B36'
-      }
-    ]
-  }
-})
 
 const getStatusColor = (status) => {
   const colors = {
@@ -256,8 +260,51 @@ const getStatusColor = (status) => {
   return colors[status] || '#666'
 }
 
-// ✅ Opções do gráfico com porcentagem dentro das fatias
-const chartOptions = computed(() => ({
+const highVolumeData = computed(() => {
+  const labels = ['Aguardando Resposta', 'Aguardando assistencia']
+  const data = [
+    chamadosPorStatus.value['Aguardando Resposta'] || 0,
+    chamadosPorStatus.value['Aguardando assistencia'] || 0
+  ]
+  const backgroundColor = ['#6c757d', '#607D8B']
+
+  return {
+    labels,
+    datasets: [{
+      label: 'Aguardando',
+      data,
+      backgroundColor,
+      borderColor: '#1C2C36',
+      borderWidth: 2,
+      hoverOffset: 10
+    }]
+  }
+})
+
+const lowVolumeData = computed(() => {
+  const labels = orderedStatusList.value.filter(status =>
+    !['Aguardando Resposta', 'Aguardando assistencia'].includes(status) &&
+    chamadosPorStatus.value[status] > 0
+  )
+
+  const data = labels.map(status => chamadosPorStatus.value[status])
+  const backgroundColor = labels.map(status => getStatusColor(status))
+
+  return {
+    labels,
+    datasets: [{
+      label: 'Chamados',
+      data,
+      backgroundColor,
+      borderColor: '#1C2B36',
+      borderWidth: 2,
+      hoverOffset: 8
+    }]
+  }
+})
+
+
+const chartOptionsHigh = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -265,60 +312,39 @@ const chartOptions = computed(() => ({
       display: true,
       position: 'bottom',
       labels: {
-        color: '#FFFFFF',
+        color: '#fff',
         font: { size: 12 }
       }
     },
-    // tooltip: {
-    //   callbacks: {
-    //     label: (context) => {
-    //       const label = context.label || ''
-    //       const value = context.parsed
-    //       const total = totalChamados.value
-    //       const percent = total ? ((value / total) * 100).toFixed(1) : 0
-    //       return `${label}: ${value} (${percent}%)`
-    //     }
-    //   }
-    // },
     tooltip: {
-  callbacks: {
-    label: (context) => {
-      const label = context.label || ''
-      const value = context.parsed
-      const total = totalChamados.value
-      const percent = total ? ((value / total) * 100).toFixed(1) : 0
-      return `${label}: ${value} chamados (${percent}%)`
+      callbacks: {
+        label: (context) => {
+          const label = context.label || ''
+          const value = context.raw
+          const total = totalChamados.value
+          const percent = total ? ((value / total) * 100).toFixed(1) : 0
+          // return `${label}: ${value} chamados (${percent}%)`
+        }
+      }
     },
-    title: () => null // remove título duplicado
-  }
-},
-    // ✅ Plugin para exibir porcentagem DENTRO das fatias
     datalabels: {
       color: '#fff',
-      font: {
-        weight: 'bold',
-        size: 14
-      },
-      formatter: (value) => {
+      font: { weight: 'bold', size: 14 },
+      formatter: (value, context) => {
         const total = totalChamados.value
-        if (total === 0) return ''
-        const percent = ((value / total) * 100).toFixed(1)
-        return `${percent}%`
+        const percent = total ? ((value / total) * 100).toFixed(1) : 0
+        // return `${percent}%`
       },
-      display: (context) => {
-        const value = context.dataset.data[context.dataIndex]
-        const total = totalChamados.value
-        const percent = total ? (value / total) * 100 : 0
-        return percent > 5 // Só mostra se for > 5% para não poluir
-      }
+      anchor: 'center',
+      align: 'center'
     }
   },
-  elements: {
-    arc: {
-      borderWidth: 2
-    }
-  }
+  cutout: '50%' // ← isso faz ser "doughnut" (rosca). Use '0%' para pie.
 }))
+
+// chartOptionsLow é idêntico, então você pode reutilizar ou copiar
+const chartOptionsLow = chartOptionsHigh // ou copie o mesmo objeto se forem iguais
+
 
 onMounted(() => {
   fetchData()
@@ -422,8 +448,8 @@ onUnmounted(() => {
 }
 
 .header-section {
-  margin-bottom: 26px;
-  padding: 24px;
+  margin-bottom: 16px;
+  padding: 14px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
