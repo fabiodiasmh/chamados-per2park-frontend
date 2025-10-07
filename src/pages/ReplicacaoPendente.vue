@@ -44,31 +44,28 @@
       >
         <q-card
           v-for="(item, index) in replicacaoComPendencias"
-
           :key="index"
           class="ranking-item"
           :class="getCardClassByStatus(item.ReplicationQueue.error, item.ReplicationQueue.Pendencies)"
 
           >
-          <q-card-section  class="ranking-content flex items-center">
-            <!-- Ícone de status -->
-            <div class="position-container flex flex-center">
+          <q-card-section
+              class="ranking-content ">
 
 
 
-            </div>
 
-            <!-- Detalhes -->
-            <div  class="details flex column justify-center q-pl-md">
-              <div class="text-subtitle1 text-black text-weight-medium">
+            <div  class="details flex column justify-between q-pl-xs" style="min-height: 100px;">
+
+              <div class="text-subtitle1 text-black text-weight-medium ">
                 {{ item.ClientName }} — {{ item.Name }}
               </div>
-              <div class="text-caption text-black q-mt-xs">
+              <div class="text-caption text-black">
                 Upload: {{ formatDate(item.UploadDate) }}
               </div>
               <div class="q-mt-xs">
 
-                <div  class="text-h6 text-red">
+                <div  class="text-h6 text-red-10">
                   <strong>Pendente:</strong> {{ item.ReplicationQueue.Pendencies }}
                   <!-- <strong>Pendências:</strong> {{ item.replicacao.error }} -->
                 </div>
@@ -79,54 +76,50 @@
         </q-card>
       </div>
 
-<!-- <div class="q-mt-xl">
-
-  <q-card
-  v-for="(item, index) in ServidorOffline"
-  :key="index"
-class="row"
-  >
-  <div class="col-2 ">
-
-    <q-card-section >
-      {{ item.ClientName }}
-    </q-card-section>
-
-  </div>
-
-  <div class="col-3">
-<q-card-section >
-  — {{ item.Name }}
-</q-card-section>
-
-  </div>
-
-    <div class="col">
-<q-card-section >
-   {{ formatDate(item.UploadDate) }}
-</q-card-section>
-
-  </div>
 
 
-</q-card>
-</div> -->
- <div class="q-mt-md">
+
+
+
+ <div class="q-mt-md tabela ">
     <q-table
       title="Servidores Offline"
       :rows="ServidorOffline"
       :columns="columns"
       row-key="id"
       :pagination="{ rowsPerPage: 30 }"
-      flat
+
       bordered
+      dense
+flat
+      :no-data-label="'Nenhum servidor offline encontrado.'"
+      :no-results-label="'Nenhum resultado encontrado.'"
+      class="q-mt-md"
+
+      card-style="backgroundColor: ;"
+
     >
       <!-- Formatação da coluna de data -->
-      <template v-slot:body-cell-UploadDate="props">
+      <!-- <template v-slot:body-cell-UploadDate="props">
         <q-td :props="props">
           {{ formatDate(props.row.UploadDate) }}
         </q-td>
-      </template>
+      </template> -->
+<template v-slot:body-cell-UploadDate="props">
+  <q-td :props="props">
+    <div>
+      {{ formatDate(props.row.UploadDate) }}
+      <div
+        v-if="isOffline(props.row.UploadDate)"
+        class="text-red text-caption"
+      >
+        Offline há {{ getElapsedTime(props.row.UploadDate) }}
+      </div>
+    </div>
+  </q-td>
+</template>
+
+
 
       <!-- Se quiser personalizar a linha inteira ou outra coluna, pode usar outros slots -->
     </q-table>
@@ -176,19 +169,49 @@ const columns = [
   }
 ]
 
-const formatDate = (isoString) => {
+ const formatDate = (isoString) => {
   return date.formatDate(isoString, 'DD/MM/YYYY HH:mm:ss')
 }
 
+   const getMinutesDiff = (isoString) => {
+  const now = new Date()
+  const past = new Date(isoString)
+  const diffMs = now - past
+  return Math.floor(diffMs / 60000)
+}
+
+ const isOffline = (isoString) => {
+  const diff = getMinutesDiff(isoString)
+  return diff > 1 // offline se passou mais de 10 minutos
+}
+
+const getElapsedTime = (isoString) => {
+  if (!isoString) return '-'
+
+  const now = new Date()
+  const past = new Date(isoString)
+  const diffMs = now - past
+
+  const diffMinutes = Math.floor(diffMs / 60000)
+  const days = Math.floor(diffMinutes / 1440) // 1440 min = 24h
+  const hours = Math.floor((diffMinutes % 1440) / 60)
+  const minutes = diffMinutes % 60
+
+  if (days > 0) return `${days}d ${hours}h ${minutes}min`
+  if (hours > 0) return `${hours}h ${minutes}min`
+  return `${minutes} min`
+}
+
+
 const getCardClassByStatus = (errors, pendencies) => {
   if (errors > 0) return 'bg-orange-4'
-  if (pendencies > 0) return 'bg-light-blue-5'
+  if (pendencies > 0) return 'bg-light-blue-1'
   return 'bg-green-9'
 }
 
 const replicacaoComPendencias = computed(() => {
   return replicacaoData.value.filter(item =>
-    item.ReplicationQueue?.Pendencies > 1
+    item.ReplicationQueue?.Pendencies > 5
   )
 })
 
@@ -225,9 +248,18 @@ const fetchData = async () => {
   }
 }
 
+// onMounted(() => {
+//   fetchData()
+//   intervalId = setInterval(fetchData, 180000) // 3 minutos
+// })
 onMounted(() => {
   fetchData()
-  intervalId = setInterval(fetchData, 180000) // 3 minutos
+  intervalId = setInterval(() => {
+    fetchData()
+  }, 180000) // 3 min para atualizar dados
+
+  // Atualiza o contador de tempo a cada minuto
+  setInterval(() => {}, 60000)
 })
 
 onUnmounted(() => {
@@ -244,13 +276,13 @@ onUnmounted(() => {
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
+  /* max-width: 1400px; */
+  /* margin: 0 auto; */
 }
 
 .header-section {
-  margin-bottom: 36px;
-  padding: 24px;
+  margin-bottom: 12px;
+  padding: 14px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
@@ -270,26 +302,31 @@ onUnmounted(() => {
 
 .ranking-list {
   /* color: red; */
-  margin-top: 14px;
+  margin-top: 4px;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
   /* flex-direction: column; */
   gap: 12px;
+  /* width: 100%; */
 }
 
 .ranking-item {
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 70px;
+  width: 290px;
+  height: 125px;
+  /* border-radius: 12px; */
+  /* box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); */
+  /* transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
+  /* min-height: 70px; */
   display: flex;
   align-items: center;
-  padding: 6px;
-  border: 2px solid rgba(255, 255, 255, 0.05);
+  /* padding: 6px; */
+  border: 2px solid silver;
 }
 
 .ranking-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  /* transform: translateY(-2px); */
+  /* box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3); */
 }
 
 .ranking-content {
@@ -322,7 +359,11 @@ onUnmounted(() => {
 }
 
 .text-caption {
-  font-size: 0.8rem;
+  /* font-size: 0.8rem; */
+}
+
+.tabela{
+width: 900px;
 }
 
 
