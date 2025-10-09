@@ -211,15 +211,42 @@ const getCardClassByStatus = (errors, pendencies) => {
 
 const replicacaoComPendencias = computed(() => {
   return replicacaoData.value.filter(item =>
-    item.ReplicationQueue?.Pendencies > 5
+    item.ReplicationQueue?.Pendencies > 10
   )
 })
 
+// const ServidorOffline = computed(() => {
+
+//    const dezMinutosAtras = new Date();
+//   dezMinutosAtras.setMinutes(dezMinutosAtras.getMinutes() - 10);
+
+//   return replicacaoData.value.filter(item =>
+//      // Só considera servidores com Status == 0 (offline)
+//     if(item.Status !== 0) return false
+
+//     // Converte a string UploadDate para objeto Date
+//     const uploadDate = new Date(item.UploadDate);
+
+//     // Mantém apenas os cujo último upload foi ANTES de 10 minutos atrás
+//     return uploadDate < dezMinutosAtras;
+// )
+// })
+
 const ServidorOffline = computed(() => {
-  return replicacaoData.value.filter(item =>
-    item.Status == 0
-  )
-})
+  const dezMinutosAtras = new Date();
+  dezMinutosAtras.setMinutes(dezMinutosAtras.getMinutes() - 10);
+
+  return replicacaoData.value.filter(item => {
+    // Só considera servidores com Status == 0 (offline)
+    if (item.Status !== 0) return false;
+
+    // Converte a string UploadDate para objeto Date
+    const uploadDate = new Date(item.UploadDate);
+
+    // Mantém apenas os cujo último upload foi ANTES de 10 minutos atrás
+    return uploadDate < dezMinutosAtras;
+  });
+});
 
 const fetchData = async () => {
   loading.value = true
@@ -362,9 +389,9 @@ onUnmounted(() => {
   /* font-size: 0.8rem; */
 }
 
-.tabela{
+/* .tabela{
 width: 900px;
-}
+} */
 
 
 

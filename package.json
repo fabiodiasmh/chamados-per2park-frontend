@@ -1,8 +1,8 @@
 {
-  "name": "quasar-project",
+  "name": "chamados-per2park",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Quasar App",
+  "description": "",
+  "productName": "Chamados",
   "author": "Fabio Dias <84019663+Fabiodias10@users.noreply.github.com>",
   "private": true,
   "scripts": {

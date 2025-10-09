@@ -69,7 +69,9 @@ export default configure(function (/* ctx */) {
     },
 
     cordova: {
+
       // noIosLegacyBuildFlag: true
+
     },
 
     capacitor: {
@@ -83,7 +85,7 @@ export default configure(function (/* ctx */) {
         // configs...
       },
       builder: {
-        appId: 'quasar-project'
+        appId: 'Chamados-Per2Park'
       }
     },
 
