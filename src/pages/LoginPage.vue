@@ -4,10 +4,10 @@
       <!-- Background Animation -->
       <div class="background-animation">
         <div class="floating-shapes">
-          <div class="shape shape-1"></div>
+          <!-- <div class="shape shape-1"></div>
           <div class="shape shape-2"></div>
           <div class="shape shape-3"></div>
-          <div class="shape shape-4"></div>
+          <div class="shape shape-4"></div> -->
           <div class="shape shape-5"></div>
         </div>
       </div>
@@ -31,9 +31,10 @@
             <q-form @submit="onSubmit" class="q-gutter-lg">
               <q-input
                 v-model="formData.Login"
-                label="E-mail"
+                label="Login Perto"
                 type="email"
-                outlined
+
+                dense
                 class="custom-input"
                 :rules="[val => !!val || 'E-mail é obrigatório', val => /.+@.+\..+/.test(val) || 'E-mail inválido']"
                 lazy-rules
@@ -47,7 +48,8 @@
                 v-model="formData.Password"
                 label="Senha"
                 :type="showPassword ? 'text' : 'password'"
-                outlined
+
+                dense
                 class="custom-input"
                 :rules="[val => !!val || 'Senha é obrigatória']"
                 lazy-rules
@@ -68,12 +70,12 @@
               <q-btn
                 type="submit"
                 class="login-btn full-width"
-                size="lg"
+                size="md"
                 :loading="authStore.loading"
                 :disable="authStore.loading"
               >
                 <q-icon name="login" class="q-mr-sm" />
-                Entrar
+                Acessar
               </q-btn>
             </q-form>
           </q-card-section>
@@ -169,7 +171,7 @@ const onSubmit = async () => {
 }
 
 /* Background Animation */
-.background-animation {
+/* .background-animation {
   position: absolute;
   top: 0;
   left: 0;
@@ -177,9 +179,9 @@ const onSubmit = async () => {
   height: 100%;
   overflow: hidden;
   z-index: 1;
-}
+} */
 
-.floating-shapes {
+/* .floating-shapes {
   position: relative;
   width: 100%;
   height: 100%;
@@ -224,26 +226,27 @@ const onSubmit = async () => {
   top: 5%;
   right: 25%;
   animation-delay: 1.5s;
-}
+} */
 
-.shape-5 {
+/* .shape-5 {
   width: 120px;
   height: 120px;
   top: 45%;
   left: 8%;
   animation-delay: 3.5s;
   background: rgba(255, 83, 0, 0.05);
-}
+} */
 
 /* Login Content */
 .login-content {
-  width: 100%;
-  max-width: 450px;
-  z-index: 3;
+
+ width: 400px;
+ /* height: 300px; */
+  /* z-index: 3; */
 }
 
 /* Brand Section */
-.brand-section {
+/* .brand-section {
   text-align: center;
   margin-bottom: 40px;
   color: #F0F3F4;
@@ -251,25 +254,25 @@ const onSubmit = async () => {
 
 .logo-container {
   margin-bottom: 20px;
-}
+} */
 
-.logo-icon {
+/* .logo-icon {
   color: #FF5300;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   animation: pulse 2s ease-in-out infinite;
-}
+} */
 
-.brand-title {
+/* .brand-title {
   font-weight: 700;
   color: #FFFFFF;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   animation: slideInDown 0.8s ease-out;
-}
+} */
 
-.brand-subtitle {
+/* .brand-subtitle {
   color: #D1D9E0;
   animation: slideInDown 0.8s ease-out 0.2s both;
-}
+} */
 
 /* Login Card */
 .login-card {
@@ -281,7 +284,7 @@ const onSubmit = async () => {
 }
 
 /* Custom Input */
-.custom-input {
+/* .custom-input {
   margin-bottom: 20px;
 }
 
@@ -289,38 +292,38 @@ const onSubmit = async () => {
   border-radius: 15px;
   background: #F9FAFB;
   border: 2px solid #F0F3F4;
-}
+} */
 
-.custom-input :deep(.q-field__control:hover) {
+/* .custom-input :deep(.q-field__control:hover) {
   border-color: #FF5300;
   background: #FFFFFF;
-}
+} */
 
-.custom-input :deep(.q-field__label) {
+/* .custom-input :deep(.q-field__label) {
   color: #1C2B36;
   font-weight: 500;
-}
+} */
 
-.custom-input :deep(.q-field__prepend) .q-icon,
+/* .custom-input :deep(.q-field__prepend) .q-icon,
 .custom-input :deep(.q-field__append) .q-icon {
   color: #FF5300;
-}
+} */
 
 /* Login Button */
 .login-btn {
   background: linear-gradient(135deg, #FF5300 0%, #E04800 100%);
   color: white;
-  border-radius: 15px;
-  padding: 15px;
-  font-weight: 600;
-  text-transform: none;
-  box-shadow: 0 8px 25px rgba(255, 83, 0, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+  /* border-radius: 15px; */
+  /* padding: 15px; */
+  /* font-weight: 600; */
+  /* text-transform: none; */
+  /* box-shadow: 0 8px 25px rgba(255, 83, 0, 0.3); */
+  /* transition: all 0.3s ease; */
+  /* position: relative; */
+  /* overflow: hidden; */
 }
 
-.login-btn::before {
+/* .login-btn::before {
   content: '';
   position: absolute;
   top: 0;
@@ -329,9 +332,9 @@ const onSubmit = async () => {
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
-}
+} */
 
-.login-btn:hover::before {
+/* .login-btn:hover::before {
   left: 100%;
 }
 
@@ -342,7 +345,7 @@ const onSubmit = async () => {
 
 .login-btn:active {
   transform: translateY(0);
-}
+} */
 
 /* Response Card */
 .response-card {
@@ -362,25 +365,25 @@ const onSubmit = async () => {
 }
 
 /* Animations */
-@keyframes float {
+/* @keyframes float {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
     transform: translateY(-20px) rotate(180deg);
   }
-}
+} */
 
-@keyframes pulse {
+/* @keyframes pulse {
   0%, 100% {
     transform: scale(1);
   }
   50% {
     transform: scale(1.08);
   }
-}
+} */
 
-@keyframes slideInDown {
+/* @keyframes slideInDown {
   from {
     opacity: 0;
     transform: translateY(-30px);
@@ -389,9 +392,9 @@ const onSubmit = async () => {
     opacity: 1;
     transform: translateY(0);
   }
-}
+} */
 
-@keyframes slideInUp {
+/* @keyframes slideInUp {
   from {
     opacity: 0;
     transform: translateY(30px);
@@ -400,7 +403,7 @@ const onSubmit = async () => {
     opacity: 1;
     transform: translateY(0);
   }
-}
+} */
 
 /* Responsive Design */
 @media (max-width: 768px) {

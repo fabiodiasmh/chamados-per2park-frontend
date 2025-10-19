@@ -31,6 +31,7 @@ export default configure(function (/* ctx */) {
     extras: [
       'roboto-font', // optional, you are not bound to it
       'material-icons', // optional, you are not bound to it
+      'fontawesome-v6'
     ],
 
     build: {
@@ -47,7 +48,7 @@ export default configure(function (/* ctx */) {
 
     framework: {
       config: {},
-      plugins: []
+      plugins: ['Dialog', 'Notify']
     },
 
     animations: [],

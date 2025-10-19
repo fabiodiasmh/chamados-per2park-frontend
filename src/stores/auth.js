@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     isAuthenticated: false,
     user: null,
+    usuario:null,
     token: null,
     loading: false,
     error: null
@@ -25,12 +26,15 @@ export const useAuthStore = defineStore('auth', {
         console.log('Login response:', response)
 
         this.isAuthenticated = true
-        this.user = credentials
+        this.usuario = response.data
+
+        localStorage.setItem('user_data', JSON.stringify(response.data)) // ← salva usuario
+        // this.user = credentials
         this.token = response.data?.token || 'session-token'
 
         // Store in localStorage for persistence
         localStorage.setItem('auth_token', this.token)
-        localStorage.setItem('user_data', JSON.stringify(credentials))
+
 
         return {
           success: true,
@@ -57,7 +61,9 @@ export const useAuthStore = defineStore('auth', {
 
       // Clear localStorage
       localStorage.removeItem('auth_token')
-      localStorage.removeItem('user_data')
+
+
+      // localStorage.removeItem('user_data') // ← remove usuario
     },
 
     // Initialize auth state from localStorage
@@ -67,9 +73,13 @@ export const useAuthStore = defineStore('auth', {
 
       if (token && userData) {
         this.token = token
-        this.user = JSON.parse(userData)
+        // this.user = JSON.parse(userData)
         this.isAuthenticated = true
       }
+
+       if (userData) {
+          this.usuario = JSON.parse(userData) // ← restaura usuario
+        }
     },
 
     // Check if user is authenticated

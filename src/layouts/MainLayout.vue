@@ -76,7 +76,7 @@
             <q-icon name="assignment" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Chamados Abertos</q-item-label>
+            <q-item-label>Chamados</q-item-label>
             <q-item-label caption></q-item-label>
           </q-item-section>
         </q-item>
@@ -108,8 +108,8 @@
             <q-icon name="computer" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Replicacao</q-item-label>
-            <q-item-label caption>Pendentes</q-item-label>
+            <q-item-label>Unidades Offline</q-item-label>
+            <q-item-label caption>Falha replicação</q-item-label>
           </q-item-section>
         </q-item>
 
