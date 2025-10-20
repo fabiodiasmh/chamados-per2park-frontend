@@ -113,7 +113,38 @@
           </q-item-section>
         </q-item>
 
+           <q-item
+          clickable
+          v-ripple
+          to="/testeee"
+          exact
+          v-if="authStore.isLoggedIn"
+        >
+          <q-item-section avatar>
+            <q-icon name="" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Espaço em disco</q-item-label>
+            <q-item-label caption>Disco server e database</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-separator class="q-my-md" />
+     <q-item
+          clickable
+          v-ripple
+          to="/testeee"
+          exact
+          v-if="authStore.isLoggedIn"
+        >
+          <q-item-section avatar>
+            <q-icon name="computer" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Meus chamados</q-item-label>
+            <q-item-label caption>Historico de chamados</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <q-item
           clickable

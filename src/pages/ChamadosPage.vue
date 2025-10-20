@@ -318,7 +318,7 @@
               color="orange"
               icon="photo_camera"
               label="Pedir evidência"
-              @click="abrirPromptAtualizacao(9, 'Pedir evidência')"
+              @click="abrirPromptAtualizacao(9, 'enviar evidencias no Whatsapp','Pedir evidência')"
               dense
               class="mobile-full-width"
             />
@@ -327,7 +327,7 @@
               color="red"
               icon="done_all"
               label="Pedir validação"
-              @click="abrirPromptAtualizacao(9, 'Pedir validação')"
+              @click="abrirPromptAtualizacao(9, 'efetuado ajustes, favor verificar e validar.', 'Pedir validação')"
               dense
               class="mobile-full-width"
             />
@@ -336,7 +336,7 @@
               color="teal"
               icon="inventory"
               label="Solicitar nº série"
-              @click="abrirPromptAtualizacao(9, 'Solicitar número de série')"
+              @click="abrirPromptAtualizacao(9, 'informar numero de serie do(s) equipamento(s).','Solicitar nº série')"
               dense
               class="mobile-full-width"
             />
@@ -345,7 +345,7 @@
               color="blue"
               icon="engineering"
               label="Em atendimento"
-              @click="abrirPromptAtualizacao(2, 'Iniciar atendimento')"
+              @click="abrirPromptAtualizacao(2, 'o chamado foi recepcionado e está na fila de atendimento.','Em atendimento')"
               dense
               class="mobile-full-width"
             />
@@ -354,7 +354,27 @@
               color="brown"
               icon="build"
               label="Assistência técnica"
-              @click="abrirPromptAtualizacao(11, 'Encaminhar para assistência técnica')"
+              @click="abrirPromptAtualizacao(11, 'encaminhado para assistência técnica OS: ','Assistência técnica')"
+              dense
+              class="mobile-full-width"
+            />
+
+             <q-btn
+              size="sm"
+              color="purple-4"
+              icon="build"
+              label="Encaminhar Nível 2"
+              @click="abrirPromptAtualizacao(12, 'encaminhado nivel 2.','Encaminhar Nível 2')"
+              dense
+              class="mobile-full-width"
+            />
+
+             <q-btn
+              size="sm"
+              color="blue-10"
+              icon="build"
+              label="Encaminhar Nível 3"
+              @click="abrirPromptAtualizacao(10, 'encaminhado nivel 3.','Encaminhar Nível 3')"
               dense
               class="mobile-full-width"
             />
@@ -363,7 +383,7 @@
               color="green"
               icon="check_circle"
               label="Fechar chamado"
-              @click="abrirPromptAtualizacao(5, 'Chamado resolvido e finalizado')"
+              @click="abrirPromptAtualizacao(5, 'chamado resolvido e finalizado.','Fechar chamado')"
               dense
               :disable="true"
               class="mobile-full-width"
@@ -428,6 +448,8 @@ const filtroStatus = ref(null); // 0 = abertos, null = todos
 // Filtro de ordenação
 const ordenacao = ref("recentes"); // 'recentes' ou 'antigos'
 
+
+
 // Função para limpar todos os filtros
 const limparFiltros = () => {
   filtroTexto.value = "";
@@ -464,6 +486,21 @@ const getStatusLabel = (status) => {
   };
   return map[status] || "Desconhecido";
 };
+
+// 1. Primeiro, declare a função
+const getSaudacao = () => {
+  const hora = new Date().getHours()
+  if (hora >= 5 && hora < 12) {
+    return 'Bom dia'
+  } else if (hora >= 12 && hora < 18) {
+    return 'Boa tarde'
+  } else {
+    return 'Boa noite'
+  }
+}
+
+// 2. Depois, use-a
+const saudacao = ref(getSaudacao())
 
 const formatarNumeroWhatsApp = (numero) => {
   let soNumeros = numero.replace(/\D/g, "");
@@ -557,21 +594,81 @@ const chamadosFiltrados = computed(() => {
 //.filter(chamado => chamado.Status === 0)
 //  .sort((a, b) => new Date(b.OpeningDate) - new Date(a.OpeningDate))
 //})
-const abrirPromptAtualizacao = (novoStatus, placeholderTexto) => {
+const abrirPromptAtualizacao = (novoStatus, placeholderTexto,selecionado) => {
+
+  console.log('saudacao.value:', saudacao.value);
+console.log('placeholderTexto:', placeholderTexto);
   $q.dialog({
-    title: "Adicionar observação",
-    message: "Descreva brevemente a ação realizada:",
+    title: selecionado,
+     message: "Descreva brevemente a ação realizada:",
+
     prompt: {
-      model: "",
+      model: saudacao.value + ", " + placeholderTexto,
       type: "textarea",
-      isValid: (val) => val && val.trim().length > 0,
+      // isValid: (val) => val && val.trim().length > 0,
+      isValid: val => val?.trim().length > 0
     },
     cancel: true,
-    persistent: true,
-    ok: "Confirmar",
+    persistent: false,
+    ok: "OK",
     cancel: "Cancelar",
   }).onOk(async (descricao) => {
-    await atualizarStatusChamado(novoStatus, descricao.trim());
+     try {
+      // 1. Atualiza o status no backend (via store)
+      const result = await chamadosStore.atualizarStatusNoStore(novoStatus, descricao.trim());
+
+      // if (!result?.success) throw new Error("Falha ao atualizar");
+
+      // 2. Recarrega os detalhes ATUALIZADOS
+      const detalhesAtualizados = await chamadosStore.fetchDetalheChamados(chamadoSelecionado.value.Id);
+
+      if (detalhesAtualizados?.success && detalhesAtualizados.data) {
+        // 3. Atualiza o objeto do modal REATIVAMENTE
+        chamadoSelecionado.value = { ...detalhesAtualizados.data };
+      }
+
+      $q.notify({
+        type: "positive",
+        message: "Status atualizado com sucesso!",
+        icon: "check",
+        timeout: 2000,
+      });
+
+    } catch (error) {
+      $q.notify({
+        type: "negative",
+        message: "Erro ao atualizar o status. Tente novamente.",
+        icon: "error",
+        timeout: 3000,
+      });
+      console.error("Erro:", error);
+    }
+
+    // //  console.log("OK clicado, descrição:", descricao);
+
+
+    // try {
+    //   await atualizarStatusChamado(novoStatus, descricao.trim());
+    //   // Notificação de sucesso
+    //   $q.notify({
+    //     type: "positive",
+    //     message: "Status atualizado com sucesso!",
+    //     icon: "check",
+    //     timeout: 2000,
+    //   });
+
+    // await  fetchDetalhesChamadoData(chamadoSelecionado.value.Id)
+    // } catch (error) {
+    //   // Opcional: tratar erro com notificação
+    //   $q.notify({
+    //     type: "negative",
+    //     message: "Erro ao atualizar o status. Tente novamente.",
+    //     icon: "error",
+    //     timeout: 3000,
+    //   });
+    //   console.error("Erro ao atualizar status:", error);
+    // }
+
   });
 };
 
@@ -582,42 +679,7 @@ const atualizarStatusChamado = async (novoStatus, descricao) => {
 
   console.log(chamadosStore.detalhe_chamado);
 
-  // chamadosStore.detalhe_chamado.User = "descricao";
 
-  // console.log("Novo status: "+ chamadosStore.detalhe_chamado.Status);
-  // console.log("User: " + descricao);
-
-  // try {
-  //   // Supondo que seu store tenha uma action como `atualizarChamado(id, dados)`
-  //   const payload = {
-  //     Status: novoStatus,
-  //     Description: descricao
-  //   };
-
-  //   const result = await chamadosStore.atualizarChamado(chamadoSelecionado.value.Id, payload);
-
-  //   if (result.success) {
-  //     $q.notify({
-  //       color: 'positive',
-  //       message: 'Chamado atualizado com sucesso!',
-  //       icon: 'check'
-  //     });
-
-  //     // Atualiza o chamado no modal
-  //     chamadoSelecionado.value.Status = novoStatus;
-  //     // Opcional: recarregar o histórico ou a lista principal
-  //     await fetchDetalhesChamadoData(chamadoSelecionado.value.Id);
-  //     await fetchData(); // atualiza a lista principal
-  //   } else {
-  //     throw new Error(result.message || 'Falha ao atualizar');
-  //   }
-  // } catch (err) {
-  //   $q.notify({
-  //     color: 'negative',
-  //     message: 'Erro ao atualizar chamado: ' + (err.message || 'tente novamente'),
-  //     icon: 'error'
-  //   });
-  // }
 };
 
 // Formata data para exibição amigável
@@ -699,7 +761,12 @@ const fetchDetalhesChamadoData = async (id) => {
 
 onMounted(() => {
   fetchData();
-  intervalId = setInterval(fetchData, 180000); // 5 minutos
+  saudacao.value = getSaudacao(); // define inicialmente
+
+  intervalId = setInterval(() => {
+    saudacao.value = getSaudacao();
+    fetchData();
+  }, 180000); // a cada 3 minutos
 });
 
 onUnmounted(() => {
