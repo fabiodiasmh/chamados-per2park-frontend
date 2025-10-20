@@ -5,6 +5,8 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     isAuthenticated: false,
     user: null,
+    ip_servidor_store:localStorage.getItem('ip_servidor') || 'localhost',
+    portaApi:8080,
     usuario:null,
     token: null,
     loading: false,
@@ -22,7 +24,7 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       try {
         console.log('Attempting login with:', credentials)
-        const response = await api.post('/login', credentials)
+        const response = await api.post('/login', credentials,{ timeout: 5000 })
         console.log('Login response:', response)
 
         this.isAuthenticated = true
@@ -43,7 +45,7 @@ export const useAuthStore = defineStore('auth', {
         }
       } catch (error) {
         console.error('Login error:', error)
-        this.error = error.response?.data?.message || 'Erro ao fazer login'
+        this.error = error.response?.data?.message || 'Credenciais invalidas'
         return {
           success: false,
           message: this.error

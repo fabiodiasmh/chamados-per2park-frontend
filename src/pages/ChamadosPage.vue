@@ -3,98 +3,102 @@
     <div class="container">
       <!-- Header Compacto -->
 
-      <div class="text-subtitle2 text-weight-bold text-white">
-        📬 Quantidade:
-        {{ chamadosFiltrados.length }} chamados • Atualizado: {{ lastUpdate }}
-      </div>
-      <div class="filtros-section q-mb-md">
-        <div class="row q-gutter-sm">
-          <!-- Busca -->
 
-          <q-input
-  v-model="filtroNumeroChamado"
-  dense
-  outlined
-  placeholder="Nº do chamado"
-  class="col-3 col-sm-2"
-  input-class="text-white"
-  bg-color="dark"
-  type="text"
->
-  <template v-slot:prepend>
-    <q-icon name="tag" color="grey-5" />
-  </template>
-</q-input>
+      <div class="text-subtitle1 text-weight-bold text-white q-mb-xs">
+  Quantidade: {{ chamadosFiltrados.length }} • Atualizado: {{ lastUpdate }}
+</div>
 
-          <q-input
-            v-model="filtroTexto"
-            dense
-            outlined
-            dark
-            color="blue-4"
-            placeholder="Buscar por local, descrição..."
-            class="col"
-            input-class="text-white"
-            bg-color="dark"
-          >
-            <template v-slot:prepend>
-              <q-icon name="search" color="grey-5" />
-            </template>
-          </q-input>
+<div class="filtros-section q-mb-md">
+  <div class="row q-gutter-sm">
+    <!-- Busca por número do chamado -->
+    <q-input
+      v-model="filtroNumeroChamado"
+      dense
+      outlined
+      placeholder="Nº do chamado"
+      class="col-12 col-sm-6 col-md-2"
+      input-class="text-white"
+      bg-color="dark"
+      type="text"
+    >
+      <template v-slot:prepend>
+        <q-icon name="tag" color="grey-5" />
+      </template>
+    </q-input>
 
-          <!-- Status -->
-          <q-select
-            v-model="filtroStatus"
-            :options="opcoesStatus"
-            dense
-            outlined
-            dark
-            color="blue-4"
-            emit-value
-            map-options
-            class="col-4 col-sm-3"
-            input-class="text-white"
-            bg-color="dark"
-            options-dark
-            popup-content-class="bg-dark text-white"
-          />
+    <!-- Busca geral -->
+    <q-input
+      v-model="filtroTexto"
+      dense
+      outlined
+      dark
+      color="blue-4"
+      placeholder="Buscar por local, descrição..."
+      class="col-12 col-sm-6 col-md"
+      input-class="text-white"
+      bg-color="dark"
+    >
+      <template v-slot:prepend>
+        <q-icon name="search" color="grey-5" />
+      </template>
+    </q-input>
 
-          <!-- Ordenação -->
-          <q-select
-            v-model="ordenacao"
-            :options="[
-              { label: 'Mais recentes', value: 'recentes' },
-              { label: 'Mais antigos', value: 'antigos' },
-            ]"
-            dense
-            outlined
-            dark
-            color="blue-4"
-            emit-value
-            map-options
-            class="col-3 col-sm-2"
-            input-class="text-white"
-            bg-color="dark"
-            options-dark
-            popup-content-class="bg-dark text-white"
-          />
-          <q-btn
-            dense
-            flat
-            icon="clear"
-            color="grey-5"
-            @click="limparFiltros"
-            title="Limpar todos os filtros"
-            class="q-ml-auto"
-          >
-            <q-tooltip>LIMPAR FILTROS</q-tooltip>
-          </q-btn>
-        </div>
-          <!-- Botão Limpar Filtros (extrema direita) -->
-      </div>
+    <!-- Filtro de Status -->
+    <q-select
+      v-model="filtroStatus"
+      :options="opcoesStatus"
+      dense
+      outlined
+      dark
+      color="blue-4"
+      emit-value
+      map-options
+      class="col-12 col-sm-6 col-md-3"
+      input-class="text-white"
+      bg-color="dark"
+      options-dark
+      popup-content-class="bg-dark text-white"
+      placeholder="Status"
+    />
 
-      <!-- Filtros -->
-      <!-- Filtros -->
+    <!-- Ordenação -->
+    <q-select
+      v-model="ordenacao"
+      :options="[
+        { label: 'Mais recentes', value: 'recentes' },
+        { label: 'Mais antigos', value: 'antigos' },
+      ]"
+      dense
+      outlined
+      dark
+      color="blue-4"
+      emit-value
+      map-options
+      class="col-12 col-sm-6 col-md-2"
+      input-class="text-white"
+      bg-color="dark"
+      options-dark
+      popup-content-class="bg-dark text-white"
+      placeholder="Ordenar"
+    />
+
+    <!-- Botão Limpar -->
+    <div class="col-12 col-md-auto flex flex-center q-mt-sm q-md-mt-0">
+      <q-btn
+        dense
+        flat
+        icon="clear"
+        color="grey-5"
+        @click="limparFiltros"
+        title="Limpar todos os filtros"
+        class="full-width full-md-width"
+      >
+        <q-tooltip>LIMPAR FILTROS</q-tooltip>
+      </q-btn>
+    </div>
+  </div>
+</div>
+
 
       <!-- Loading -->
       <div v-if="loading" class="loading-container flex flex-center">
@@ -135,313 +139,275 @@
       </div>
 
       <!-- Lista Compacta de Chamados -->
-      <div
-        v-if="
-          !loading &&
-          !error &&
-          chamadosFiltrados &&
-          chamadosFiltrados.length > 0
-        "
-        class="chamados-list"
-      >
-        <q-card
-          v-for="chamado in chamadosFiltrados"
-          :key="chamado.Id"
-          class="chamado-card"
-          @click="mostrarDescricaoCompleta(chamado)"
-        >
-          <q-card-section class="p-0">
-            <!-- Cabeçalho do Chamado -->
-
-            <div class="chamado-header">
-              <!-- Esquerda: ID + Data -->
-              <div class="chamado-id-data text-h6 text-blue-5">
-                {{ chamado.Id }} • {{ formatarData(chamado.OpeningDate) }}
-              </div>
-
-              <!-- Centro: Status + Nome do Local -->
-              <div class="chamado-status-local flex items-center">
-                <q-badge
-                  :color="getStatusColor(chamado.Status)"
-                  text-color="white"
-                  size="xs"
-                  class="q-mr-xs"
-                  style="line-height: 1.2; padding: 2px 6px; font-size: 0.72rem"
-                >
-                  {{ getStatusLabel(chamado.Status) }}
-                </q-badge>
-                <span
-                  class="text-orange-3 text-weight-medium text-body1 chamado-nome-local"
-                >
-                  {{ chamado.Local?.Name || "Local não informado" }}
-                </span>
-              </div>
-
-              <!-- Direita: Categoria -->
-              <div
-                class="chamado-categoria text-body2 text-blue-3 text-weight-medium"
-              >
-                {{ chamado.Category?.Name || "—" }}
-              </div>
-            </div>
-
-            <!-- Descrição (3 linhas visíveis) -->
-            <div class="chamado-descricao q-px-sm q-pb-sm">
-              <div class="text-body1 text-grey-2 line-clamp-3">
-                {{ chamado.Description }}
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+   <div
+  v-if="!loading && !error && chamadosFiltrados && chamadosFiltrados.length > 0"
+  class="chamados-list"
+>
+  <q-card
+    v-for="chamado in chamadosFiltrados"
+    :key="chamado.Id"
+    class="chamado-card"
+    @click="mostrarDescricaoCompleta(chamado)"
+  >
+    <q-card-section class="">
+      <!-- Cabeçalho do Chamado -->
+     <!-- Cabeçalho do Chamado -->
+<div class="chamado-header">
+  <div class="chamado-header-content">
+    <!-- Linha 1: ID + Data -->
+    <div class="chamado-linha">
+      <span class="text-subtitle1 text-blue-3">
+        {{ chamado.Id }} •
+        <q-icon name="schedule" color="white-8" size="16px" class="q-ml-xs" />
+        {{ formatarData(chamado.OpeningDate) }}
+      </span>
     </div>
 
-    <!-- Modal com detalhes do chamado -->
-    <q-dialog v-model="dialogDescricao">
-      <q-card class="modal-completo" style="min-width: 90vw; ">
-        <!-- Cabeçalho -->
-        <q-card-section class="">
-          <div class="row  justify-between items-center">
-            <div class="col-4 text-body2">
-              <q-icon
-                name="location_on"
-                color="primary"
-                size="25px"
-                class="q-mr-sm"
-              />
-              <span class="text-subtitle1">{{
-                chamadoSelecionado?.Local?.Name || "Local não informado"
-              }}</span>
-            </div>
+    <!-- Linha 2: Status + Local -->
+    <div class="chamado-linha">
+      <q-badge
+        :color="getStatusColor(chamado.Status)"
+        text-color="white"
+        size="xs"
+        class="q-mr-xs"
+        style="line-height: 1.2; padding: 2px 6px; font-size: 0.72rem;"
+      >
+        {{ getStatusLabel(chamado.Status) }}
+      </q-badge>
+      <span class="text-orange-4 text-weight-medium text-body1">
+        {{ chamado.Local?.Name || "Local não informado" }}
+      </span>
+    </div>
 
-              <div class="col items-center">
-              <q-badge
-                :color="getStatusColor(chamadoSelecionado?.Status)"
-                text-color="white"
-                size="sm"
-                class=""
-              >
-                {{ getStatusLabel(chamadoSelecionado?.Status) }}
-              </q-badge>
-            </div>
-
-              <div class="text-subtitle1 col-2 items-center">
-              Chamado #{{ chamadoSelecionado?.Id }}
-            </div>
-
-            <div class="col items-center text-body2">
-              <q-icon
-                name="schedule"
-                color="orange-8"
-                size="18px"
-                class="q-mr-sm"
-              />
-              Aberto: {{ formatarData(chamadoSelecionado?.OpeningDate) }}
-            </div>
-
-
-
-
-
-            <div class="col-1 items-center flex justify-end">
-              <q-btn dense flat icon="close" v-close-popup round />
-            </div>
-          </div>
-          <q-space />
-        </q-card-section>
-
-        <q-separator />
-
-        <!-- Corpo do modal -->
-        <q-card-section class="q-pt-sm">
-          <div class="row q-gutter-sm">
-            <!-- Local -->
-            <div class="col-12">
-              <div class="row items-center text-body2"></div>
-            </div>
-
-            <!-- Contato (tudo em uma linha) -->
-            <div class="col-12">
-              <div class="row items-center text-body2">
-
-                <q-icon
-  name="fas fa-user-circle"
-  size="18px"
-  class="q-mr-sm"
-  style="color: #666;"
-/>
-                <span class="text-weight-medium">{{
-                  chamadoSelecionado?.ContactName || "—"
-                }}</span>
-
-
-<a
-  v-if="chamadoSelecionado?.ContactPhone"
-  @click.prevent="abrirWhatsApp(chamadoSelecionado.ContactPhone)"
-  style="cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; color: inherit;"
->
-  <q-icon
-    name="fab fa-whatsapp"
-    size="18px"
-    class="q-ml-md q-mr-sm"
-    style="color: #25D366;"
-  />
-  <span>{{ chamadoSelecionado.ContactPhone }}</span>
-</a>
-<span v-else>
-  <q-icon
-    name="fab fa-whatsapp"
-    size="18px"
-    class="q-ml-md q-mr-sm"
-    style="color: #25D366; opacity: 0.5;"
-  />
-  <span>—</span>
-</span>
-
-
-
-
-
-                <q-icon
-                  name="mail"
-                  color="red-8"
-                  size="18px"
-                  class="q-ml-md q-mr-sm"
-                />
-                <span class="text-blue-9">{{
-                  chamadoSelecionado?.ContactMail || "—"
-                }}</span>
-              </div>
-            </div>
-
-            <!-- Data de abertura -->
-            <!-- <div class="col-12">
-          <div class="row items-center text-body2">
-            <q-icon name="schedule" color="orange-8" size="18px" class="q-mr-sm" />
-            Aberto em: {{ formatarData(chamadoSelecionado?.OpeningDate) }}
-          </div>
-        </div> -->
-
-            <!-- Descrição -->
-            <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Descrição</div>
-              <q-card flat bordered class="bg-grey-1">
-                <q-card-section class="q-pa-sm text-body2">
-                  {{ chamadoSelecionado?.Description || "Sem descrição" }}
-                </q-card-section>
-              </q-card>
-            </div>
-
-            <!-- Equipamentos -->
-            <div class="col-12" v-if="chamadoSelecionado?.Equipments?.length">
-              <div class="text-caption text-grey-7 q-mb-xs">Equipamentos</div>
-              <div class="row q-gutter-xs">
-                <q-chip
-                  v-for="equip in chamadoSelecionado.Equipments"
-                  :key="equip.Id"
-                  dense
-                  color="grey-3"
-                  text-color="grey-9"
-                  icon="devices"
-                  class="text-weight-medium"
-                >
-                  {{ equip.Name }}
-                </q-chip>
-              </div>
-            </div>
-
-            <!-- Ações Rápidas -->
-<div class="col-12 q-mt-md">
-  <div class="text-caption text-grey-7 q-mb-xs">Ações</div>
-  <div class="row q-gutter-sm">
-    <q-btn
-      size="sm"
-      color="orange"
-      icon="photo_camera"
-      label="Pedir evidência"
-      @click="abrirPromptAtualizacao(9, 'Pedir evidência')"
-      dense
-    />
-    <q-btn
-      size="sm"
-      color="teal"
-      icon="inventory"
-      label="Solicitar nº série"
-      @click="abrirPromptAtualizacao(9, 'Solicitar número de série')"
-      dense
-    />
-    <q-btn
-      size="sm"
-      color="blue"
-      icon="engineering"
-      label="Em atendimento"
-      @click="abrirPromptAtualizacao(2, 'Iniciar atendimento')"
-      dense
-    />
-    <q-btn
-      size="sm"
-      color="brown"
-      icon="build"
-      label="Assistência técnica"
-      @click="abrirPromptAtualizacao(11, 'Encaminhar para assistência técnica')"
-      dense
-    />
-    <q-btn
-      size="sm"
-      color="green"
-      icon="check_circle"
-      label="Fechar chamado"
-      @click="abrirPromptAtualizacao(5, 'Chamado resolvido e finalizado')"
-      dense
-    />
+    <!-- Linha 3: Categoria -->
+    <div class="text-blue-1 chamado-linha chamado-categoria">
+      {{ chamado.Category?.Name || "—" }}
+    </div>
   </div>
 </div>
 
-            <!-- Histórico de Atendimento -->
-            <div class="col-12" v-if="chamadoSelecionado?.HistoryCalls?.length">
-              <div class="text-caption text-grey-7 q-mt-md q-mb-xs">
-                Histórico de Atendimento
-              </div>
-              <q-timeline color="primary" class="q-mt-sm">
-                <q-timeline-entry
-                  v-for="(hist, index) in chamadoSelecionado.HistoryCalls"
-                  :key="index"
-                  :title="hist.User?.Name || 'Sistema'"
-                  :subtitle="formatarData(hist.Date)"
-                  icon="chat"
-                  icon-color="primary"
-                >
-                  <div class="text-caption text-grey-8">
-                    Status: {{ getStatusLabel(hist.Status) }}
-                  </div>
-                  <div class="text-body2 q-mt-xs">
-                    {{ hist.Description || "Sem descrição" }}
-                  </div>
-                </q-timeline-entry>
-              </q-timeline>
+      <!-- Descrição -->
+      <div class="q-py-sm">
+        <div class="text-body1 text-grey-2 line-clamp-3">
+          {{ chamado.Description }}
+        </div>
+      </div>
+    </q-card-section>
+  </q-card>
+</div>
+    </div>
+
+    <!-- Modal com detalhes do chamado -->
+<q-dialog v-model="dialogDescricao" seamless>
+  <q-card class="modal-completo q-pa-none" style="width: 95vw; max-width: 1000px; max-height: 90vh;">
+    <!-- Cabeçalho com botão de fechar fixo no canto superior direito -->
+    <q-card-section class="relative-position">
+      <div class="row justify-between items-start q-gutter-xs">
+        <!-- Local -->
+        <div class="col-12 col-sm-4 text-body2">
+          <q-icon name="location_on" color="primary" size="24px" class="q-mr-sm" />
+          <span class="text-subtitle1">
+            {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
+          </span>
+        </div>
+
+        <!-- Status -->
+        <div class="col-12 col-sm-auto text-center q-mt-xs q-sm-mt-0">
+          <q-badge
+            :color="getStatusColor(chamadoSelecionado?.Status)"
+            text-color="white"
+            size="xs"
+          >
+            {{ getStatusLabel(chamadoSelecionado?.Status) }}
+          </q-badge>
+        </div>
+
+        <!-- ID do chamado -->
+        <div class="col-12 col-sm-2 text-subtitle1 text-center q-mt-xs q-sm-mt-0">
+          Chamado #{{ chamadoSelecionado?.Id }}
+        </div>
+
+        <!-- Data de abertura -->
+        <div class="col-12 col-sm-auto text-body2 text-center q-mt-xs q-sm-mt-0">
+          <q-icon name="schedule" color="orange-8" size="18px" class="q-mr-xs" />
+          Aberto: {{ formatarData(chamadoSelecionado?.OpeningDate) }}
+        </div>
+      </div>
+
+      <!-- Botão de fechar fixo no canto superior direito (sempre visível) -->
+      <q-btn
+        dense
+        flat
+        icon="close"
+        v-close-popup
+        round
+        color="grey-6"
+        class="absolute-top-right"
+        style="top: 8px; right: 8px; z-index: 10;"
+      />
+    </q-card-section>
+
+    <q-separator />
+
+    <!-- Corpo com scroll interno -->
+    <q-card-section class="scroll" style="max-height: 65vh; overflow-y: auto;">
+      <div class="column q-gutter-sm">
+        <!-- Contato -->
+        <div class="col-12">
+          <div class="row items-center flex-wrap q-gutter-x-sm q-gutter-y-xs text-body1">
+            <div class="row items-center">
+              <q-icon name="fas fa-user-circle" size="18px" class="q-mr-xs" style="color: #666" />
+              <span class="text-weight-medium">{{ chamadoSelecionado?.ContactName || "—" }}</span>
+            </div>
+
+            <div v-if="chamadoSelecionado?.ContactPhone" class="row items-center">
+              <a
+                @click.prevent="abrirWhatsApp(chamadoSelecionado.ContactPhone)"
+                style="cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; color: #25d366;"
+              >
+                <q-icon name="fab fa-whatsapp" size="18px" class="q-mr-xs" />
+                <span>{{ chamadoSelecionado.ContactPhone }}</span>
+              </a>
+            </div>
+            <div v-else class="row items-center">
+              <q-icon name="fab fa-whatsapp" size="18px" class="q-mr-xs" style="color: #25d366; opacity: 0.5" />
+              <span>—</span>
+            </div>
+
+            <div class="row items-center">
+              <q-icon name="mail" color="red-8" size="18px" class="q-mr-xs" />
+              <span class="text-blue-9">{{ chamadoSelecionado?.ContactMail || "—" }}</span>
             </div>
           </div>
-        </q-card-section>
+        </div>
 
-        <!-- Rodapé -->
-        <q-card-actions align="right" class="q-pr-md q-pb-md">
-          <q-btn label="Fechar" color="primary" outline v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+        <!-- Descrição -->
+        <div class="col-12">
+          <div class="text-caption text-grey-7 q-mb-xs">Descrição</div>
+          <q-card flat bordered class="bg-grey-1">
+            <q-card-section class="q-pa-sm text-body2">
+              {{ chamadoSelecionado?.Description || "Sem descrição" }}
+            </q-card-section>
+          </q-card>
+        </div>
+
+        <!-- Equipamentos -->
+        <div class="col-12" v-if="chamadoSelecionado?.Equipments?.length">
+          <div class="text-caption text-grey-7 q-mb-xs">Equipamentos</div>
+          <div class="row wrap q-gutter-xs">
+            <q-chip
+              v-for="equip in chamadoSelecionado.Equipments"
+              :key="equip.Id"
+              dense
+              color="grey-3"
+              text-color="grey-9"
+              icon="devices"
+              class="text-weight-medium"
+            >
+              {{ equip.Name }}
+            </q-chip>
+          </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="col-12 q-mt-md">
+          <div class="text-caption text-grey-7 q-mb-xs">Ações</div>
+          <div class="row wrap q-gutter-sm justify-center">
+            <q-btn
+              size="sm"
+              color="orange"
+              icon="photo_camera"
+              label="Pedir evidência"
+              @click="abrirPromptAtualizacao(9, 'Pedir evidência')"
+              dense
+              class="mobile-full-width"
+            />
+            <q-btn
+              size="sm"
+              color="red"
+              icon="done_all"
+              label="Pedir validação"
+              @click="abrirPromptAtualizacao(9, 'Pedir validação')"
+              dense
+              class="mobile-full-width"
+            />
+            <q-btn
+              size="sm"
+              color="teal"
+              icon="inventory"
+              label="Solicitar nº série"
+              @click="abrirPromptAtualizacao(9, 'Solicitar número de série')"
+              dense
+              class="mobile-full-width"
+            />
+            <q-btn
+              size="sm"
+              color="blue"
+              icon="engineering"
+              label="Em atendimento"
+              @click="abrirPromptAtualizacao(2, 'Iniciar atendimento')"
+              dense
+              class="mobile-full-width"
+            />
+            <q-btn
+              size="sm"
+              color="brown"
+              icon="build"
+              label="Assistência técnica"
+              @click="abrirPromptAtualizacao(11, 'Encaminhar para assistência técnica')"
+              dense
+              class="mobile-full-width"
+            />
+            <q-btn
+              size="sm"
+              color="green"
+              icon="check_circle"
+              label="Fechar chamado"
+              @click="abrirPromptAtualizacao(5, 'Chamado resolvido e finalizado')"
+              dense
+              :disable="true"
+              class="mobile-full-width"
+            />
+          </div>
+        </div>
+
+        <!-- Histórico de Atendimento -->
+        <div class="col-12" v-if="chamadoSelecionado?.HistoryCalls?.length">
+          <div class="text-caption text-grey-7 q-mt-md q-mb-xs">Histórico de Atendimento</div>
+          <q-timeline color="primary" class="q-mt-sm">
+            <q-timeline-entry
+              v-for="(hist, index) in chamadoSelecionado.HistoryCalls"
+              :key="index"
+              :title="hist.User?.Name || 'Sistema'"
+              :subtitle="formatarData(hist.Date)"
+              icon="chat"
+              icon-color="primary"
+            >
+              <div class="text-caption text-grey-8">Status: {{ getStatusLabel(hist.Status) }}</div>
+              <div class="text-body2 q-mt-xs">{{ hist.Description || "Sem descrição" }}</div>
+            </q-timeline-entry>
+          </q-timeline>
+        </div>
+      </div>
+    </q-card-section>
+
+    <!-- Rodapé -->
+    <q-separator />
+    <q-card-actions align="center" class="q-py-md">
+      <q-btn label="Fechar" color="primary" outline v-close-popup class="mobile-full-width" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
   </q-page>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from "vue";
 import { useQuasar } from "quasar";
+const $q = useQuasar();
 import { useChamadosStore } from "stores/chamados";
 
-
-
-
 const chamadosStore = useChamadosStore();
-const $q = useQuasar();
 
 const chamados = ref([]);
 const detalhe_chamado = ref([]);
@@ -464,11 +430,11 @@ const ordenacao = ref("recentes"); // 'recentes' ou 'antigos'
 
 // Função para limpar todos os filtros
 const limparFiltros = () => {
-  filtroTexto.value = ''
-  filtroStatus.value = null // ou null, se "Todos" for null
-  ordenacao.value = 'recentes'
-  filtroNumeroChamado.value = ''
-}
+  filtroTexto.value = "";
+  filtroStatus.value = null; // ou null, se "Todos" for null
+  ordenacao.value = "recentes";
+  filtroNumeroChamado.value = "";
+};
 
 const opcoesStatus = [
   { label: "Todos", value: null },
@@ -480,7 +446,7 @@ const opcoesStatus = [
   { label: "Nivel 3", value: 10 },
   { label: "Aguardando resposta", value: 9 },
   { label: "Aguardando assistencia", value: 11 },
-  { label: "Fechado", value: 5 },
+  // { label: "Fechado", value: 5 },
 ];
 
 // Mapeamento de status para rótulos legíveis
@@ -494,17 +460,15 @@ const getStatusLabel = (status) => {
     10: "Nível 3",
     11: "Aguardando assistência",
     12: "Nível 2",
-    5: "Fechado"
+    5: "Fechado",
   };
   return map[status] || "Desconhecido";
 };
 
-
-
 const formatarNumeroWhatsApp = (numero) => {
-  let soNumeros = numero.replace(/\D/g, '');
-  if (soNumeros.startsWith('0')) soNumeros = soNumeros.substring(1);
-  if (!soNumeros.startsWith('55')) soNumeros = '55' + soNumeros;
+  let soNumeros = numero.replace(/\D/g, "");
+  if (soNumeros.startsWith("0")) soNumeros = soNumeros.substring(1);
+  if (!soNumeros.startsWith("55")) soNumeros = "55" + soNumeros;
   return soNumeros;
 };
 
@@ -522,7 +486,7 @@ const abrirWhatsApp = (numero) => {
   setTimeout(() => {
     // Só abre no web se o usuário ainda estiver na mesma aba (ou seja, o app não abriu)
     if (!document.hidden) {
-      window.open(webUrl, '_blank');
+      window.open(webUrl, "_blank");
     }
   }, 1000);
 };
@@ -561,7 +525,7 @@ const chamadosFiltrados = computed(() => {
     );
   }
 
- // Filtro por número do chamado (ID) – busca parcial
+  // Filtro por número do chamado (ID) – busca parcial
   if (filtroNumeroChamado.value) {
     const termoId = filtroNumeroChamado.value.trim();
     if (termoId) {
@@ -595,17 +559,17 @@ const chamadosFiltrados = computed(() => {
 //})
 const abrirPromptAtualizacao = (novoStatus, placeholderTexto) => {
   $q.dialog({
-    title: 'Adicionar observação',
-    message: 'Descreva brevemente a ação realizada:',
+    title: "Adicionar observação",
+    message: "Descreva brevemente a ação realizada:",
     prompt: {
-      model: '',
-      type: 'textarea',
-      isValid: val => val && val.trim().length > 0
+      model: "",
+      type: "textarea",
+      isValid: (val) => val && val.trim().length > 0,
     },
     cancel: true,
     persistent: true,
-    ok: 'Confirmar',
-    cancel: 'Cancelar'
+    ok: "Confirmar",
+    cancel: "Cancelar",
   }).onOk(async (descricao) => {
     await atualizarStatusChamado(novoStatus, descricao.trim());
   });
@@ -621,8 +585,7 @@ const atualizarStatusChamado = async (novoStatus, descricao) => {
   // chamadosStore.detalhe_chamado.User = "descricao";
 
   // console.log("Novo status: "+ chamadosStore.detalhe_chamado.Status);
-    // console.log("User: " + descricao);
-
+  // console.log("User: " + descricao);
 
   // try {
   //   // Supondo que seu store tenha uma action como `atualizarChamado(id, dados)`
@@ -630,7 +593,6 @@ const atualizarStatusChamado = async (novoStatus, descricao) => {
   //     Status: novoStatus,
   //     Description: descricao
   //   };
-
 
   //   const result = await chamadosStore.atualizarChamado(chamadoSelecionado.value.Id, payload);
 
@@ -746,6 +708,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+
+/* Importa a fonte Inter do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 .nowrap {
   flex-wrap: nowrap;
   overflow-x: auto; /* scroll horizontal se necessário */
@@ -762,7 +728,7 @@ onUnmounted(() => {
 .dashboard-page {
   background: linear-gradient(135deg, #1c2b36 0%, #2c3e50 100%);
   min-height: 100vh;
-  padding: 10px;
+  padding: 15px;
   /* border: 2px red solid; */
 }
 
@@ -793,43 +759,36 @@ onUnmounted(() => {
 .chamados-list {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 15px;
 }
 
-/* .chamado-card {
-  border-radius: 10px;
-  background: #2d3748;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-} */
 .chamado-card {
   border-radius: 10px;
-  background: #2d3748;
+  background: #354155;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.25s ease;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid white;
   display: flex;
   flex-direction: column;
   min-height: 80px; /* ✅ Altura mínima para evitar cards muito curtos */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .chamado-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transform: translateY(-0px);
+  box-shadow: 0 0 13px 3px orange;
   background: #333f50;
 }
 
 .chamado-header {
-  display: flex;
-  align-items: center; /* ✅ Alinha todos os filhos verticalmente ao centro */
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  min-height: 44px; /* ✅ Altura mínima fixa para alinhar todos os cards */
+  /* display: flex; */
+  /* align-items: center; ✅ Alinha todos os filhos verticalmente ao centro */
+  /* justify-content: center ; */
+  /* gap: 500px; */
+  padding: 0px 0px;
+  border-bottom: 2px solid rgba(202, 198, 198, 0.08);
+  min-height: 40px; /* ✅ Altura mínima fixa para alinhar todos os cards */
 }
 
 /* Esquerda: ID + Data — não cresce, não encolhe */
@@ -845,44 +804,26 @@ onUnmounted(() => {
   justify-content: center;
 }
 
+.testee {
+  flex: 1 1 auto;
+  min-width: 0; /* ✅ Permite que o texto seja truncado */
+  justify-content: center;
+}
+
 /* Nome do local: não quebra linha, trunca se necessário */
 .chamado-nome-local {
-  white-space: nowrap;
+  /* white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-left: 4px; /* pequeno espaçamento após a badge */
+  margin-left: 4px; pequeno espaçamento após a badge */
 }
 
 /* Direita: Categoria — fixa */
 .chamado-categoria {
   flex: 0 0 auto;
   white-space: nowrap;
+
 }
-
-/* .badge-local {
-  background: linear-gradient(135deg, #FF6B35, #FF8E53);
-  font-size: 0.75rem;
-  max-width: 200px;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
-
-/* .chamado-descricao {
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-} */
-
-/* .line-clamp {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-} */
 
 .descricao-completa {
   white-space: pre-wrap;
@@ -896,31 +837,122 @@ onUnmounted(() => {
 } */
 .filtros-section {
   background: rgba(255, 255, 255, 0.03);
-  padding: 12px;
+  padding: 10px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+.chamado-header {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chamado-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.chamado-linha {
+  /* display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap; */
+}
+
+.chamado-categoria {
+  color: var(--q-color-blue-3);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: right;
+  min-width: fit-content;
+}
 /* Responsividade */
-@media (max-width: 768px) {
-  .dashboard-page {
-    padding: 12px;
+/* Ajustes apenas para mobile */
+@media (max-width: 767px) {
+  .mobile-full-width {
+    width: 100% !important;
+    margin-bottom: 10px !important;
+
   }
 
-  .header-section {
-    padding: 12px;
+    .modal-completo .absolute-top-right {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .badge-local {
-    font-size: 0.7rem;
-    max-width: 140px;
+  .chamado-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
   }
 
-  .chamado-descricao {
-    min-height: 40px;
+  .chamado-linha {
+    width: 100%;
+    justify-content: flex-start;
   }
 
+  .chamado-categoria {
+    text-align: left;
+    font-size: 0.875rem;
+  }
+
+  /* Evita que o badge fique muito pequeno */
+  .chamado-linha .q-badge {
+    font-size: 0.75rem !important;
+  }
+
+   .full-md-width {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .chamado-header-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .chamado-header-row > div {
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  /* Força categoria à esquerda em mobile */
+  .chamado-header-row > div:last-child {
+    text-align: left !important;
+  }
+
+  /* Garante que o ícone do WhatsApp e e-mail não fiquem apertados */
+  .modal-completo .row.items-center.text-body2 {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  /* Melhora o espaçamento do cabeçalho em mobile */
+  .modal-completo .q-card__section:first-child .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal-completo .q-card__section:first-child .col-12.col-sm-4,
+  .modal-completo .q-card__section:first-child .col-12.col-sm-2,
+  .modal-completo .q-card__section:first-child .col-12.col-sm-auto {
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .modal-completo .q-card__section:first-child .col-12.col-sm-auto:last-child {
+    text-align: right !important;
+  }
+
+  /* Evita que o modal fique muito alto em mobile */
   .modal-completo {
-    min-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
   }
 }
 </style>

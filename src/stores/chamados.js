@@ -7,7 +7,7 @@ import { useAuthStore } from 'stores/auth' // outro store
 export const useChamadosStore = defineStore('chamados', {
   state: () => ({
     chamados: [],
-    detalhe_chamado:[],
+    detalhe_chamado:{},
     chamadosPorStatus: {},
     topLocais: [],
     loading: false,
@@ -16,23 +16,56 @@ export const useChamadosStore = defineStore('chamados', {
 
   actions: {
 
-     atualizarStatusNoStore(novoStatus, descricao) {
+    async atualizarStatusNoStore(novoStatus, descricao) {
       const authStore = useAuthStore()
 
-    // if (this.detalhe_chamado) {
-    //   this.detalhe_chamado.Status = novoStatus;
-
-    //    this.detalhe_chamado.User = authStore.usuario
-    // }
-      if (this.detalhe_chamado) {
-    this.detalhe_chamado = {
-      ...this.detalhe_chamado,
-      Status: novoStatus,
-      User: authStore.usuario,
-      Description: descricao,
-      DescriptionUser:descricao
-    };
+        // 🔴 Validação crítica
+  if (!this.detalhe_chamado?.Id) {
+    console.error('ID do chamado ausente!', this.detalhe_chamado)
+    return { success: false, message: 'Chamado inválido: ID não encontrado' }
   }
+
+  // 🔴 Garanta que authStore.usuario tem Id
+  if (!authStore.usuario?.Id) {
+    console.error('Usuário sem ID!', authStore.usuario)
+    return { success: false, message: 'Usuário não autenticado corretamente' }
+  }
+
+
+  // ✅ Atualize mantendo todos os campos originais + novos valores
+  const payload = {
+    ...this.detalhe_chamado, // preserva Id, ParkingId, etc.
+    Status: novoStatus,
+    User: {...authStore.usuario}, // ⚠️ confirme se este objeto tem "Id"
+    Description: descricao,
+    DescriptionUser: descricao,
+    HistoryCalls:[]
+
+  }
+
+console.log('Payload para atualização:', payload);
+console.log('Payload para atualização:', payload);
+console.log('Payload para atualização:', payload);
+console.log('Payload para atualização:', payload);
+console.log('Payload para atualização:', payload);
+console.log('Payload para atualização:', payload);
+
+   this.loading = true
+      this.error = null
+      try {
+        console.log('Fetching chamados...')
+        const response = await api.put('/update_chamado',payload)
+        console.log('PUT update chamado:', payload)
+        // this.chamados = response.data || []
+        return { data: response.data  }
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Erro ao buscar chamados'
+        console.error('Error fetching chamados:', error)
+        console.error('Error response:', error.response)
+        return { message: this.error }
+      } finally {
+        this.loading = false
+      }
 
   },
     async fetchChamados() {

@@ -1,6 +1,7 @@
 import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 
+import { useAuthStore } from 'stores/auth'
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -8,7 +9,7 @@ import axios from 'axios'
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api/', // Updated to match your /api base path
+  // baseURL: 'http://localhost:8080/api/', // Updated to match your /api base path
   headers: {
     'Content-Type': 'application/json'
   },
@@ -16,17 +17,28 @@ const api = axios.create({
 })
 
 // Add request interceptor for debugging
-api.interceptors.request.use(
-  (config) => {
-    console.log('Making request to:', config.url)
-    console.log('Full config:', config)
-    return config
-  },
-  (error) => {
-    console.error('Request error:', error)
-    return Promise.reject(error)
-  }
-)
+// api.interceptors.request.use(
+//   (config) => {
+//     console.log('Making request to:', config.url)
+//     console.log('Full config:', config)
+//     return config
+//   },
+//   (error) => {
+//     console.error('Request error:', error)
+//     return Promise.reject(error)
+//   }
+// )
+api.interceptors.request.use((config) => {
+  const store = useAuthStore()
+  const ip = store.ip_servidor_store || 'localhostttt'
+  const porta = store.portaApi || '8080' // opcional
+  config.baseURL = `http://${ip}:${porta}/api/`
+
+  // console.log('Usando baseURL:', config.baseURL)
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
 
 // Add response interceptor for debugging
 api.interceptors.response.use(

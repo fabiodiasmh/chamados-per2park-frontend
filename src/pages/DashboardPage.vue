@@ -48,55 +48,44 @@
     class="stat-card"
     :class="getStatusClass(status)"
   >
-    <q-card-section class="stat-content flex flex-center text-center">
-      <div class="number-display text-weight-bolder">
-        {{ chamadosPorStatus[status] || 0 }}
-      </div>
-      <div class="status-label text-subtitle1 text-white text-weight-medium q-mt-xs">
-        {{ status }}
-      </div>
+    <q-card-section class="stat-content">
+      <div class="number-display">{{ chamadosPorStatus[status] || 0 }}</div>
+      <div class="status-label">{{ status }}</div>
     </q-card-section>
-    <q-card-section class="icon-section flex flex-center">
-      <q-icon :name="getIconForStatus(status)" size="2.5em" color="white" />
+    <q-card-section class="icon-section">
+      <q-icon :name="getIconForStatus(status)" size="24px" color="white" />
     </q-card-section>
   </q-card>
 </div>
    <!-- Gráfico 1: Chamados com Alto Volume -->
-    <div class="row ">
+ <!-- Gráficos -->
+<div class="row q-col-gutter-md q-mt-xl">
+  <div class="col-12 col-md-6">
+    <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
+      <q-card class="chart-card">
+        <q-card-section class="text-center">
+          <div class="text-h6 text-white q-mb-sm">Em Atendimento</div>
+          <div class="chart-container">
+            <Doughnut :data="lowVolumeData" :options="chartOptionsLow" />
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
 
-
-
-      <div class="col">
-
-        <!-- Gráfico 2: Demais Chamados -->
-        <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
-          <q-card class="chart-card">
-            <q-card-section class="text-center">
-              <div class="text-h6 text-white q-mb-sm">Em Atendimento</div>
-              <div style="height: 250px; max-width: 500px; margin: 0 auto;">
-                <Doughnut :data="lowVolumeData" :options="chartOptionsLow" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
-
-       <div class="col q-mx-md">
-
-        <!-- Gráfico 1: Chamados com Alto Volume -->
-        <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
-          <q-card class="chart-card">
-            <q-card-section class="text-center">
-              <div class="text-h6 text-white q-mb-sm">Aguardando</div>
-              <div style="height: 250px; max-width: 500px; margin: 0 auto;">
-                <Doughnut :data="highVolumeData" :options="chartOptionsHigh" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
-
- </div>
+  <div class="col-12 col-md-6">
+    <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
+      <q-card class="chart-card">
+        <q-card-section class="text-center">
+          <div class="text-h6 text-white q-mb-sm">Aguardando</div>
+          <div class="chart-container">
+            <Doughnut :data="highVolumeData" :options="chartOptionsHigh" />
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
+  </div>
+</div>
     </div>
   </q-page>
 </template>
@@ -359,17 +348,18 @@ onUnmounted(() => {
 <style scoped>
 
 .stat-card {
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s ease;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0;
-  min-height: 140px; /* aumentado para dar espaço ao texto centralizado */
+  min-height: 110px;
   position: relative;
   overflow: hidden;
-  /* color: red; */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .stat-card:hover {
@@ -378,62 +368,47 @@ onUnmounted(() => {
 }
 
 .stat-content {
-  padding: 24px;
+  padding: 6px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 5px;
 }
 
 .number-display {
-  font-size: 3rem; /* destaque máximo no número */
-  line-height: 1;
-  font-weight: 800; /* extra bold */
+  font-size: 2.7rem;
+  font-weight: 700;
   color: white;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .status-label {
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .icon-section {
-  width: 80px;
-  height: 100%;
+  width: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
+  /* background: rgba(0, 0, 0, 0.15); */
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .stat-card {
-    flex-direction: column;
-    min-height: 160px;
-  }
-
-  .icon-section {
-    width: 100%;
-    height: 70px;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-  }
-
-  .number-display {
-    font-size: 2.5rem;
-  }
-
-  .stat-content {
-    padding: 16px;
-  }
+.chart-container {
+  height: 220px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
 }
+
+
 
 /* ------------------------- */
 .dashboard-page {
@@ -474,39 +449,16 @@ onUnmounted(() => {
   margin-top: 24px;
 }
 
-.stat-card {
-  border-radius: 25px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0;
-  min-height: 120px;
-  position: relative;
-  overflow: hidden;
-}
+
 
 .stat-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
-.stat-content {
-  padding: 20px;
-  flex: 1;
-}
 
-.icon-section {
-  width: 80px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
+
+
 
 .chart-section {
   margin-top: 40px;
@@ -521,32 +473,5 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
 
-  .stat-card {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .icon-section {
-    width: 100%;
-    height: 80px;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-  }
-
-  .stat-content {
-    padding: 16px;
-  }
-
-  .chart-section {
-    margin-top: 24px;
-  }
-}
 </style>
