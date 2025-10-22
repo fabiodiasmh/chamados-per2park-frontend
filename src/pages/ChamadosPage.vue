@@ -245,7 +245,7 @@
             <!-- <div class="row items-center"> -->
 
             <div
-              class="text-subtitle1 col col-6 nowrap items-center flex justify-start"
+              class="text-subtitle1 text-bold col col-6 items-center flex justify-start"
             >
               Chamado: {{ chamadoSelecionado?.Id }} -
               {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
@@ -283,7 +283,7 @@
               <q-btn dense flat icon="close" v-close-popup round />
             </div>
             <!-- </div> -->
-            <q-space />
+            <!-- <q-space /> -->
           </q-card-section>
 
           <q-separator />
@@ -370,7 +370,7 @@
 
     dense
     placeholder="Digite o número de série"
-    style="width: 120px"
+    style="width: 175px"
     disable
   />
   <q-btn
@@ -379,8 +379,12 @@
     icon="check_circle"
     label="Verificar"
     dense
-    push
+
+
+    rounded
     disable
+    outline
+glossy
   />
 </div>
 
@@ -742,9 +746,11 @@ function copiarChamado() {
     textColor: "black",
     position: "top",
     icon: "check",
-    timeout: 500,
+
   });
 }
+
+
 
 const formatarNumeroWhatsApp = (numero) => {
   let soNumeros = numero.replace(/\D/g, "");
