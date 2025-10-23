@@ -240,7 +240,7 @@
             <!-- <div class="row items-center"> -->
 
             <div
-              class="text-subtitle1 col col-6 nowrap items-center flex justify-start"
+              class="text-subtitle1 text-bold col col-6 items-center flex justify-start"
             >
               Chamado: {{ chamadoSelecionado?.Id }} -
               {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
@@ -278,7 +278,7 @@
               <q-btn dense flat icon="close" v-close-popup round />
             </div>
             <!-- </div> -->
-            <q-space />
+            <!-- <q-space /> -->
           </q-card-section>
 
           <q-separator />
@@ -358,6 +358,7 @@
 
           </div> -->
 
+<<<<<<< HEAD
                   <div class="row items-center q-ml-xl q-gutter-sm">
                     <div class="text-body2 text-weight-medium">
                       Consulta SAT
@@ -380,6 +381,35 @@
                       disable
                     />
                   </div>
+=======
+          <div class="row items-center q-ml-xl q-gutter-sm">
+  <div class="text-body2 text-weight-medium">Consulta SAT</div>
+  <q-input
+    v-model="valor_numero_serie"
+    outlined
+
+    dense
+    placeholder="Digite o número de série"
+    style="width: 175px"
+    disable
+  />
+  <q-btn
+    class="q-ml-sm"
+    color="positive"
+    icon="check_circle"
+    label="Verificar"
+    dense
+
+
+    rounded
+    disable
+    outline
+glossy
+  />
+</div>
+
+
+>>>>>>> a925e6bd37174b904c51dc56d26ff2a9fa450fe7
                 </div>
               </div>
 
@@ -797,9 +827,11 @@ function copiarChamado() {
     textColor: "black",
     position: "top",
     icon: "check",
-    timeout: 500,
+
   });
 }
+
+
 
 const formatarNumeroWhatsApp = (numero) => {
   let soNumeros = numero.replace(/\D/g, "");
