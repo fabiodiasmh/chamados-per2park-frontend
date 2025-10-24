@@ -47,11 +47,11 @@
             :options="opcoesStatus"
             dense
             outlined
-            dark
+          dark
             color="blue-4"
             emit-value
             map-options
-            class="col-4 col-sm-3"
+            class="col-4 col-sm-2"
             input-class="text-white"
             bg-color="dark"
             options-dark
@@ -175,12 +175,12 @@
           class="chamado-card"
           @click="mostrarDescricaoCompleta(chamado)"
         >
-          <q-card-section class="p-0">
+          <q-card-section class="">
             <!-- Cabeçalho do Chamado -->
 
             <div class="chamado-header">
               <!-- Esquerda: ID + Data -->
-              <div class="chamado-id-data text-h6 text-blue-5">
+              <div class="chamado-id-data text-h6 text-blue-3 text-weight-medium">
                 {{ chamado.Id }} • {{ formatarData(chamado.OpeningDate) }}
               </div>
 
@@ -191,7 +191,8 @@
                   text-color="white"
                   size="xs"
                   class="q-mr-xs"
-                  style="line-height: 1.2; padding: 2px 6px; font-size: 0.72rem"
+                  style="line-height: 1.2; padding: 2px 10px; font-size: 0.80rem"
+rounded
                 >
                   {{ getStatusLabel(chamado.Status) }}
                 </q-badge>
@@ -223,7 +224,8 @@
 
     <!-- Modal com detalhes do chamado -->
     <!-- <q-dialog v-model="dialogDescricao"> -->
-    <q-dialog v-model="dialogDescricao">
+    <q-dialog v-model="dialogDescricao"
+    class="blurred-dialog">
       <q-card style="min-width: 90vw; position: relative">
         <!-- <div
       v-if="loading"
@@ -282,7 +284,6 @@
           </q-card-section>
 
           <q-separator />
-
 
           <!-- Corpo do modal -->
           <q-card-section class="q-pt-sm">
@@ -358,7 +359,7 @@
 
           </div> -->
 
-<<<<<<< HEAD
+                  <!-- <<<<<<< HEAD
                   <div class="row items-center q-ml-xl q-gutter-sm">
                     <div class="text-body2 text-weight-medium">
                       Consulta SAT
@@ -381,35 +382,31 @@
                       disable
                     />
                   </div>
-=======
-          <div class="row items-center q-ml-xl q-gutter-sm">
-  <div class="text-body2 text-weight-medium">Consulta SAT</div>
-  <q-input
-    v-model="valor_numero_serie"
-    outlined
-
-    dense
-    placeholder="Digite o número de série"
-    style="width: 175px"
-    disable
-  />
-  <q-btn
-    class="q-ml-sm"
-    color="positive"
-    icon="check_circle"
-    label="Verificar"
-    dense
-
-
-    rounded
-    disable
-    outline
-glossy
-  />
-</div>
-
-
->>>>>>> a925e6bd37174b904c51dc56d26ff2a9fa450fe7
+======= -->
+                  <div class="row items-center q-ml-xl q-gutter-sm">
+                    <div class="text-body2 text-weight-medium">
+                      Consultar SAT
+                    </div>
+                    <q-input
+                      v-model="valor_numero_serie"
+                      outlined
+                      dense
+                      placeholder="Digite o número de série"
+                      style="width: 195px"
+                    />
+                    <q-btn
+                      class="q-ml-sm"
+                      color="positive"
+                      icon="check_circle"
+                      label="Verificar"
+                      dense
+                      @click="buscar_SAT"
+                      rounded
+                      outline
+                      glossy
+                      :loading="loadingSAT"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -424,9 +421,6 @@ glossy
                   </q-card-section>
                 </q-card>
               </div>
-
-
-
 
               <!-- Equipamentos -->
               <div class="col-12" v-if="chamadoSelecionado?.Equipments?.length">
@@ -632,7 +626,8 @@ glossy
                       abrirPromptAtualizacao(
                         2,
                         'Iniciar atendimento',
-                        saudacao()+'o chamado foi recepcionado e está na fila de atendimento.'
+                        saudacao() +
+                          'o chamado foi recepcionado e está na fila de atendimento.'
                       )
                     "
                     dense
@@ -735,7 +730,7 @@ glossy
             </div>
           </q-card-section>
 
-              <q-separator />
+          <q-separator />
 
           <!-- Rodapé -->
           <q-card-actions align="right" class="q-pr-md q-pb-md">
@@ -746,11 +741,24 @@ glossy
         <!-- </div> -->
       </q-card>
     </q-dialog>
+    <!-- No final do seu template, dentro de <q-page> -->
+<q-page-sticky position="bottom-right" :offset="[18, 18]">
+  <q-btn
+    v-show="showScrollTopButton"
+    fab
+    icon="arrow_upward"
+    color="primary"
+    @click="scrollToTop"
+    class="shadow-4"
+  >
+    <q-tooltip>Ir para o topo</q-tooltip>
+  </q-btn>
+</q-page-sticky>
   </q-page>
 </template>
 <!-- 46198  -->
 <script setup>
-import { ref, onMounted, computed, onUnmounted } from "vue";
+import { ref, onMounted, computed, onUnmounted, watch, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useChamadosStore } from "stores/chamados";
 
@@ -766,8 +774,9 @@ const dialogDescricao = ref(false);
 const chamadoSelecionado = ref(null);
 let intervalId = null;
 
+
 const valor_numero_serie = ref("");
-const valor_saida_sat = ref("");
+const valor_saida_sat = ref(null)
 
 // ... imports existentes ...
 
@@ -776,8 +785,34 @@ const filtroTexto = ref("");
 const filtroNumeroChamado = ref("");
 const filtroStatus = ref(null); // 0 = abertos, null = todos
 
+
+const savedScrollPosition = ref(0);
+
+const showScrollTopButton = ref(false)
+
+const loadingSAT = ref(false);
 // Filtro de ordenação
 const ordenacao = ref("recentes"); // 'recentes' ou 'antigos'
+
+const handleScroll = () => {
+  // Mostra o botão se o usuário rolar mais de 400px
+  showScrollTopButton.value = window.scrollY > 400
+}
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth' // rolagem suave
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 
 // Função para limpar todos os filtros
 const limparFiltros = () => {
@@ -786,6 +821,29 @@ const limparFiltros = () => {
   ordenacao.value = "recentes";
   filtroNumeroChamado.value = "";
 };
+
+// Função para abrir o dialog (ex: ao clicar no card)
+    const openDialog = () => {
+      // Salva a posição atual do scroll
+      savedScrollPosition.value = window.scrollY
+      // Abre o dialog (ex: this.$refs.dialog.show())
+    }
+
+    // Função para fechar o dialog
+    const closeDialog = () => {
+      // Fecha o dialog primeiro
+      // this.$refs.dialog.hide()
+
+      // Depois, restaura a posição do scroll
+      setTimeout(() => {
+        window.scrollTo({
+          top: savedScrollPosition.value,
+          behavior: 'smooth' // opcional: animação suave
+        })
+      }, 100) // pequeno delay para garantir que o dialog já foi removido
+    }
+
+
 
 const opcoesStatus = [
   { label: "Todos", value: null },
@@ -827,11 +885,8 @@ function copiarChamado() {
     textColor: "black",
     position: "top",
     icon: "check",
-
   });
 }
-
-
 
 const formatarNumeroWhatsApp = (numero) => {
   let soNumeros = numero.replace(/\D/g, "");
@@ -840,31 +895,82 @@ const formatarNumeroWhatsApp = (numero) => {
   return soNumeros;
 };
 
-const buscar_SAT = () => {
-  // Lógica para buscar o SAT usando o valor do número de série
-  console.log("Buscando SAT para o número de série:", valor_numero_serie.value);
-  const w = valor_numero_serie.value;
-  if (w.includes("SAT")) {
-    valor_saida_sat.value = "SAT encontrado com sucesso!";
+const buscar_SAT = async () => {
+  loadingSAT.value = true;
 
-    $q.notify({
-      position: "top",
-      caption: "parabens campeao",
-      color: "positive",
-      message: "SAT encontrado com sucesso!",
-      icon: "error",
-    });
-  } else {
-    valor_saida_sat.value = "SAT não encontrado.";
-    $q.notify({
-      position: "top",
-      color: "negative",
-      message: "SAT não encontrado.",
-      icon: "error",
-    });
+  try {
+    const respostaSAT = await chamadosStore.satSerie(valor_numero_serie.value);
+
+    if (respostaSAT.data.length === 0) {
+      $q.dialog({
+        title: 'Erro',
+        message: 'Número de série não encontrado!',
+        color: 'negative',
+        ok: { label: 'OK', color: 'negative' }
+      });
+    } else if (respostaSAT.data.length > 1) {
+      $q.dialog({
+        title: 'Atenção',
+        message: 'Está faltando caracteres no número de série, mais de um SAT encontrado!',
+        color: 'warning',
+        ok: { label: 'OK', color: 'warning' }
+      });
+    } else {
+      const w = respostaSAT.data[0];
+
+      // Validação opcional (pode ser removida se a API já garante correspondência exata)
+      if (valor_numero_serie.value === w.numSerie) {
+        valor_saida_sat.value = w;
+
+        $q.dialog({
+          title: 'SAT Encontrado - N/S: ' + w.numSerie,
+          html: true,
+          message: `
+            <ul style="text-align: left; margin: 0; padding-left: 25px;">
+
+              <li><strong>Cliente:</strong> ${w.cliente.nomeFantasia}</li>
+              <li><strong>Local:</strong> ${w.localAtendimento.nomeLocal}</li>
+              <li><strong>Equipamento:</strong> ${w.equipamento.codEEquip}</li>
+              <li><strong>Ativo:</strong> ${w.indAtivo?'sim':'não'}</li>
+              <li>
+  <strong>Tipo de chamado:</strong>
+  ${w.indAtivo
+    ? '<strong><span style="color: blue;">Corretiva</span></strong>'
+    : '<strong><span style="color: red;">Orçamento</span></strong>'
   }
+</li>
+            </ul>
+          `,
+          color: 'positive',
+          ok: { label: 'OK', color: 'positive' },
+          onOk: () => {
+            // Ação após fechar o diálogo, se necessário
+            valor_numero_serie.value = "";
+          }
 
-  // Aqui você pode adicionar a chamada à API ou qualquer outra lógica necessária
+        });
+      } else {
+        $q.dialog({
+          title: 'Erro',
+          message: 'Número de série não corresponde ao retornado!',
+          color: 'negative',
+          ok: { label: 'OK', color: 'negative' }
+        });
+
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao buscar SAT:', error);
+    $q.dialog({
+      title: 'Erro',
+      message: 'Ocorreu um erro durante a busca do SAT. Tente novamente.',
+      color: 'negative',
+      ok: { label: 'OK', color: 'negative' }
+    });
+  } finally {
+    loadingSAT.value = false;
+    valor_numero_serie.value = "";
+  }
 };
 
 function saudacao() {
@@ -928,7 +1034,8 @@ const chamadosFiltrados = computed(() => {
     lista = lista.filter(
       (chamado) =>
         chamado.Local?.Name?.toLowerCase().includes(termo) ||
-        chamado.Description?.toLowerCase().includes(termo)
+        chamado.Description?.toLowerCase().includes(termo) ||
+        chamado.User.Name?.toLowerCase().includes(termo)
     );
   }
 
@@ -958,12 +1065,7 @@ const chamadosFiltrados = computed(() => {
   // return lista.sort((a, b) => new Date(b.OpeningDate) - new Date(a.OpeningDate))
 });
 
-// Filtra e ordena chamados (Status = 0, por data crescente)
-//const chamadosFiltrados = computed(() => {
-//return [...chamados.value]
-//.filter(chamado => chamado.Status === 0)
-//  .sort((a, b) => new Date(b.OpeningDate) - new Date(a.OpeningDate))
-//})
+
 const abrirPromptAtualizacao = (novoStatus, placeholderTexto, texto) => {
   $q.dialog({
     title: placeholderTexto,
@@ -1054,7 +1156,24 @@ const truncarTexto = (texto, limite) => {
 //   console.log(chamado.Id);
 // };
 
+// Observa quando o dialog é fechado
+watch(dialogDescricao, (isOpen) => {
+  if (!isOpen) {
+    // Modal foi fechado → restaura scroll
+    setTimeout(() => {
+      window.scrollTo({
+        top: savedScrollPosition.value,
+        // behavior: 'smooth'
+        behavior:'instant'
+      });
+    }, 100);
+  }
+});
+
 const mostrarDescricaoCompleta = async (chamado) => {
+
+   // 👇 Salva a posição do scroll ANTES de qualquer coisa
+  savedScrollPosition.value = window.scrollY;
   loading.value = true;
   try {
     // busca os detalhes antes
@@ -1064,7 +1183,7 @@ const mostrarDescricaoCompleta = async (chamado) => {
     chamadoSelecionado.value = detalhe_chamado.value || chamado;
 
     // só abre o modal depois que tudo foi carregado
-    dialogDescricao.value = true;
+    dialogDescricao.value = true; //abre o modal
   } finally {
     loading.value = false;
   }
@@ -1072,6 +1191,10 @@ const mostrarDescricaoCompleta = async (chamado) => {
 
 // Busca dados da API
 const fetchData = async () => {
+
+  // 👇 Salva a posição do scroll ANTES de atualizar
+  const currentScroll = window.scrollY;
+
   loading.value = true;
   error.value = null;
 
@@ -1083,6 +1206,13 @@ const fetchData = async () => {
     }
 
     chamados.value = result.data || [];
+
+    // 👇 Restaura o scroll IMEDIATAMENTE após atualizar os dados
+    // Usa nextTick para garantir que o DOM já foi atualizado
+    nextTick(() => {
+      window.scrollTo({ top: currentScroll, behavior: 'auto' });
+    });
+
     lastUpdate.value = new Date().toLocaleString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
@@ -1125,7 +1255,17 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
+<style >
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Aplica desfoque na camada de fundo do dialog */
+.blurred-dialog .q-dialog__backdrop {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* compatibilidade Safari */
+}
+
 .col {
   /* border: 2px red solid; */
 }
@@ -1143,6 +1283,7 @@ onUnmounted(() => {
 }
 
 .dashboard-page {
+  /* background: #22354b; */
   background: linear-gradient(135deg, #1c2b36 0%, #2c3e50 100%);
   min-height: 100vh;
   padding: 10px;
@@ -1176,33 +1317,32 @@ onUnmounted(() => {
 .chamados-list {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 14px;
+}
+body{
 }
 
-/* .chamado-card {
-  border-radius: 10px;
-  background: #2d3748;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.25s ease;
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-} */
 .chamado-card {
   border-radius: 10px;
-  background: #2d3748;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.25s ease;
+  background: #2c3749;
+  /* box-shadow: 10px 10px 10px 10px white; */
+  transition: all 0.35s ease;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 2px solid silver;
   display: flex;
   flex-direction: column;
   min-height: 80px; /* ✅ Altura mínima para evitar cards muito curtos */
+
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* font-family: 'Poppins', sans-serif; */
 }
+
 
 .chamado-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  background: #333f50;
+  background: #2f3a49;
 }
 
 .chamado-header {
@@ -1242,30 +1382,7 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 
-/* .badge-local {
-  background: linear-gradient(135deg, #FF6B35, #FF8E53);
-  font-size: 0.75rem;
-  max-width: 200px;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 
-/* .chamado-descricao {
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-} */
-
-/* .line-clamp {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-} */
 
 .descricao-completa {
   white-space: pre-wrap;
@@ -1273,10 +1390,6 @@ onUnmounted(() => {
   line-height: 1.6;
 }
 
-/* .modal-completo {
-  min-width: 90vw;
-  max-width: 1000px;
-} */
 .filtros-section {
   background: rgba(255, 255, 255, 0.03);
   padding: 12px;

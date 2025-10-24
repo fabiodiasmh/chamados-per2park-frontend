@@ -44,11 +44,6 @@ export const useChamadosStore = defineStore('chamados', {
   }
 
 console.log('Payload para atualização:', payload);
-console.log('Payload para atualização:', payload);
-console.log('Payload para atualização:', payload);
-console.log('Payload para atualização:', payload);
-console.log('Payload para atualização:', payload);
-console.log('Payload para atualização:', payload);
 
    this.loading = true
       this.error = null
@@ -147,6 +142,29 @@ console.log('Payload para atualização:', payload);
       try {
         console.log('Fetching locais...')
         const response = await api.get('/locais')
+        console.log('Locais response:', response)
+        this.topLocais = response.data || []
+        return { success: true, data: response.data || [] }
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Erro ao buscar locais'
+        console.error('Error fetching locais:', error)
+        console.error('Error response:', error.response)
+        return { success: false, message: this.error }
+      } finally {
+        this.loading = false
+      }
+    },
+
+        async satSerie(numeroSerie) {
+      this.loading = true
+      this.error = null
+      try {
+        console.log('Fetching locais...')
+        const response = await api.get('/sat',{
+          params: {
+            serie: numeroSerie
+          }
+        })
         console.log('Locais response:', response)
         this.topLocais = response.data || []
         return { success: true, data: response.data || [] }

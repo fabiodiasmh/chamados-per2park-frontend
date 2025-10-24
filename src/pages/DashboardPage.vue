@@ -58,33 +58,16 @@
   </q-card>
 </div>
    <!-- Gráfico 1: Chamados com Alto Volume -->
- <!-- Gráficos -->
-<div class="row q-col-gutter-md q-mt-xl">
-  <div class="col-12 col-md-6">
-    <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
-      <q-card class="chart-card">
-        <q-card-section class="text-center">
-          <div class="text-h6 text-white q-mb-sm">Em Atendimento</div>
-          <div class="chart-container">
-            <Doughnut :data="lowVolumeData" :options="chartOptionsLow" />
-          </div>
-        </q-card-section>
-      </q-card>
-    </div>
-  </div>
-
-  <div class="col-12 col-md-6">
-    <div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section">
-      <q-card class="chart-card">
-        <q-card-section class="text-center">
-          <div class="text-h6 text-white q-mb-sm">Aguardando</div>
-          <div class="chart-container">
-            <Doughnut :data="highVolumeData" :options="chartOptionsHigh" />
-          </div>
-        </q-card-section>
-      </q-card>
-    </div>
-  </div>
+ <!-- Substitua toda a seção de gráficos por isso -->
+<div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section q-mt-xl">
+  <q-card class="chart-card">
+    <q-card-section class="text-center">
+      <div class="text-h6 text-white q-mb-sm">Distribuição de Chamados por Status</div>
+      <div class="chart-container">
+        <Doughnut :data="fullChartData" :options="chartOptions" />
+      </div>
+    </q-card-section>
+  </q-card>
 </div>
     </div>
   </q-page>
@@ -129,6 +112,67 @@ const error = ref(null)
 const lastUpdate = ref('')
 let intervalId = null
 var teste = ref(null)
+
+// ✅ Dados completos para um único gráfico com todos os status
+const fullChartData = computed(() => {
+  const labels = orderedStatusList.value.filter(status => chamadosPorStatus.value[status] > 0)
+  const data = labels.map(status => chamadosPorStatus.value[status])
+  const backgroundColor = labels.map(status => getStatusColor(status))
+
+  return {
+    labels,
+    datasets: [{
+      data,
+      backgroundColor,
+      borderColor: '#1C2B36',
+      borderWidth: 2,
+      hoverOffset: 10
+    }]
+  }
+})
+
+// ✅ Opções do gráfico com porcentagens visíveis
+const chartOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: true,
+      position: 'bottom',
+      labels: {
+        color: '#fff',
+        font: { size: 12 },
+        padding: 15
+      }
+    },
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          const label = context.label || ''
+          const value = context.raw
+          const total = totalChamados.value
+          const percent = total ? ((value / total) * 100).toFixed(1) : 0
+          return `${label}: ${value} chamados (${percent}%)`
+        }
+      }
+    },
+    datalabels: {
+      color: '#fff',
+      font: {
+        weight: 'bold',
+        size: 14
+      },
+      formatter: (value, context) => {
+        const total = totalChamados.value
+        const percent = total ? ((value / total) * 100).toFixed(1) : 0
+        return `${percent}%`
+      },
+      anchor: 'center',
+      align: 'center'
+    }
+  },
+  cutout: '60%' // rosca (doughnut). Use '0%' para gráfico de pizza.
+}))
 
 // Ícones por status — ATUALIZADOS
 const getIconForStatus = (status) => {
