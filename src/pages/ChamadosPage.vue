@@ -192,6 +192,8 @@
                   size="xs"
                   class="q-mr-xs"
                   style="line-height: 1.2; padding: 2px 10px; font-size: 0.80rem"
+
+outline
 rounded
                 >
                   {{ getStatusLabel(chamado.Status) }}
@@ -224,9 +226,15 @@ rounded
 
     <!-- Modal com detalhes do chamado -->
     <!-- <q-dialog v-model="dialogDescricao"> -->
-    <q-dialog v-model="dialogDescricao"
+    <!-- <q-dialog v-model="dialogDescricao"
+
     class="blurred-dialog">
-      <q-card style="min-width: 90vw; position: relative">
+      <q-card class="meu_card"
+
+      > -->
+      <q-dialog v-model="dialogDescricao" class="blurred-dialog" >
+
+  <q-card style="min-width: 90vw" class="no-overflow-x">
         <!-- <div
       v-if="loading"
       class="absolute-full flex flex-center bg-black bg-opacity-30 z-top"
@@ -393,17 +401,18 @@ rounded
                       dense
                       placeholder="Digite o número de série"
                       style="width: 195px"
+                      @keyup.enter="buscar_SAT"
                     />
                     <q-btn
                       class="q-ml-sm"
-                      color="positive"
+                      color="blue"
                       icon="check_circle"
                       label="Verificar"
                       dense
                       @click="buscar_SAT"
                       rounded
-                      outline
-                      glossy
+
+
                       :loading="loadingSAT"
                     />
                   </div>
@@ -413,10 +422,10 @@ rounded
               <!-- Verificar SAT -->
 
               <!-- Descrição -->
-              <div class="col-12">
+              <div class="col-12 ">
                 <div class="text-caption text-grey-7 q-mb-xs">Descrição</div>
                 <q-card flat bordered class="bg-grey-2">
-                  <q-card-section class="q-pa-sm text-body1">
+                  <q-card-section class="q-pa-md text-body1">
                     {{ chamadoSelecionado?.Description || "Sem descrição" }}
                   </q-card-section>
                 </q-card>
@@ -440,266 +449,123 @@ rounded
               </div>
 
               <!-- Ações Rápidas -->
-              <div class="col-12 q-mt-md">
-                <div class="text-caption text-grey-7 q-mb-xs">Ações</div>
-                <!-- <div class="row items-center justify-center q-gutter-sm">
+           <!-- Bloco 1: Ações de comunicação e status -->
+<div class="col-12 q-mt-sm">
+  <div class="text-caption text-grey-7 ">Ações</div>
+  <div class="row items-center justify-center q-gutter-sm">
+    <!-- <p>{{ chamadoSelecionado.Status }}</p> -->
+     <q-btn
+v-if="chamadoSelecionado.Status==0"
+      size="md"
+      color="blue"
+      icon="assignment_turned_in"
+      label="Em atendimento"
+      @click="abrirPromptAtualizacao(2, 'Iniciar atendimento', saudacao() + ' o chamado foi recepcionado e está na fila de atendimento.')"
+      dense
+      push
+      outline
+      rounded
+    />
 
+    <q-btn
+      size="md"
+      color="teal"
+      icon="edit_note"
+      label="Responder"
+      @click="abrirPromptAtualizacao(9, 'Resposta', '')"
+      dense
+      push
+      outline
+      rounded
+    />
+    <q-btn
+      size="md"
+      color="blue-grey-5"
+      icon="photo_camera"
+      label="Evidência"
+      @click="abrirPromptAtualizacao(9, 'Pedir evidência', 'Favor encaminhar a evidência para o WhatsApp.')"
+      dense
+      push
+      outline
+      rounded
+    />
+    <q-btn
+      size="md"
+      color="deep-purple"
+      icon="fact_check"
+      label="Validação"
+      @click="abrirPromptAtualizacao(9, 'Pedir validação', 'Favor verificar e validar.')"
+      dense
+      push
+      outline
+      rounded
+    />
+    <q-btn
+      size="md"
+      color="indigo"
+      icon="qr_code"
+      label="Solicitar Nº série"
+      @click="abrirPromptAtualizacao(9, 'Solicitar número de série', 'Solicito o número de série do(s) equipamento(s).')"
+      dense
+      push
+      outline
+      rounded
+    />
 
+    <q-btn
+      size="md"
+      color="green"
+      icon="check_circle"
+      label="Fechar"
+      @click="abrirPromptAtualizacao(5, 'Chamado resolvido e finalizado', 'Chamado encerrado.')"
+      dense
+      push
+      outline
+      rounded
+    />
+  </div>
+</div>
 
-                  <q-btn
-                    size="md"
-                    color="teal-10"
-                    icon="inventory"
-                    label="Responder"
-                    @click="
-                      abrirPromptAtualizacao(9, 'Resposta','' )
-                    "
-                    dense
+<!-- Bloco 2: Encaminhamentos técnicos -->
+<div class="col-12 q-mt-xs" >
+  <div class="text-caption text-grey-7 ">Encaminhamentos</div>
+  <div class="row items-center justify-center q-gutter-sm">
+    <q-btn
+      size="md"
+      color="red"
+      icon="build"
+      label="Assistência técnica"
+      @click="abrirPromptAtualizacao(11, 'Encaminhar para assistência técnica', 'Encaminhado para assistência técnica OS: ')"
+      dense
+      push
+      outline
+      rounded
+    />
+    <q-btn
+      size="md"
+      color="orange"
+      icon="engineering"
+      label="Nível 2"
+      @click="abrirPromptAtualizacao(12, 'Chamado encaminhado para nível 2', 'Chamado encaminhado para nível 2.')"
+      dense
+      push
+      outline
+      rounded
+    />
+    <q-btn
+      size="md"
+      color="brown"
+      icon="precision_manufacturing"
+      label="Nível 3"
+      @click="abrirPromptAtualizacao(10, 'Chamado encaminhado para nível 3', 'Chamado encaminhado para nível 3.')"
+      dense
+      push
+      outline
+      rounded
+    />
+  </div>
+</div>
 
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="orange-10"
-                    icon="photo_camera"
-                    label="Pedir evidência"
-                    @click="abrirPromptAtualizacao(9, 'Pedir evidência', 'favor encaminhar a evidencia para o whatsapp ')"
-                    dense
-
-                    push
-                  />
-                  <q-btn
-                    size="md"
-                    color="teal-5"
-                    icon="inventory"
-                    label="Solicitar nº série"
-                    @click="
-                      abrirPromptAtualizacao(9, 'Solicitar número de série','solicito numero de série do(s) equipamento(s).' )
-                    "
-                    dense
-
-                    push
-                  />
-                  <q-btn
-                    size="md"
-                    color="blue-8"
-                    icon="engineering"
-                    label="Em atendimento"
-                    @click="abrirPromptAtualizacao(2, 'Iniciar atendimento','o chamado foi recepcionado e está na fila de atendimento.')"
-                    dense
-
-                    push
-                  />
-                  <q-btn
-                    size="md"
-                    color="brown"
-                    icon="build"
-                    label="Assistência técnica"
-                    @click="
-                      abrirPromptAtualizacao(
-                        11,
-                        'Encaminhar para assistência técnica','encaminhado para assistência técnica OS: '
-                      )
-                    "
-                    dense
-
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="blue-10"
-                    icon="build"
-                    label="Nivel 2"
-                    @click="
-                      abrirPromptAtualizacao(
-                        12,
-                        'chamado encaminhado para nível 2','chamado encaminhado para nível 2'
-                      )
-                    "
-                    dense
-
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="purple-6"
-                    icon="build"
-                    label="Nivel 3"
-                    @click="
-                      abrirPromptAtualizacao(
-                        10,
-                        'chamado encaminhado para nível 3','chamado encaminhado para nível 3'
-                      )
-                    "
-                    dense
-
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="green"
-                    icon="check_circle"
-                    label="Fechar chamado"
-                    @click="
-                      abrirPromptAtualizacao(
-                        5,
-                        'Chamado resolvido e finalizado','Chamado finalizado'
-                      )
-                    "
-                    dense
-
-                    push
-                  />
-                </div> -->
-
-                <div class="row items-center justify-center q-gutter-sm">
-                  <!-- Ações de atualização / comunicação -->
-                  <q-btn
-                    size="md"
-                    color="primary"
-                    icon="edit_note"
-                    label="Responder"
-                    @click="abrirPromptAtualizacao(9, 'Resposta', '')"
-                    dense
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="warning"
-                    icon="photo_camera"
-                    label="Pedir evidência"
-                    @click="
-                      abrirPromptAtualizacao(
-                        9,
-                        'Pedir evidência',
-                        'favor encaminhar a evidencia para o whatsapp '
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="blue-grey"
-                    icon="fact_check"
-                    label="Pedir validação"
-                    @click="
-                      abrirPromptAtualizacao(
-                        9,
-                        'Pedir validacao',
-                        'favor verificar e validar. '
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="info"
-                    icon="qr_code"
-                    label="Solicitar nº série"
-                    @click="
-                      abrirPromptAtualizacao(
-                        9,
-                        'Solicitar número de série',
-                        'solicito numero de série do(s) equipamento(s).'
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <!-- Status do chamado -->
-                  <q-btn
-                    size="md"
-                    color="blue"
-                    icon="assignment_turned_in"
-                    label="Em atendimento"
-                    @click="
-                      abrirPromptAtualizacao(
-                        2,
-                        'Iniciar atendimento',
-                        saudacao() +
-                          'o chamado foi recepcionado e está na fila de atendimento.'
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="amber"
-                    icon="build"
-                    label="Assistência técnica"
-                    @click="
-                      abrirPromptAtualizacao(
-                        11,
-                        'Encaminhar para assistência técnica',
-                        'encaminhado para assistência técnica OS: '
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="deep-orange"
-                    icon="engineering"
-                    label="Nível 2"
-                    @click="
-                      abrirPromptAtualizacao(
-                        12,
-                        'chamado encaminhado para nível 2',
-                        'chamado encaminhado para nível 2'
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <q-btn
-                    size="md"
-                    color="brown"
-                    icon="precision_manufacturing"
-                    label="Nível 3"
-                    @click="
-                      abrirPromptAtualizacao(
-                        10,
-                        'chamado encaminhado para nível 3',
-                        'chamado encaminhado para nível 3'
-                      )
-                    "
-                    dense
-                    push
-                  />
-
-                  <!-- Conclusão -->
-                  <q-btn
-                    size="md"
-                    color="positive"
-                    icon="check_circle"
-                    label="Fechar chamado"
-                    @click="
-                      abrirPromptAtualizacao(
-                        5,
-                        'Chamado resolvido e finalizado',
-                        'chamado encerrado.'
-                      )
-                    "
-                    dense
-                    push
-                  />
-                </div>
-              </div>
 
               <!-- Histórico de Atendimento -->
               <div
@@ -775,7 +641,7 @@ const chamadoSelecionado = ref(null);
 let intervalId = null;
 
 
-const valor_numero_serie = ref("");
+const valor_numero_serie = ref('');
 const valor_saida_sat = ref(null)
 
 // ... imports existentes ...
@@ -794,6 +660,10 @@ const loadingSAT = ref(false);
 // Filtro de ordenação
 const ordenacao = ref("recentes"); // 'recentes' ou 'antigos'
 
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
 const handleScroll = () => {
   // Mostra o botão se o usuário rolar mais de 400px
   showScrollTopButton.value = window.scrollY > 400
@@ -806,13 +676,8 @@ const scrollToTop = () => {
   })
 }
 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+
 
 // Função para limpar todos os filtros
 const limparFiltros = () => {
@@ -898,8 +763,29 @@ const formatarNumeroWhatsApp = (numero) => {
 const buscar_SAT = async () => {
   loadingSAT.value = true;
 
+  // Remove espaços em branco no início e no fim
+  // const numeroLimpo = valor_numero_serie.value?.trim();
+
+    // 1. Remove espaços e atualiza o campo imediatamente
+  valor_numero_serie.value = valor_numero_serie.value?.trim() || '';
+
+  const numeroLimpo = valor_numero_serie.value;
+
   try {
-    const respostaSAT = await chamadosStore.satSerie(valor_numero_serie.value);
+
+      if (!numeroLimpo) {
+      $q.dialog({
+        title: 'Atenção',
+        message: 'Por favor, informe um número de série.',
+        color: 'warning',
+        ok: { label: 'OK', color: 'warning' }
+      });
+      return;
+    }
+
+    console.log(numeroLimpo);
+
+    const respostaSAT = await chamadosStore.satSerie(numeroLimpo);
 
     if (respostaSAT.data.length === 0) {
       $q.dialog({
@@ -915,6 +801,7 @@ const buscar_SAT = async () => {
         color: 'warning',
         ok: { label: 'OK', color: 'warning' }
       });
+      valor_numero_serie.value = ""; // Limpa após ambiguidade
     } else {
       const w = respostaSAT.data[0];
 
@@ -943,10 +830,11 @@ const buscar_SAT = async () => {
           `,
           color: 'positive',
           ok: { label: 'OK', color: 'positive' },
-          onOk: () => {
-            // Ação após fechar o diálogo, se necessário
-            valor_numero_serie.value = "";
-          }
+  onOk: async () => {
+  valor_numero_serie.value = "";
+
+
+}
 
         });
       } else {
@@ -956,6 +844,7 @@ const buscar_SAT = async () => {
           color: 'negative',
           ok: { label: 'OK', color: 'negative' }
         });
+        valor_numero_serie.value = ""; // Limpa após erro de validação
 
       }
     }
@@ -967,6 +856,7 @@ const buscar_SAT = async () => {
       color: 'negative',
       ok: { label: 'OK', color: 'negative' }
     });
+    valor_numero_serie.value = ""; // Limpa após erro de rede/exceção
   } finally {
     loadingSAT.value = false;
     valor_numero_serie.value = "";
@@ -1007,14 +897,24 @@ const abrirWhatsApp = (numero) => {
 // Opcional: definir cores por status (para badge)
 const getStatusColor = (status) => {
   const colors = {
-    0: "green", // Aberto
-    1: "orange", // Em análise
-    2: "blue", // Em atendimento
-    8: "teal", // Feedback
-    9: "amber", // Aguardando resposta
-    10: "purple", // Nível 3
-    11: "brown", // Aguardando assistência
-    12: "deep-purple", // Nível 2
+    // 0: "green", // Aberto
+    // 1: "orange", // Em análise
+    // 2: "blue", // Em atendimento
+    // 8: "teal", // Feedback
+    // 9: "amber", // Aguardando resposta
+    // 10: "purple", // Nível 3
+    // 11: "brown", // Aguardando assistência
+    // 12: "deep-purple", // Nível 2
+
+  0: "green",
+  1: "amber",
+  2: "orange",
+  8: "blue",
+  9: "amber",
+  10: "purple",
+  11: "blue-grey",
+  12: "indigo"
+
   };
   return colors[status] || "grey";
 };
@@ -1248,10 +1148,31 @@ const fetchDetalhesChamadoData = async (id) => {
 onMounted(() => {
   fetchData();
   intervalId = setInterval(fetchData, 120000); // 5 minutos
+
+    window.addEventListener('scroll', handleScroll)
+
+     // Aplica filtro de status (se houver)
+    const statusQuery = route.query.status
+  if (statusQuery !== undefined) {
+    const statusNum = parseInt(statusQuery, 10)
+    if (!isNaN(statusNum)) {
+      filtroStatus.value = statusNum
+    }
+  }
+
+   // Aplica filtro de local (se houver)
+  const localQuery = route.query.local
+  if (localQuery) {
+    filtroTexto.value = decodeURIComponent(localQuery)
+  }
+
 });
 
 onUnmounted(() => {
   if (intervalId) clearInterval(intervalId);
+
+  window.removeEventListener('scroll', handleScroll)
+
 });
 </script>
 
@@ -1260,10 +1181,27 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+.meu_card{
+  /* min-width: 50vw; */
+  /* display: flex; */
+
+}
+
+.no-overflow-x {
+  overflow-x: hidden;
+  word-break: break-word;
+}
+
+.text-wrap {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
 /* Aplica desfoque na camada de fundo do dialog */
 .blurred-dialog .q-dialog__backdrop {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px); /* compatibilidade Safari */
+
 }
 
 .col {
@@ -1416,7 +1354,8 @@ body{
   }
 
   .modal-completo {
-    min-width: 95vw;
+    /* min-width: 95vw; */
+    /* width: 500px; */
   }
 }
 </style>

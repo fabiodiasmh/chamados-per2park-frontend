@@ -61,7 +61,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>Dashboard</q-item-label>
-            <q-item-label caption>Visão geral</q-item-label>
+            <q-item-label caption></q-item-label>
           </q-item-section>
         </q-item>
 
@@ -92,7 +92,7 @@
             <q-icon name="analytics" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Ranking Top 10</q-item-label>
+            <q-item-label>Ranking top-10</q-item-label>
             <q-item-label caption>Unidades com mais chamados</q-item-label>
           </q-item-section>
         </q-item>

@@ -42,12 +42,19 @@
   v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0"
   class="stats-grid"
 >
-  <q-card
+  <!-- <q-card
     v-for="status in orderedStatusList"
     :key="status"
     class="stat-card"
     :class="getStatusClass(status)"
-  >
+  > -->
+  <q-card
+  v-for="status in orderedStatusList"
+  :key="status"
+  class="stat-card"
+  :class="getStatusClass(status)"
+  @click="irParaChamadosComStatus(status)"
+>
     <q-card-section class="stat-content">
       <div class="number-display">{{ chamadosPorStatus[status] || 0 }}</div>
       <div class="status-label">{{ status }}</div>
@@ -57,10 +64,14 @@
     </q-card-section>
   </q-card>
 </div>
-   <!-- Gráfico 1: Chamados com Alto Volume -->
- <!-- Substitua toda a seção de gráficos por isso -->
-<div v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0" class="chart-section q-mt-xl">
-  <q-card class="chart-card">
+
+<!-- Gráfico e novo card lado a lado -->
+<div
+  v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0"
+  class="charts-row q-mt-xl"
+>
+  <!-- Gráfico de Distribuição -->
+  <q-card class="chart-card half-width">
     <q-card-section class="text-center">
       <div class="text-h6 text-white q-mb-sm">Distribuição de Chamados por Status</div>
       <div class="chart-container">
@@ -68,7 +79,19 @@
       </div>
     </q-card-section>
   </q-card>
+
+
+
+
+      <servidores-offline-card class="q-px-md q-pb-sm"  />
+
+
+
+
+
+
 </div>
+
     </div>
   </q-page>
 </template>
@@ -87,6 +110,9 @@ import {
 import { Doughnut } from 'vue-chartjs' // ← use Doughnut, não Bar
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 
+// Importe o novo componente
+import ServidoresOfflineCard from 'components/ServidoresOfflineCard.vue'
+
 ChartJS.register(
   Title,
   Tooltip,
@@ -95,13 +121,19 @@ ChartJS.register(
   ChartDataLabels
 )
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useChamadosStore } from 'stores/chamados'
 
+import {useMonitorServerStore} from 'stores/monitoramentoServidor'
 
 
 const chamadosStore = useChamadosStore()
+
+const storeMonitoramento = useMonitorServerStore()
 const $q = useQuasar()
 
 
@@ -112,6 +144,30 @@ const error = ref(null)
 const lastUpdate = ref('')
 let intervalId = null
 var teste = ref(null)
+
+const irParaChamadosComStatus = (statusLabel) => {
+  // Mapeia o rótulo textual para o código numérico do status
+  const statusMap = {
+    'Aberto': 0,
+    'Em Atendimento': 2,
+    'Em Análise': 1,
+    'Feedback': 8,
+    'Encaminhado Nível 2': 12,
+    'Encaminhado Nível 3': 10,
+    'Aguardando assistencia': 11,
+    'Aguardando Resposta': 9,
+  }
+
+  const statusCode = statusMap[statusLabel]
+
+  if (statusCode === undefined) return
+
+  // Navega para a página de chamados com o filtro na query
+  router.push({
+    path: '/chamados',
+    query: { status: statusCode }
+  })
+}
 
 // ✅ Dados completos para um único gráfico com todos os status
 const fullChartData = computed(() => {
@@ -141,26 +197,26 @@ const chartOptions = computed(() => ({
       position: 'bottom',
       labels: {
         color: '#fff',
-        font: { size: 12 },
-        padding: 15
+        font: { size: 10 },
+        padding: 10
       }
     },
-    tooltip: {
-      callbacks: {
-        label: (context) => {
-          const label = context.label || ''
-          const value = context.raw
-          const total = totalChamados.value
-          const percent = total ? ((value / total) * 100).toFixed(1) : 0
-          return `${label}: ${value} chamados (${percent}%)`
-        }
-      }
-    },
+    // tooltip: {
+    //   callbacks: {
+    //     label: (context) => {
+    //       const label = context.label || ''
+    //       const value = context.raw
+    //       const total = totalChamados.value
+    //       const percent = total ? ((value / total) * 100).toFixed(1) : 0
+    //       return `${label}: ${value} chamados (${percent}%)`
+    //     }
+    //   }
+    // },
     datalabels: {
       color: '#fff',
       font: {
         weight: 'bold',
-        size: 14
+        size: 12
       },
       formatter: (value, context) => {
         const total = totalChamados.value
@@ -171,7 +227,7 @@ const chartOptions = computed(() => ({
       align: 'center'
     }
   },
-  cutout: '60%' // rosca (doughnut). Use '0%' para gráfico de pizza.
+  cutout: '50%' // rosca (doughnut). Use '0%' para gráfico de pizza.
 }))
 
 // Ícones por status — ATUALIZADOS
@@ -293,106 +349,126 @@ const getStatusColor = (status) => {
   return colors[status] || '#666'
 }
 
-const highVolumeData = computed(() => {
-  const labels = ['Aguardando Resposta', 'Aguardando assistencia']
-  const data = [
-    chamadosPorStatus.value['Aguardando Resposta'] || 0,
-    chamadosPorStatus.value['Aguardando assistencia'] || 0
-  ]
-  const backgroundColor = ['#6c757d', '#607D8B']
+// const highVolumeData = computed(() => {
+//   const labels = ['Aguardando Resposta', 'Aguardando assistencia']
+//   const data = [
+//     chamadosPorStatus.value['Aguardando Resposta'] || 0,
+//     chamadosPorStatus.value['Aguardando assistencia'] || 0
+//   ]
+//   const backgroundColor = ['#6c757d', '#607D8B']
 
-  return {
-    labels,
-    datasets: [{
-      label: 'Aguardando',
-      data,
-      backgroundColor,
-      borderColor: '#1C2C36',
-      borderWidth: 2,
-      hoverOffset: 10
-    }]
-  }
-})
+//   return {
+//     labels,
+//     datasets: [{
+//       label: 'Aguardando',
+//       data,
+//       backgroundColor,
+//       borderColor: '#1C2C36',
+//       borderWidth: 2,
+//       hoverOffset: 10
+//     }]
+//   }
+// })
 
-const lowVolumeData = computed(() => {
-  const labels = orderedStatusList.value.filter(status =>
-    !['Aguardando Resposta', 'Aguardando assistencia'].includes(status) &&
-    chamadosPorStatus.value[status] > 0
-  )
+// const lowVolumeData = computed(() => {
+//   const labels = orderedStatusList.value.filter(status =>
+//     !['Aguardando Resposta', 'Aguardando assistencia'].includes(status) &&
+//     chamadosPorStatus.value[status] > 0
+//   )
 
-  const data = labels.map(status => chamadosPorStatus.value[status])
-  const backgroundColor = labels.map(status => getStatusColor(status))
+//   const data = labels.map(status => chamadosPorStatus.value[status])
+//   const backgroundColor = labels.map(status => getStatusColor(status))
 
-  return {
-    labels,
-    datasets: [{
-      label: 'Chamados',
-      data,
-      backgroundColor,
-      borderColor: '#1C2B36',
-      borderWidth: 2,
-      hoverOffset: 8
-    }]
-  }
-})
+//   return {
+//     labels,
+//     datasets: [{
+//       label: 'Chamados',
+//       data,
+//       backgroundColor,
+//       borderColor: '#1C2B36',
+//       borderWidth: 2,
+//       hoverOffset: 8
+//     }]
+//   }
+// })
 
 
-const chartOptionsHigh = computed(() => ({
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      display: true,
-      position: 'bottom',
-      labels: {
-        color: '#fff',
-        font: { size: 12 }
-      }
-    },
-    tooltip: {
-      callbacks: {
-        label: (context) => {
-          const label = context.label || ''
-          const value = context.raw
-          const total = totalChamados.value
-          const percent = total ? ((value / total) * 100).toFixed(1) : 0
-          // return `${label}: ${value} chamados (${percent}%)`
-        }
-      }
-    },
-    datalabels: {
-      color: '#fff',
-      font: { weight: 'bold', size: 14 },
-      formatter: (value, context) => {
-        const total = totalChamados.value
-        const percent = total ? ((value / total) * 100).toFixed(1) : 0
-        // return `${percent}%`
-      },
-      anchor: 'center',
-      align: 'center'
-    }
-  },
-  cutout: '50%' // ← isso faz ser "doughnut" (rosca). Use '0%' para pie.
-}))
+// const chartOptionsHigh = computed(() => ({
+//   responsive: true,
+//   maintainAspectRatio: false,
+//   plugins: {
+//     legend: {
+//       display: true,
+//       position: 'bottom',
+//       labels: {
+//         color: '#fff',
+//         font: { size: 12 }
+//       }
+//     },
+//     tooltip: {
+//       callbacks: {
+//         label: (context) => {
+//           const label = context.label || ''
+//           const value = context.raw
+//           const total = totalChamados.value
+//           const percent = total ? ((value / total) * 100).toFixed(1) : 0
+//           // return `${label}: ${value} chamados (${percent}%)`
+//         }
+//       }
+//     },
+//     datalabels: {
+//       color: '#fff',
+//       font: { weight: 'bold', size: 14 },
+//       formatter: (value, context) => {
+//         const total = totalChamados.value
+//         const percent = total ? ((value / total) * 100).toFixed(1) : 0
+//         // return `${percent}%`
+//       },
+//       anchor: 'center',
+//       align: 'center'
+//     }
+//   },
+//   cutout: '50%' // ← isso faz ser "doughnut" (rosca). Use '0%' para pie.
+// }))
 
 // chartOptionsLow é idêntico, então você pode reutilizar ou copiar
-const chartOptionsLow = chartOptionsHigh // ou copie o mesmo objeto se forem iguais
+// const chartOptionsLow = chartOptionsHigh // ou copie o mesmo objeto se forem iguais
 
+let chamadosInterval = null
+let replicacaoInterval = null
 
 onMounted(() => {
   fetchData()
-  intervalId = setInterval(fetchData, 180000) // 5 minutos
+  storeMonitoramento.fetchReplicacao()
+
+  chamadosInterval = setInterval(fetchData, 120000)
+  replicacaoInterval = setInterval(() => {
+    storeMonitoramento.fetchReplicacao()
+  }, 120000)
 })
 
 onUnmounted(() => {
-  if (intervalId) clearInterval(intervalId)
+  if (chamadosInterval) clearInterval(chamadosInterval)
+  if (replicacaoInterval) clearInterval(replicacaoInterval)
 })
 </script>
 
 <style scoped>
 
+.charts-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.half-width {
+  flex: 1 1 calc(50% - 12px); /* 50% menos metade do gap */
+  min-width: 300px; /* evita que fique muito estreito em telas pequenas */
+}
+
 .stat-card {
-   border-radius: 20px;
+   cursor: pointer; /* ← Adicione esta linha */
+  border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: all 0.25s ease;
   display: flex;
@@ -446,10 +522,10 @@ onUnmounted(() => {
 }
 
 .chart-container {
-  height: 220px;
+  /* height: 220px;
   width: 100%;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0 auto; */
 }
 
 

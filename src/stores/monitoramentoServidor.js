@@ -3,11 +3,12 @@ import { api } from 'boot/axios'
 
 export const useMonitorServerStore = defineStore('monitoramentoServer', {
   state: () => ({
-    qtdReplicacao: [],
-    chamadosPorStatus: {},
-    topLocais: [],
+    // qtdReplicacao: [],
+    // chamadosPorStatus: {},
+    // topLocais: [],
     loading: false,
-    error: null
+    error: null,
+    todas_unidades:[]
   }),
 
   actions: {
@@ -20,7 +21,7 @@ export const useMonitorServerStore = defineStore('monitoramentoServer', {
         console.log('Chamados response replication:', response)
         // this.qtdReplicacao = response.data || []
         // console.log("Replicationn: "+response.data);
-
+this.todas_unidades =response.data
         return { success: true, data: response.data || [] }
       } catch (error) {
         this.error = error.response?.data?.message || 'Erro ao buscar chamados'

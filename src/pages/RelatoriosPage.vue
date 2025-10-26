@@ -3,10 +3,10 @@
     <div class="container">
       <!-- Header -->
       <div class="header-section">
-        <div class="text-h4 text-weight-bold text-white">
+        <div class="text-h6 text-weight-bold text-white">
           Ranking de Unidades com Mais Chamados Abertos
         </div>
-        <div class="text-subtitle1 text-grey-3">
+        <div class="text-subtitle2 text-grey-3">
           Atualizado em: {{ lastUpdate }}
         </div>
       </div>
@@ -46,6 +46,7 @@
     v-for="(item, index) in sortedTopLocais.slice(0, 10)"
     :key="index"
     class="ranking-item"
+    @click="irParaChamadosPorLocal(item)"
   >
     <q-card-section class="ranking-content flex items-center">
       <!-- Medalha ou Posição -->
@@ -74,11 +75,11 @@
       </div>
 
       <!-- Nome e Chamados -->
-      <div class="details flex column justify-center q-pl-md">
-        <div class="text-subtitle1 text-white text-weight-medium">
+      <div class="details flex column justify-center q-pl-md q-pt-sm">
+        <div class="text-subtitle2 text-white text-weight-medium">
           {{ extrairLocal(item).nome }}
         </div>
-        <div class="text-h6 text-white text-weight-bolder q-mt-xs">
+        <div class="text-h6 text-white  q-mt-xs">
           {{ extrairLocal(item).totalChamados }} chamados
         </div>
       </div>
@@ -93,6 +94,9 @@
 import { ref, onMounted, computed,onUnmounted } from 'vue'
 import { useQuasar } from 'quasar'
 import { useChamadosStore } from 'stores/chamados'
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const chamadosStore = useChamadosStore()
 const $q = useQuasar()
@@ -156,6 +160,19 @@ const fetchData = async () => {
   }
 }
 
+const irParaChamadosPorLocal = (item) => {
+  const local = extrairLocal(item)
+  if (!local.nome || local.nome === 'Desconhecido') return
+
+  // Codifica o nome para URL (evita problemas com espaços ou caracteres especiais)
+  const localEncoded = encodeURIComponent(local.nome)
+
+  router.push({
+    path: '/chamados',
+    query: { local: localEncoded }
+  })
+}
+
 // onMounted(() => {
 //   fetchData()
 // })
@@ -170,135 +187,9 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.ranking-list {
-  margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.ranking-item {
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background-color: #2d3748; /* ✅ Cor uniforme para todos */
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.ranking-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-  background-color: #333f50; /* leve destaque no hover */
-}
-
-.ranking-content {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.position-container {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.position-number {
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-}
-
-.details {
-  flex: 1;
-  overflow: hidden;
-}
-
-.text-subtitle1 {
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-}
-
-.text-h6 {
-  font-size: 1.1rem;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.ranking-card {
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-  background-color: #2d3748; /* fundo escuro */
-}
-
-.ranking-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
-}
-
-.ranking-content {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.position-container {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.position-number {
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-}
-
-.details {
-  flex: 1;
-  overflow: hidden;
-}
-
-.text-subtitle1 {
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-}
-
-.text-h6 {
-  font-size: 1.1rem;
-}
+/* Layout Geral */
 .dashboard-page {
-  background: linear-gradient(135deg, #1C2B36 0%, #2C3E50 100%);
+  background: linear-gradient(135deg, #1c2b36 0%, #2c3e50 100%);
   min-height: 100vh;
   padding: 24px;
 }
@@ -308,9 +199,10 @@ onUnmounted(() => {
   margin: 0 auto;
 }
 
+/* Cabeçalho */
 .header-section {
   margin-bottom: 36px;
-  padding: 24px;
+  padding: 20px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
@@ -318,6 +210,7 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Estados de carregamento e erro */
 .loading-container {
   min-height: 300px;
 }
@@ -328,76 +221,34 @@ onUnmounted(() => {
   border: 1px dashed rgba(255, 255, 255, 0.1);
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  margin-top: 24px;
-}
-
-.ranking-card {
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.ranking-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
-}
-
-.ranking-content {
-  width: 100%;
-}
-
-.medal-container {
-  width: 60px;
-  height: 60px;
-  min-width: 60px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.position-number {
-  font-size: 1.5rem;
-}
-
-.details {
-  overflow: hidden;
-}
+/* Lista de Ranking */
 .ranking-list {
-  margin-top: 24px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 15px;
 }
 
 .ranking-item {
+  cursor: pointer;
   border-radius: 12px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 80px;
+  height: 70px;
   display: flex;
   align-items: center;
   padding: 16px;
-  background-color: #2d3748; /* fundo escuro uniforme */
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: #2d3748;
+  border: 1px solid silver;
 }
 
 .ranking-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  background-color: #333f50;
 }
 
+/* Conteúdo interno do item */
 .ranking-content {
   width: 100%;
   display: flex;
@@ -439,24 +290,18 @@ onUnmounted(() => {
 
 /* Responsividade */
 @media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .header-section {
+    padding: 16px;
+    margin-bottom: 24px;
   }
 
-  .ranking-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .medal-container {
-    margin-bottom: 16px;
+  .ranking-item {
+    padding: 12px;
+    min-height: auto;
   }
 
   .details {
-    align-items: center;
-    text-align: center;
+    q-pl-md: 0;
   }
 }
 </style>
