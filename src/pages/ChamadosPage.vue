@@ -255,12 +255,12 @@ rounded
               Chamado: {{ chamadoSelecionado?.Id }} -
               {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
 
-              <q-icon
-                name="content_copy"
+              <!-- <q-icon
+                name="content_copyyyyy"
                 size="18px"
                 class="q-ml-sm cursor-pointer text-grey-5 hover:text-primary"
                 @click="copiarChamado"
-              />
+              /> -->
             </div>
 
             <div class="col items-center flex justify-center text-body2">
@@ -973,6 +973,15 @@ const abrirPromptAtualizacao = (novoStatus, placeholderTexto, texto) => {
     // message: "Descreva brevemente a ação realizada:",
     prompt: {
       model: texto,
+      counter: true,
+       maxlength:"400",
+       outlined: true,
+      label: "Descrição",
+
+
+
+      // placeholder: placeholderTexto,
+
       type: "textarea",
       isValid: (val) => val && val.trim().length > 0,
     },

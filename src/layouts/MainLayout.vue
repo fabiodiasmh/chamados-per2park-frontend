@@ -113,7 +113,7 @@
           </q-item-section>
         </q-item>
 
-           <q-item
+           <!-- <q-item
           clickable
           v-ripple
           to="/testeee"
@@ -127,7 +127,7 @@
             <q-item-label>Espaço em disco</q-item-label>
             <q-item-label caption>Disco server e database</q-item-label>
           </q-item-section>
-        </q-item>
+        </q-item> -->
 
         <q-separator class="q-my-md" />
      <q-item
@@ -193,11 +193,11 @@ function toggleLeftDrawer () {
 const logout = async () => {
   await authStore.logout()
   router.push('/login')
-  $q.notify({
-    type: 'info',
-    message: 'Logout realizado com sucesso',
-    position: 'top'
-  })
+  // $q.notify({
+  //   type: 'info',
+  //   message: 'Logout realizado com sucesso',
+  //   position: 'top'
+  // })
 }
 
 onMounted(() => {
