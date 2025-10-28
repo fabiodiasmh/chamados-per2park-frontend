@@ -91,7 +91,7 @@
 
       bordered
       dense
-flat
+      flat
       :no-data-label="'Nenhum servidor offline encontrado.'"
       :no-results-label="'Nenhum resultado encontrado.'"
       class="q-mt-md"

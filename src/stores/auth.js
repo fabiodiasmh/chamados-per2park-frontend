@@ -22,13 +22,29 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       this.loading = true
       this.error = null
+
       try {
-        console.log('Attempting login with:', credentials)
+
+
+
+
         const response = await api.post('/login', credentials,{ timeout: 5000 })
         console.log('Login response:', response)
 
         this.isAuthenticated = true
         this.usuario = response.data
+
+        // Validação antes do try, mas sem throw
+    if (this.usuario?.UserType?.Id == 2) {
+      this.loading = false
+      return {
+        success: false,
+        message: "Faça login com um usuário do tipo Perto/WPS"
+
+      }
+      // throw new Error ("Faça login com um usuário do tipo Perto")
+    }
+
 
         localStorage.setItem('user_data', JSON.stringify(response.data)) // ← salva usuario
         // this.user = credentials
@@ -45,7 +61,10 @@ export const useAuthStore = defineStore('auth', {
         }
       } catch (error) {
         console.error('Login error:', error)
-        this.error = error.response?.data?.message || 'Credenciais invalidas'
+        this.error = 'Credenciais invalidas'
+        // this.error = error.response?.data?.message || 'Credenciais invalidas'
+        console.log(error.response?.data?.message);
+
         return {
           success: false,
           message: this.error

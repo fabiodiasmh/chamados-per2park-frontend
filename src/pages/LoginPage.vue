@@ -167,8 +167,8 @@ const onSubmit = async () => {
       type: 'negative',
 
       message: result.message,
-       caption: '*Confira login senha <br>*Está na rede GRUPO DIGICON <br>*PC da sala ligado <br> *Backend rodando no PC da sala',
-  html: true, // ← necessário para interpretar HTML
+      //  caption: '*Confira login senha <br>*Está na rede GRUPO DIGICON <br>*PC da sala ligado <br> *Backend rodando no PC da sala',
+  // html: true, // ← necessário para interpretar HTML
       position: 'top'
     })
   }

@@ -234,7 +234,7 @@ const chartOptions = computed(() => ({
 const getIconForStatus = (status) => {
 teste = 'handshake'
 
-console.log("aa ",chamadosPorStatus.value)  ;
+// console.log("aa ",chamadosPorStatus.value)  ;
 
 if (chamadosPorStatus.value['Aberto'] > 0) {
   teste = 'warning'
@@ -274,7 +274,7 @@ const orderedStatusList = computed(() => [
 var cor = ref(null)
 const getStatusClass = (status) => {
 
-  console.log(chamadosPorStatus.value['Aberto']);
+  // console.log(chamadosPorStatus.value['Aberto']);
 
   if (chamadosPorStatus.value['Aberto'] == null) {
     cor ='bg-green-8'

@@ -783,7 +783,7 @@ const buscar_SAT = async () => {
       return;
     }
 
-    console.log(numeroLimpo);
+    // console.log(numeroLimpo);
 
     const respostaSAT = await chamadosStore.satSerie(numeroLimpo);
 
@@ -849,7 +849,7 @@ const buscar_SAT = async () => {
       }
     }
   } catch (error) {
-    console.error('Erro ao buscar SAT:', error);
+    // console.error('Erro ao buscar SAT:', error);
     $q.dialog({
       title: 'Erro',
       message: 'Ocorreu um erro durante a busca do SAT. Tente novamente.',
