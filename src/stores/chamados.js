@@ -10,6 +10,7 @@ export const useChamadosStore = defineStore('chamados', {
     detalhe_chamado:{},
     chamadosPorStatus: {},
     topLocais: [],
+    retorno_status: [],
     loading: false,
     error: null
   }),
@@ -166,7 +167,26 @@ console.log('Payload para atualização:', payload);
           }
         })
         console.log('Locais response:', response)
-        this.topLocais = response.data || []
+        this.retorno_status = response.data || []
+        return { success: true, data: response.data || [] }
+      } catch (error) {
+        this.error = error.response?.data?.message || 'Erro ao buscar locais'
+        console.error('Error fetching locais:', error)
+        console.error('Error response:', error.response)
+        return { success: false, message: this.error }
+      } finally {
+        this.loading = false
+      }
+    },
+
+         async meus_chamados(dados) {
+      this.loading = true
+      this.error = null
+      try {
+        console.log('Fetching locais...')
+        const response = await api.post('/insert_usuario',dados)
+        console.log('Locais response:', response)
+        this.retorno_status = response.data || []
         return { success: true, data: response.data || [] }
       } catch (error) {
         this.error = error.response?.data?.message || 'Erro ao buscar locais'

@@ -445,6 +445,8 @@ onMounted(() => {
   replicacaoInterval = setInterval(() => {
     storeMonitoramento.fetchReplicacao()
   }, 120000)
+
+  // await chamadosStore.meus_chamados();
 })
 
 onUnmounted(() => {

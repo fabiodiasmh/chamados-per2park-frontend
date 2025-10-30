@@ -594,6 +594,11 @@ import { ref, onMounted, computed, onUnmounted, watch, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useChamadosStore } from "stores/chamados";
 
+ import { useAuthStore } from "stores/auth";
+  const authStore = useAuthStore();
+
+
+
 const chamadosStore = useChamadosStore();
 const $q = useQuasar();
 
@@ -779,13 +784,18 @@ const buscar_SAT = async () => {
               <li><strong>Equipamento:</strong> ${w.equipamento.codEEquip}</li>
               <li><strong>Ativo:</strong> ${w.indAtivo ? "sim" : "não"}</li>
               <li>
-  <strong>Tipo de chamado:</strong>
+  <strong>Tipo de intervenção:</strong>
   ${
     w.indAtivo
       ? '<strong><span style="color: blue;">Corretiva</span></strong>'
       : '<strong><span style="color: red;">Orçamento</span></strong>'
   }
 </li>
+<li><strong>Nome solicitante:</strong> ${chamadosStore.detalhe_chamado.ContactName }</li>
+<li><strong>Telefone solicitante:</strong> ${chamadosStore.detalhe_chamado.ContactPhone}</li>
+<li><strong>Chamado cliente:</strong> ${chamadosStore.detalhe_chamado.Id }</li>
+<li><strong>Defeito:</strong> ${chamadosStore.detalhe_chamado.Description }</li>
+
             </ul>
           `,
           color: "positive",
@@ -967,11 +977,24 @@ const atualizarStatusChamado = async (novoStatus, descricao) => {
       icon: "check",
     });
 
+
+
     // 3. RECARREGA OS DETALHES COMPLETOS DO CHAMADO (inclui novo histórico)
     await fetchDetalhesChamadoData(chamadoSelecionado.value.Id);
 
     // 3. Atualiza o objeto reativo SEM fechar o modal
     chamadoSelecionado.value = { ...chamadosStore.detalhe_chamado };
+
+    const dados ={
+chamado: chamadoSelecionado.value.Id,
+status: novoStatus,
+email: authStore.usuario.Login,
+nome: authStore.usuario.Name
+    }
+console.log("enviado back "+dados);
+
+   await chamadosStore.meus_chamados(dados)
+
   } catch (err) {
     $q.notify({
       position: "top",
