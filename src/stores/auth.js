@@ -14,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isLoggedIn: (state) => state.isAuthenticated && state.token,
+    isLoggedIn: (state) => state.isAuthenticated, //&& state.token,
     userEmail: (state) => state.user?.Login || null
   },
 
@@ -51,7 +51,8 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data?.token || 'session-token'
 
         // Store in localStorage for persistence
-        localStorage.setItem('auth_token', this.token)
+        // localStorage.setItem('auth_token', this.token)
+        sessionStorage.setItem('auth_token', this.token)
 
 
         return {
@@ -89,8 +90,8 @@ export const useAuthStore = defineStore('auth', {
 
     // Initialize auth state from localStorage
     initializeAuth() {
-      const token = localStorage.getItem('auth_token')
-      const userData = localStorage.getItem('user_data')
+      const token = sessionStorage.getItem('auth_token')
+      const userData = sessionStorage.getItem('user_data')
 
       if (token && userData) {
         this.token = token
