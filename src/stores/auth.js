@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', {
       this.loading = false
       return {
         success: false,
-        message: "Ultilize usuário do tipo Perto/WPS"
+        message: "Utilize usuário do tipo Perto/WPS"
 
       }
       // throw new Error ("Faça login com um usuário do tipo Perto")

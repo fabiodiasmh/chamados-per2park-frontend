@@ -222,12 +222,31 @@
       >
         <!-- Cabeçalho -->
         <q-card-section class="row q-pa-md items-center">
-          <div
+          <!-- <div
             class="text-subtitle1 text-bold col-12 col-sm-6 q-mb-xs q-sm-mb-0"
           >
             Chamado: {{ chamadoSelecionado?.Id }} -
             {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
-          </div>
+          </div> -->
+
+          <div
+  class="text-subtitle1 text-bold col-12 col-sm-6 q-mb-xs q-sm-mb-0 row items-center q-gutter-sm"
+>
+  <span>
+    Chamado: {{ chamadoSelecionado?.Id }} -
+    {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
+  </span>
+
+  <!-- Ícone de cópia -->
+  <q-icon
+    name="content_copy"
+    size="18px"
+    class="cursor-pointer text-blue"
+    @click="copiarChamado()"
+  />
+</div>
+
+
 
           <div class="col-6 col-sm-2 text-center q-mb-xs q-sm-mb-0">
             <q-icon
@@ -997,7 +1016,7 @@ nome: authStore.usuario.Name
     }
 console.log("enviado back "+dados);
 
-  //  await chamadosStore.meus_chamados(dados)
+
 
   } catch (err) {
     $q.notify({
@@ -1010,6 +1029,7 @@ console.log("enviado back "+dados);
   } finally {
     // 5. (Opcional) Atualiza também a lista principal
     await fetchData();
+    await chamadosStore.meus_chamados(dados)
   }
 };
 
