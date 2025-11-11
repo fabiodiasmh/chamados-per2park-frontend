@@ -92,21 +92,22 @@ api.interceptors.request.use((config) => {
 
 
   const store = useAuthStore()
+  config.baseURL = store.baseUrl // ← usa getter `baseUrl`
 
-  if (store.ip_servidor_store) {
-    const ip = store.ip_servidor_store
+  // if (store.ip_servidor_store) {
+  //   const ip = store.ip_servidor_store
 
-    // Detecta ambiente: localhost/127.0.0.1 → dev; demais → produção
-    const isLocal = ip === 'localhost' || ip === '127.0.0.1'
+  //   // Detecta ambiente: localhost/127.0.0.1 → dev; demais → produção
+  //   const isLocal = ip === 'localhost' || ip === '127.0.0.1'
 
-    // Em produção, não inclui porta (usa 443 implícita do HTTPS)
-    // Em dev, inclui :porta apenas se definida
-    const porta = isLocal && store.portaApi ? `:${store.portaApi}` : ''
+  //   // Em produção, não inclui porta (usa 443 implícita do HTTPS)
+  //   // Em dev, inclui :porta apenas se definida
+  //   const porta = isLocal && store.portaApi ? `:${store.portaApi}` : ''
 
-    const protocol = isLocal ? 'http' : 'https'
+  //   const protocol = isLocal ? 'http' : 'https'
 
-    config.baseURL = `${protocol}://${ip}${porta}/api/`
-  }
+  //   config.baseURL = `${protocol}://${ip}${porta}/api/`
+  // }
 
   return config
 }, (error) => Promise.reject(error))

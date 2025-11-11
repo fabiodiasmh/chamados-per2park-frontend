@@ -27,17 +27,17 @@ export const useChamadosStore = defineStore('chamados', {
   }
 
   // 🔴 Garanta que authStore.usuario tem Id
-  if (!authStore.usuario?.Id) {
-    console.error('Usuário sem ID!', authStore.usuario)
-    return { success: false, message: 'Usuário não autenticado corretamente' }
-  }
+  // if (!authStore.usuario?.User.Id) {
+  //   console.error('Usuário sem ID!', authStore.usuario.User.Id)
+  //   return { success: false, message: 'Usuário não autenticado corretamente' }
+  // }
 
 
   // ✅ Atualize mantendo todos os campos originais + novos valores
   const payload = {
     ...this.detalhe_chamado, // preserva Id, ParkingId, etc.
     Status: novoStatus,
-    User: {...authStore.usuario}, // ⚠️ confirme se este objeto tem "Id"
+    User: {...authStore.usuario.User}, // ⚠️ confirme se este objeto tem "Id"
     Description: descricao,
     DescriptionUser: descricao,
     HistoryCalls:[]
@@ -48,15 +48,17 @@ console.log('Payload para atualização:', payload);
 
    this.loading = true
       this.error = null
+      console.log("antes entrar no try pra atualizar o chamado");
+
       try {
-        console.log('Fetching chamados...')
+        console.log('update chamado')
         const response = await api.put('/update_chamado',payload)
         console.log('PUT update chamado:', payload)
         // this.chamados = response.data || []
         return { data: response.data  }
       } catch (error) {
         this.error = error.response?.data?.message || 'Erro ao buscar chamados'
-        console.error('Error fetching chamados:', error)
+        console.error('Error update chamado:', error)
         console.error('Error response:', error.response)
         return { message: this.error }
       } finally {
@@ -180,10 +182,12 @@ console.log('Payload para atualização:', payload);
     },
 
          async meus_chamados(dados) {
+          console.log("inicio insert usuario");
+
       this.loading = true
       this.error = null
       try {
-        console.log('Fetching locais...')
+        console.log('dentro do try insert usuario')
         const response = await api.post('/insert_usuario',dados)
         console.log('Locais response:', response)
         this.retorno_status = response.data || []

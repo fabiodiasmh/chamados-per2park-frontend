@@ -67,7 +67,7 @@
                 </template>
               </q-input>
 
-              <div class="row justify-center q-my-sm" style="width: 100%">
+              <!-- <div class="row justify-center q-my-sm" style="width: 100%">
                 <q-input
                   style="width: 170px"
                   v-model="ip_servidor"
@@ -83,7 +83,7 @@
                     <q-icon name="computer" color="primary" />
                   </template>
                 </q-input>
-              </div>
+              </div> -->
 
               <q-btn
                 type="submit"

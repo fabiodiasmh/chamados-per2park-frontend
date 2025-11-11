@@ -2,20 +2,36 @@ import { defineStore } from 'pinia'
 import { api } from 'boot/axios'
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
+  state: () => {
+
+
+
+        // ✅ Calcula variáveis ANTES de retornar o estado
+    const isDev = process.env.NODE_ENV === 'development'
+    const defaultIp = isDev ? 'localhost' : 'dias.app.br'
+
+    return{
     isAuthenticated: false,
     user: null,
-    ip_servidor_store:localStorage.getItem('ip_servidor') || 'localhost',
+    ip_servidor_store: defaultIp,//localStorage.getItem('ip_servidor') || 'localhost',
     portaApi:8080,
     usuario:null,
     token: null,
     loading: false,
     error: null
-  }),
+    }
+  },
 
   getters: {
     isLoggedIn: (state) => state.isAuthenticated, //&& state.token,
-    userEmail: (state) => state.user?.Login || null
+    userEmail: (state) => state.user?.Login || null,
+     // 🔹 Domínio/base URL dinâmica (opcional, útil para axios)
+    baseUrl: (state) => {
+      const isLocal = ['localhost', '127.0.0.1', '::1'].includes(state.ip_servidor_store)
+      const protocol = isLocal ? 'http' : 'https'
+      const porta = isLocal ? `:${state.portaApi}` : ''
+      return `${protocol}://${state.ip_servidor_store}${porta}/api/`
+    }
   },
 
   actions: {
@@ -35,25 +51,24 @@ export const useAuthStore = defineStore('auth', {
         this.usuario = response.data
 
         // Validação antes do try, mas sem throw
-    if (this.usuario?.UserType?.Id == 2) {
+    if (this.usuario?.User?.UserType?.Id == 2) {
       this.loading = false
       return {
         success: false,
-        message: "Faça login com um usuário do tipo Perto/WPS"
+        message: "Ultilize usuário do tipo Perto/WPS"
 
       }
       // throw new Error ("Faça login com um usuário do tipo Perto")
     }
 
 
-        localStorage.setItem('user_data', JSON.stringify(response.data)) // ← salva usuario
-        // this.user = credentials
+       // ✅ Salva no sessionStorage (não localStorage)
+        sessionStorage.setItem('user_data', JSON.stringify(response.data))
         this.token = response.data?.token || 'session-token'
-
-        // Store in localStorage for persistence
-        // localStorage.setItem('auth_token', this.token)
         sessionStorage.setItem('auth_token', this.token)
 
+           // ✅ Garante que o IP atual está salvo
+        sessionStorage.setItem('ip_servidor', this.ip_servidor_store)
 
         return {
           success: true,
@@ -81,8 +96,10 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.error = null
 
-      // Clear localStorage
-      localStorage.removeItem('auth_token')
+           // ✅ Limpa sessionStorage (não localStorage)
+      sessionStorage.removeItem('auth_token')
+      sessionStorage.removeItem('user_data')
+      // Mantém `ip_servidor` salvo entre sessões (útil!)
 
 
       // localStorage.removeItem('user_data') // ← remove usuario
@@ -93,7 +110,8 @@ export const useAuthStore = defineStore('auth', {
       const token = sessionStorage.getItem('auth_token')
       const userData = sessionStorage.getItem('user_data')
 
-      if (token && userData) {
+      // if (token && userData) {
+      if ( userData) {
         this.token = token
         // this.user = JSON.parse(userData)
         this.isAuthenticated = true

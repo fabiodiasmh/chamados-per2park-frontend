@@ -961,7 +961,11 @@ const abrirPromptAtualizacao = (novoStatus, placeholderTexto, texto) => {
 const atualizarStatusChamado = async (novoStatus, descricao) => {
   if (!chamadoSelecionado.value?.Id) return;
 
+console.log("inicio atalizar status chamado");
+
   try {
+    console.log("try atualiza status no store");
+
     // chamadosStore.atualizarStatusNoStore(novoStatus, descricao);
     // 1. Atualiza o status no backend (ou store)
     const result = await chamadosStore.atualizarStatusNoStore(
@@ -993,7 +997,7 @@ nome: authStore.usuario.Name
     }
 console.log("enviado back "+dados);
 
-   await chamadosStore.meus_chamados(dados)
+  //  await chamadosStore.meus_chamados(dados)
 
   } catch (err) {
     $q.notify({
