@@ -217,7 +217,7 @@
 
     <q-dialog v-model="dialogDescricao" class="blurred-dialog">
       <q-card
-        class="modal-completo "
+        class="modal-completo"
         style="min-width: 95vw; width: 95vw; max-width: 95vw"
       >
         <!-- Cabeçalho -->
@@ -230,23 +230,21 @@
           </div> -->
 
           <div
-  class="text-subtitle1 text-bold col-12 col-sm-6 q-mb-xs q-sm-mb-0 row items-center q-gutter-sm"
->
-  <span>
-    Chamado: {{ chamadoSelecionado?.Id }} -
-    {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
-  </span>
+            class="text-subtitle1 text-bold col-12 col-sm-6 q-mb-xs q-sm-mb-0 row items-center q-gutter-sm"
+          >
+            <span>
+              Chamado: {{ chamadoSelecionado?.Id }} -
+              {{ chamadoSelecionado?.Local?.Name || "Local não informado" }}
+            </span>
 
-  <!-- Ícone de cópia -->
-  <q-icon
-    name="content_copy"
-    size="18px"
-    class="cursor-pointer text-blue"
-    @click="copiarChamado()"
-  />
-</div>
-
-
+            <!-- Ícone de cópia -->
+            <q-icon
+              name="content_copy"
+              size="18px"
+              class="cursor-pointer text-blue"
+              @click="copiarChamado()"
+            />
+          </div>
 
           <div class="col-6 col-sm-2 text-center q-mb-xs q-sm-mb-0">
             <q-icon
@@ -613,10 +611,8 @@ import { ref, onMounted, computed, onUnmounted, watch, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useChamadosStore } from "stores/chamados";
 
- import { useAuthStore } from "stores/auth";
-  const authStore = useAuthStore();
-
-
+import { useAuthStore } from "stores/auth";
+const authStore = useAuthStore();
 
 const chamadosStore = useChamadosStore();
 const $q = useQuasar();
@@ -810,10 +806,14 @@ const buscar_SAT = async () => {
       : '<strong><span style="color: red;">Orçamento</span></strong>'
   }
 </li>
-<li><strong>Nome solicitante:</strong> ${chamadosStore.detalhe_chamado.ContactName }</li>
-<li><strong>Telefone solicitante:</strong> ${chamadosStore.detalhe_chamado.ContactPhone}</li>
-<li><strong>Chamado cliente:</strong> ${chamadosStore.detalhe_chamado.Id }</li>
-<li><strong>Defeito:</strong> ${chamadosStore.detalhe_chamado.Description }</li>
+<li><strong>Nome solicitante:</strong> ${
+            chamadosStore.detalhe_chamado.ContactName
+          }</li>
+<li><strong>Telefone solicitante:</strong> ${
+            chamadosStore.detalhe_chamado.ContactPhone
+          }</li>
+<li><strong>Chamado cliente:</strong> ${chamadosStore.detalhe_chamado.Id}</li>
+<li><strong>Defeito:</strong> ${chamadosStore.detalhe_chamado.Description}</li>
 
             </ul>
           `,
@@ -980,7 +980,7 @@ const abrirPromptAtualizacao = (novoStatus, placeholderTexto, texto) => {
 const atualizarStatusChamado = async (novoStatus, descricao) => {
   if (!chamadoSelecionado.value?.Id) return;
 
-console.log("inicio atalizar status chamado");
+  console.log("inicio atalizar status chamado");
 
   try {
     console.log("try atualiza status no store");
@@ -1000,24 +1000,25 @@ console.log("inicio atalizar status chamado");
       icon: "check",
     });
 
-
-
     // 3. RECARREGA OS DETALHES COMPLETOS DO CHAMADO (inclui novo histórico)
     await fetchDetalhesChamadoData(chamadoSelecionado.value.Id);
 
     // 3. Atualiza o objeto reativo SEM fechar o modal
     chamadoSelecionado.value = { ...chamadosStore.detalhe_chamado };
 
-    const dados ={
-chamado: chamadoSelecionado.value.Id,
-status: novoStatus,
-email: authStore.usuario.Login,
-nome: authStore.usuario.Name
+    const dados = {
+      chamado: chamadoSelecionado.value.Id,
+      status: novoStatus,
+      email: authStore.usuario.User.Login,
+      nome: authStore.usuario.User.Name,
+    };
+    try {
+
+      await chamadosStore.meus_chamados(dados);
+    } catch (error) {
+      console.error("Erro ao enviar dados para meus_chamados:", error);
     }
-console.log("enviado back "+dados);
-
-
-
+    console.log("enviado back " + dados);
   } catch (err) {
     $q.notify({
       position: "top",
@@ -1029,7 +1030,7 @@ console.log("enviado back "+dados);
   } finally {
     // 5. (Opcional) Atualiza também a lista principal
     await fetchData();
-    await chamadosStore.meus_chamados(dados)
+
   }
 };
 
