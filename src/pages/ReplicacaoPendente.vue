@@ -211,7 +211,7 @@ const getCardClassByStatus = (errors, pendencies) => {
 
 const replicacaoComPendencias = computed(() => {
   return replicacaoData.value.filter(item =>
-    item.ReplicationQueue?.Pendencies > 10
+    item.ReplicationQueue?.Pendencies > 5
   )
 })
 
