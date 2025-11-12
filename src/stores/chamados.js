@@ -188,7 +188,7 @@ console.log('Payload para atualização:', payload);
       this.error = null
       try {
         console.log('dentro do try insert usuario')
-        const response = await api.post('/insert_usuario',dados)
+        const response = await api.post('/insert_chamado', dados)
         console.log('Locais response:', response)
         this.retorno_status = response.data || []
         return { success: true, data: response.data || [] }
