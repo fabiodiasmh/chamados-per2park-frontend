@@ -4,9 +4,9 @@
       <!-- Header -->
       <div class="header-section">
         <div class="text-h6 text-weight-bold text-white">
-          Pendências de Replicação
+          Unidades monitoradas
         </div>
-        <div class="text-subtitle3 text-grey-3">
+        <div class="text-caption text-grey-3">
           Atualizado em: {{ lastUpdate }}
         </div>
       </div>
@@ -38,91 +38,19 @@
       </div>
 
       <!-- Replicação List -->
-      <div
-        v-if="!loading && !error && replicacaoData && replicacaoData.length > 0"
-        class="ranking-list"
-      >
-        <q-card
-          v-for="(item, index) in replicacaoComPendencias"
-          :key="index"
-          class="ranking-item"
-          :class="getCardClassByStatus(item.ReplicationQueue.error, item.ReplicationQueue.Pendencies)"
-
-          >
-          <q-card-section
-              class="ranking-content ">
-
-
-
-
-            <div  class="details flex column justify-between q-pl-xs" style="min-height: 100px;">
-
-              <div class="text-subtitle1 text-black text-weight-medium ">
-                {{ item.ClientName }} — {{ item.Name }}
-              </div>
-              <div class="text-caption text-black">
-                Upload: {{ formatDate(item.UploadDate) }}
-              </div>
-              <div class="q-mt-xs">
-
-                <div  class="text-h6 text-red-10">
-                  <strong>Pendente:</strong> {{ item.ReplicationQueue.Pendencies }}
-                  <!-- <strong>Pendências:</strong> {{ item.replicacao.error }} -->
-                </div>
-
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
 
 
 
 
 
 
- <div class="q-mt-md tabela ">
-    <q-table
-      title="Servidores Offline"
-      :rows="ServidorOffline"
-      :columns="columns"
-      row-key="id"
-      :pagination="{ rowsPerPage: 30 }"
+<totens-table :data="replicacaoData" />
+ <div class="q-mt-sm tabela ">
 
-      bordered
-      dense
-      flat
-      :no-data-label="'Nenhum servidor offline encontrado.'"
-      :no-results-label="'Nenhum resultado encontrado.'"
-      class="q-mt-md"
-
-      card-style="backgroundColor: ;"
-
-    >
-      <!-- Formatação da coluna de data -->
-      <!-- <template v-slot:body-cell-UploadDate="props">
-        <q-td :props="props">
-          {{ formatDate(props.row.UploadDate) }}
-        </q-td>
-      </template> -->
-<template v-slot:body-cell-UploadDate="props">
-  <q-td :props="props">
-    <div>
-      {{ formatDate(props.row.UploadDate) }}
-      <div
-        v-if="isOffline(props.row.UploadDate)"
-        class="text-red text-caption"
-      >
-        Offline há {{ getElapsedTime(props.row.UploadDate) }}
-      </div>
-    </div>
-  </q-td>
-</template>
+<TabelaTbs :replicacaoData="replicacaoData" />
 
 
 
-      <!-- Se quiser personalizar a linha inteira ou outra coluna, pode usar outros slots -->
-    </q-table>
   </div>
 
       </div>
@@ -136,38 +64,23 @@ import { useQuasar } from 'quasar'
 import { date } from 'quasar'
 import { useMonitorServerStore } from 'stores/monitoramentoServidor'
 
+import TabelaTbs from 'src/components/TabelaTbs.vue'
+
+import TotensTable from 'components/TotensTable.vue'
+
 const store = useMonitorServerStore()
 // const $q = useQuasar()
 
 const replicacaoData = ref([])
+const replicacaoDataTeste = ref(null)
 const loading = ref(true)
 const error = ref(null)
 const lastUpdate = ref('')
 let intervalId = null
 
-const columns = [
-  {
-    name: 'ClientName',
-    label: 'Cliente',
-    field: 'ClientName',
-    align: 'left',
-    sortable: true
-  },
-  {
-    name: 'Name',
-    label: 'Unidade',
-    field: 'Name',
-    align: 'left',
-    sortable: true
-  },
-  {
-    name: 'UploadDate',
-    label: 'Data Ultimo Upload',
-    field: 'UploadDate',
-    align: 'left',
-    sortable: true
-  }
-]
+
+
+
 
  const formatDate = (isoString) => {
   return date.formatDate(isoString, 'DD/MM/YYYY HH:mm:ss')
@@ -215,38 +128,7 @@ const replicacaoComPendencias = computed(() => {
   )
 })
 
-// const ServidorOffline = computed(() => {
 
-//    const dezMinutosAtras = new Date();
-//   dezMinutosAtras.setMinutes(dezMinutosAtras.getMinutes() - 10);
-
-//   return replicacaoData.value.filter(item =>
-//      // Só considera servidores com Status == 0 (offline)
-//     if(item.Status !== 0) return false
-
-//     // Converte a string UploadDate para objeto Date
-//     const uploadDate = new Date(item.UploadDate);
-
-//     // Mantém apenas os cujo último upload foi ANTES de 10 minutos atrás
-//     return uploadDate < dezMinutosAtras;
-// )
-// })
-
-const ServidorOffline = computed(() => {
-  const dezMinutosAtras = new Date();
-  dezMinutosAtras.setMinutes(dezMinutosAtras.getMinutes() - 10);
-
-  return replicacaoData.value.filter(item => {
-    // Só considera servidores com Status == 0 (offline)
-    if (item.Status !== 0) return false;
-
-    // Converte a string UploadDate para objeto Date
-    const uploadDate = new Date(item.UploadDate);
-
-    // Mantém apenas os cujo último upload foi ANTES de 10 minutos atrás
-    return uploadDate < dezMinutosAtras;
-  });
-});
 
 const fetchData = async () => {
   loading.value = true
@@ -389,9 +271,15 @@ onUnmounted(() => {
   /* font-size: 0.8rem; */
 }
 
-/* .tabela{
-width: 900px;
-} */
+.tabela{
+  /* font-size: 5px; */
+width: 500px;
+}
+
+.tab  {
+  font-size: 6px;
+
+}
 
 
 

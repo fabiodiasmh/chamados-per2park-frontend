@@ -108,8 +108,8 @@
             <q-icon name="computer" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>Unidades Offline</q-item-label>
-            <q-item-label caption>Falha replicação</q-item-label>
+            <q-item-label>Unidades</q-item-label>
+            <q-item-label caption>servidor local</q-item-label>
           </q-item-section>
         </q-item>
 
