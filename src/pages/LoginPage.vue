@@ -121,8 +121,8 @@ const authStore = useAuthStore();
 const $q = useQuasar();
 
 const formData = ref({
-  Login: "portaria@perto.com.br",
-  Password: "perto123",
+  Login: "",
+  Password: "",
 });
 
 // const ip_servidor=ref()
@@ -162,6 +162,24 @@ const onSubmit = async () => {
     setTimeout(() => {
       router.push("/dashboard");
     }, 1000);
+
+    const logs={
+      usuario_id: authStore.usuario.User.Id,
+      nome: authStore.usuario.User.Name,
+      email: authStore.usuario.User.Login,
+      // token_acesso: authStore.token
+    }
+    console.log(logs);
+
+    try {
+      await authStore.log_user_login(logs)
+    } catch (error) {
+
+    }
+
+
+
+
   } else {
     $q.notify({
       type: 'negative',

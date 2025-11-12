@@ -249,10 +249,10 @@ if (chamadosPorStatus.value['Aberto'] > 0) {
     'Em Atendimento': 'headset',
     'Feedback': 'feedback',
     'Encaminhado Nível 2': 'call_made',
-    'Encaminhado Nível 3': 'call_received',
+    'Encaminhado Nível 3': 'logo_dev',
     'Em Análise': 'analytics',
-     'Aguardando assistencia': 'build',
-  'Aguardando Resposta': 'hotel'
+    'Aguardando assistencia': 'build',
+    'Aguardando Resposta': 'hotel'
   }
   return icons[status] || 'help_outline'
 }
@@ -344,95 +344,11 @@ const getStatusColor = (status) => {
     'Feedback': '#2196F3',
     'Encaminhado Nível 2': '#3F51B5',
     'Encaminhado Nível 3': '#9C27B0',
-    'Em Análise': '#FFC107'
+    'Em Análise': '#FFC107',
+    'Aguardando assistencia': '#607D8B'
   }
   return colors[status] || '#666'
 }
-
-// const highVolumeData = computed(() => {
-//   const labels = ['Aguardando Resposta', 'Aguardando assistencia']
-//   const data = [
-//     chamadosPorStatus.value['Aguardando Resposta'] || 0,
-//     chamadosPorStatus.value['Aguardando assistencia'] || 0
-//   ]
-//   const backgroundColor = ['#6c757d', '#607D8B']
-
-//   return {
-//     labels,
-//     datasets: [{
-//       label: 'Aguardando',
-//       data,
-//       backgroundColor,
-//       borderColor: '#1C2C36',
-//       borderWidth: 2,
-//       hoverOffset: 10
-//     }]
-//   }
-// })
-
-// const lowVolumeData = computed(() => {
-//   const labels = orderedStatusList.value.filter(status =>
-//     !['Aguardando Resposta', 'Aguardando assistencia'].includes(status) &&
-//     chamadosPorStatus.value[status] > 0
-//   )
-
-//   const data = labels.map(status => chamadosPorStatus.value[status])
-//   const backgroundColor = labels.map(status => getStatusColor(status))
-
-//   return {
-//     labels,
-//     datasets: [{
-//       label: 'Chamados',
-//       data,
-//       backgroundColor,
-//       borderColor: '#1C2B36',
-//       borderWidth: 2,
-//       hoverOffset: 8
-//     }]
-//   }
-// })
-
-
-// const chartOptionsHigh = computed(() => ({
-//   responsive: true,
-//   maintainAspectRatio: false,
-//   plugins: {
-//     legend: {
-//       display: true,
-//       position: 'bottom',
-//       labels: {
-//         color: '#fff',
-//         font: { size: 12 }
-//       }
-//     },
-//     tooltip: {
-//       callbacks: {
-//         label: (context) => {
-//           const label = context.label || ''
-//           const value = context.raw
-//           const total = totalChamados.value
-//           const percent = total ? ((value / total) * 100).toFixed(1) : 0
-//           // return `${label}: ${value} chamados (${percent}%)`
-//         }
-//       }
-//     },
-//     datalabels: {
-//       color: '#fff',
-//       font: { weight: 'bold', size: 14 },
-//       formatter: (value, context) => {
-//         const total = totalChamados.value
-//         const percent = total ? ((value / total) * 100).toFixed(1) : 0
-//         // return `${percent}%`
-//       },
-//       anchor: 'center',
-//       align: 'center'
-//     }
-//   },
-//   cutout: '50%' // ← isso faz ser "doughnut" (rosca). Use '0%' para pie.
-// }))
-
-// chartOptionsLow é idêntico, então você pode reutilizar ou copiar
-// const chartOptionsLow = chartOptionsHigh // ou copie o mesmo objeto se forem iguais
 
 let chamadosInterval = null
 let replicacaoInterval = null

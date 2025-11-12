@@ -274,7 +274,7 @@
         <q-separator />
 
         <!-- Corpo do modal -->
-        <q-card-section class="q-pt-sm">
+        <q-card-section class="q-pt-sm model-card">
           <div class="column q-gutter-sm">
             <!-- Contato (agora em coluna no mobile) -->
             <div class="col-12">
@@ -365,7 +365,7 @@
             <!-- Descrição -->
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Descrição</div>
-              <q-card flat bordered class="bg-grey-2">
+              <q-card  flat :bordered="true" class="bg-grey-1">
                 <q-card-section class="q-pa-md text-body1">
                   {{ chamadoSelecionado?.Description || "Sem descrição" }}
                 </q-card-section>
@@ -1006,19 +1006,22 @@ const atualizarStatusChamado = async (novoStatus, descricao) => {
     // 3. Atualiza o objeto reativo SEM fechar o modal
     chamadoSelecionado.value = { ...chamadosStore.detalhe_chamado };
 
-    const dados = {
-      chamado: chamadoSelecionado.value.Id,
-      status: novoStatus,
-      email: authStore.usuario.User.Login,
-      nome: authStore.usuario.User.Name,
-    };
-    try {
-
-      await chamadosStore.meus_chamados(dados);
-    } catch (error) {
-      console.error("Erro ao enviar dados para meus_chamados:", error);
+    const dados ={
+chamadoId: chamadoSelecionado.value.Id,
+status: novoStatus,
+email: authStore.usuario.User.Login,
+usuario:{id:authStore.usuario.User.Id}
     }
-    console.log("enviado back " + dados);
+// console.log("enviado back "+ dados);
+// console.log(dados);
+
+try {
+  await chamadosStore.meus_chamados(dados)
+
+} catch (error) {
+
+}
+
   } catch (err) {
     $q.notify({
       position: "top",
@@ -1175,6 +1178,10 @@ onUnmounted(() => {
 .meu_card {
   /* min-width: 50vw; */
   /* display: flex; */
+}
+.model-card{
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
 }
 
 .no-overflow-x {
