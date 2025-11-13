@@ -1,168 +1,230 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class=" text-black"
-    style="background-color: silver">
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-            <!-- Logo ou ícone de imagem -->
-    <q-avatar size="50px" class="q-mr-sm">
+   <q-header elevated class="bg-blue-grey-2 text-black q-px-md">
+  <q-toolbar>
+    <q-btn flat dense round icon="menu" @click="toggleLeftDrawer" />
+    <q-avatar size="42px" class="q-mr-sm">
       <img src="wpsicone.png" alt="Logo" />
     </q-avatar>
+    <q-toolbar-title>Analistas de Suporte</q-toolbar-title>
+    <q-space />
+    <div class="row items-center q-gutter-sm">
+      <span v-if="authStore.userEmail" class="text-caption text-weight-medium">
+        {{ authStore.userEmail }}
+      </span>
+      <q-btn
+        v-if="authStore.isLoggedIn"
+        flat
+        round
+        dense
+        icon="logout"
+        @click="logout"
+        title="Sair"
+      />
+    </div>
+  </q-toolbar>
+</q-header>
 
-        <q-toolbar-title class="row items-center">
-          <!-- <q-icon name="support_agent" class="q-mr-sm" /> -->
-        Analistas de suporte
-        </q-toolbar-title>
-
-        <div class="row items-center q-gutter-sm">
-          <span v-if="authStore.userEmail" class="text-caption">
-            {{ authStore.userEmail }}
-          </span>
-          <q-btn
-            v-if="authStore.isLoggedIn"
-            flat
-            round
-            icon="logout"
-            @click="logout"
-            title="Logout"
-          />
-        </div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
+<q-drawer
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      class="bg-grey-1"
+
+      class="bg-grey-2 text-grey-9"
     >
-      <q-list>
-        <q-item-label header class="text-grey-8">
-          WPS-Per2park
-        </q-item-label>
+      <q-scroll-area style="height: 100%">
+        <q-list padding>
+          <!-- Cabeçalho do usuário -->
+          <div class="column items-center q-py-md">
+            <!-- <q-avatar size="64px">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png" alt="User" />
+            </q-avatar>
+            <div class="text-weight-bold text-subtitle1 q-mt-sm">
+              {{ authStore.usuario.User.Name || 'Analista' }}
+            </div>
+            <div class="text-caption text-grey-7">Analista Suporte</div> -->
+          </div>
 
-        <q-item
-          clickable
-          v-ripple
-          to="/dashboard"
-          exact
-          v-if="authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="dashboard" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Dashboard</q-item-label>
-            <q-item-label caption></q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-separator spaced />
 
-        <q-item
-          clickable
-          v-ripple
-          to="/chamados"
-          exact
-          v-if="authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="assignment" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Chamados</q-item-label>
-            <q-item-label caption></q-item-label>
-          </q-item-section>
-        </q-item>
+          <!-- Itens do menu -->
+          <q-item
+            clickable
+            v-ripple
+            to="/dashboard"
+            exact
+            active-class="bg-blue-6 text-white"
+          >
+            <q-item-section avatar>
+              <q-icon name="dashboard" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Dashboard</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-item
-          clickable
-          v-ripple
-          to="/relatorios"
-          exact
-          v-if="authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="analytics" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Ranking top-10</q-item-label>
-            <q-item-label caption>Unidades com mais chamados</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/chamados"
+            exact
+            active-class="bg-blue-6 text-white"
+          >
+            <q-item-section avatar>
+              <q-icon name="assignment" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Chamados</q-item-label>
+              <q-item-label caption>Gerenciar chamados</q-item-label>
+            </q-item-section>
+          </q-item>
 
-              <q-item
-          clickable
-          v-ripple
-          to="/replicacao"
-          exact
-          v-if="authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="computer" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Unidades</q-item-label>
-            <q-item-label caption>servidor local</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-item
+            clickable
+            v-ripple
+            to="/relatorios"
+            exact
+            active-class="bg-blue-6 text-white"
+          >
+            <q-item-section avatar>
+              <q-icon name="bar_chart" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Ranking Top-10</q-item-label>
+              <q-item-label caption>Unidades com mais chamados</q-item-label>
+            </q-item-section>
+          </q-item>
 
-           <!-- <q-item
-          clickable
-          v-ripple
-          to="/testeee"
-          exact
-          v-if="authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Espaço em disco</q-item-label>
-            <q-item-label caption>Disco server e database</q-item-label>
-          </q-item-section>
-        </q-item> -->
+          <q-item
+            clickable
+            v-ripple
+            to="/replicacao"
+            exact
+            active-class="bg-blue-6 text-white"
+          >
+            <q-item-section avatar>
+              <q-icon name="dns" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Unidades</q-item-label>
+              <q-item-label caption>Servidor local</q-item-label>
+            </q-item-section>
+          </q-item>
 
-        <q-separator class="q-my-md" />
-     <q-item
-          clickable
-          v-ripple
-          to="/testeee"
-          exact
-          v-if="authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="computer" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Meus chamados</q-item-label>
-            <q-item-label caption>Historico de chamados</q-item-label>
-          </q-item-section>
-        </q-item>
+          <q-separator spaced />
 
-        <q-item
-          clickable
-          v-ripple
-          to="/login"
-          exact
-          v-if="!authStore.isLoggedIn"
-        >
-          <q-item-section avatar>
-            <q-icon name="login" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Login</q-item-label>
-            <q-item-label caption>Fazer login</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+          <q-item
+            clickable
+            v-ripple
+            to="/meus-chamados"
+            exact
+            active-class="bg-blue-6 text-white"
+          >
+            <q-item-section avatar>
+              <q-icon name="history" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Meus chamados</q-item-label>
+              <q-item-label caption>Histórico de atendimentos</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
+
+   <!-- <q-drawer
+  v-model="leftDrawerOpen"
+  show-if-above
+  bordered
+  class="bg-grey-2 text-grey-9"
+>
+  <q-list padding>
+    <q-item-label header class="text-weight-bold text-primary">
+      WPS-Per2park
+    </q-item-label>
+
+    <q-item
+      clickable
+      v-ripple
+      to="/dashboard"
+      exact
+      active-class="bg-primary text-white"
+    >
+      <q-item-section avatar>
+        <q-icon name="dashboard" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Dashboard</q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-item
+      clickable
+      v-ripple
+      to="/chamados"
+      exact
+      active-class="bg-primary text-white"
+    >
+      <q-item-section avatar>
+        <q-icon name="assignment" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Chamados</q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-item
+      clickable
+      v-ripple
+      to="/relatorios"
+      exact
+      active-class="bg-primary text-white"
+    >
+      <q-item-section avatar>
+        <q-icon name="bar_chart" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Ranking Top-10</q-item-label>
+        <q-item-label caption>Unidades com mais chamados</q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-item
+      clickable
+      v-ripple
+      to="/replicacao"
+      exact
+      active-class="bg-primary text-white"
+    >
+      <q-item-section avatar>
+        <q-icon name="dns" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Unidades</q-item-label>
+        <q-item-label caption>Servidor local</q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-separator spaced />
+
+    <q-item
+      clickable
+      v-ripple
+      to="/meus-chamados"
+      exact
+      active-class="bg-primary text-white"
+    >
+      <q-item-section avatar>
+        <q-icon name="history" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Meus chamados</q-item-label>
+        <q-item-label caption>Histórico de chamados</q-item-label>
+      </q-item-section>
+    </q-item>
+  </q-list>
+</q-drawer> -->
+
 
     <q-page-container>
       <router-view />
@@ -205,3 +267,11 @@ onMounted(() => {
   authStore.initializeAuth()
 })
 </script>
+
+<style scoped>
+
+.q-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transition: background-color 0.2s;
+}
+</style>

@@ -11,6 +11,8 @@
         </div>
       </div>
 
+      <totens-table :data="replicacaoData" />
+
       <!-- Loading -->
       <div v-if="loading" class="loading-container flex flex-center">
         <q-spinner-hourglass color="primary" size="3em" />
@@ -37,21 +39,6 @@
         <div class="text-h6 text-grey-5 q-mt-md">Nenhuma pendência encontrada</div>
       </div>
 
-      <!-- Replicação List -->
-
-
-
-
-
-
-<totens-table :data="replicacaoData" />
- <div class="q-mt-sm tabela ">
-
-<TabelaTbs :replicacaoData="replicacaoData" />
-
-
-
-  </div>
 
       </div>
 

@@ -60,6 +60,8 @@
         @click="limparFiltros"
         flat
         dense
+        color="white"
+
         class="q-mt-md"
       />
     </div>

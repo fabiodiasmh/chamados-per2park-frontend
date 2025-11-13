@@ -4,10 +4,7 @@
       <!-- Background Animation -->
       <div class="background-animation">
         <div class="floating-shapes">
-          <!-- <div class="shape shape-1"></div>
-          <div class="shape shape-2"></div>
-          <div class="shape shape-3"></div>
-          <div class="shape shape-4"></div> -->
+
           <div class="shape shape-5"></div>
         </div>
       </div>
@@ -66,24 +63,6 @@
                   />
                 </template>
               </q-input>
-
-              <!-- <div class="row justify-center q-my-sm" style="width: 100%">
-                <q-input
-                  style="width: 170px"
-                  v-model="ip_servidor"
-                  label="IP Servidor"
-                  type="text"
-                  dense
-                  outlined
-                  rounded
-                  class="custom-input"
-                  lazy-rules
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="computer" color="primary" />
-                  </template>
-                </q-input>
-              </div> -->
 
               <q-btn
                 type="submit"
@@ -220,7 +199,7 @@ onMounted(() => {
 
 /* Login Content */
 .login-content {
-  width: 400px;
+  width: 350px;
   /* height: 300px; */
   /* z-index: 3; */
 }
