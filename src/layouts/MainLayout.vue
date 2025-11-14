@@ -13,7 +13,7 @@
         {{ authStore.userEmail }}
       </span>
       <q-btn
-        v-if="authStore.isLoggedIn"
+
         flat
         round
         dense
