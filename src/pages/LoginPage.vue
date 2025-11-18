@@ -132,11 +132,23 @@ const onSubmit = async () => {
   };
 
   if (result.success) {
+    // $q.notify({
+    //   type: 'positive',
+    //   message: 'Login realizado com sucesso!',
+    //   position: 'top'
+    // })
     $q.notify({
-      type: 'positive',
-      message: 'Login realizado com sucesso!',
-      position: 'top'
-    })
+  type: 'positive',
+  message: 'Login realizado com sucesso!',
+  caption: 'Redirecionando para o painel...',
+  position: 'top-right',
+  progress: true,
+  timeout: 2000,
+  icon: 'check_circle',
+  classes: 'text-white bg-green-8'
+});
+
+
     // Redirect to dashboard after successful login
     setTimeout(() => {
       router.push("/dashboard");

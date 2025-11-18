@@ -118,6 +118,7 @@
             v-ripple
             to="/meus-chamados"
             exact
+            disable
             active-class="bg-blue-6 text-white"
           >
             <q-item-section avatar>
@@ -132,98 +133,7 @@
       </q-scroll-area>
     </q-drawer>
 
-   <!-- <q-drawer
-  v-model="leftDrawerOpen"
-  show-if-above
-  bordered
-  class="bg-grey-2 text-grey-9"
->
-  <q-list padding>
-    <q-item-label header class="text-weight-bold text-primary">
-      WPS-Per2park
-    </q-item-label>
 
-    <q-item
-      clickable
-      v-ripple
-      to="/dashboard"
-      exact
-      active-class="bg-primary text-white"
-    >
-      <q-item-section avatar>
-        <q-icon name="dashboard" />
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Dashboard</q-item-label>
-      </q-item-section>
-    </q-item>
-
-    <q-item
-      clickable
-      v-ripple
-      to="/chamados"
-      exact
-      active-class="bg-primary text-white"
-    >
-      <q-item-section avatar>
-        <q-icon name="assignment" />
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Chamados</q-item-label>
-      </q-item-section>
-    </q-item>
-
-    <q-item
-      clickable
-      v-ripple
-      to="/relatorios"
-      exact
-      active-class="bg-primary text-white"
-    >
-      <q-item-section avatar>
-        <q-icon name="bar_chart" />
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Ranking Top-10</q-item-label>
-        <q-item-label caption>Unidades com mais chamados</q-item-label>
-      </q-item-section>
-    </q-item>
-
-    <q-item
-      clickable
-      v-ripple
-      to="/replicacao"
-      exact
-      active-class="bg-primary text-white"
-    >
-      <q-item-section avatar>
-        <q-icon name="dns" />
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Unidades</q-item-label>
-        <q-item-label caption>Servidor local</q-item-label>
-      </q-item-section>
-    </q-item>
-
-    <q-separator spaced />
-
-    <q-item
-      clickable
-      v-ripple
-      to="/meus-chamados"
-      exact
-      active-class="bg-primary text-white"
-    >
-      <q-item-section avatar>
-        <q-icon name="history" />
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Meus chamados</q-item-label>
-        <q-item-label caption>Histórico de chamados</q-item-label>
-      </q-item-section>
-    </q-item>
-  </q-list>
-</q-drawer> -->
 
 
     <q-page-container>

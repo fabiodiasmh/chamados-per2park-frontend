@@ -13,47 +13,7 @@
         class="col"
         :prefix="filter ? '🔎' : ''"
       />
-<!--
-    <q-select
-  v-model="filtroStatus"
-  :options="opcoesStatus"
-  label="Status"
-  option-value="value"
-  option-label="label"
-  emit-value
-  map-options
-  outlined
-  dense
-  class="col"
-  clearable
-/>
 
-      <q-select
-        v-model="filtroPendencias"
-        :options="opcoesPendencias"
-        label="Pendências"
-      option-value="value"
-  option-label="label"
-  emit-value
-  map-options
-  outlined
-  dense
-  class="col"
-  clearable
-      />
-      <q-select
-        v-model="filtroConsumo"
-        :options="opcoesConsumo"
-        label="Consumo de Disco"
-       option-value="value"
-  option-label="label"
-  emit-value
-  map-options
-  outlined
-  dense
-  class="col"
-  clearable
-      /> -->
 
       <q-btn
         label="Limpar Filtros"
@@ -67,7 +27,8 @@
     </div>
 
     <q-table
-      title="Totens Monitorados"
+      title="Unidades com servidor local"
+      caption="Lista de Unidade com servidor local"
       :rows="filteredRows"
       :columns="columns"
       row-key="Id"
@@ -93,30 +54,60 @@
       </template>
 
       <!-- Cliente / Estação -->
-      <template #body-cell-client_station="props">
-        <q-td :props="props">
-          <div class="flex column items-start">
-            <span class="text-weight-bold text-primary flex items-center">
-              <q-icon
-                name="store"
-                size="16px"
-                color="primary"
-                class="q-mr-xs"
-              />
-              {{ props.row.ClientName || "—" }}
-            </span>
-            <span class="text-grey-7 text-caption flex items-center">
-              <q-icon
-                name="computer"
-                size="14px"
-                color="grey-6"
-                class="q-mr-xs"
-              />
-              {{ props.row.Name || "—" }}
-            </span>
-          </div>
-        </q-td>
-      </template>
+    <template #body-cell-client_station="props">
+  <q-td :props="props">
+
+   <div
+  class="row items-start"
+  :class="$q.screen.lt.md ? 'column' : 'items-center justify-between'"
+  style="width: 100%"
+>
+
+
+      <!-- Cliente + Estação (mantém em coluna exatamente como está) -->
+      <div class="column">
+        <span class="text-weight-bold text-primary flex items-center">
+          <q-icon name="store" size="16px" color="primary" class="q-mr-xs" />
+          {{ props.row.ClientName || "—" }}
+        </span>
+
+        <span class="text-grey-7 text-caption flex items-center">
+          <q-icon name="computer" size="14px" color="grey-6" class="q-mr-xs" />
+          {{ props.row.Name || "—" }}
+        </span>
+      </div>
+
+      <!-- 🔵 Botões lado direito -->
+    <!-- 🔵 Botões lado direito (desktop) / abaixo (mobile) -->
+<div
+  class="row items-center q-gutter-sm"
+  :class="$q.screen.lt.md ? 'q-mt-sm justify-center full-width' : 'justify-end'"
+>
+  <q-btn
+    size="sm"
+    color="primary"
+    label="TABLESPACES"
+    @click="abrirResume(props.row)"
+    outline
+    icon="storage"
+  />
+
+  <q-btn
+    size="sm"
+    color="secondary"
+    outline
+    label="APIs"
+    icon="link"
+    @click="abrirApis(props.row)"
+  />
+</div>
+
+    </div>
+
+  </q-td>
+</template>
+
+
 
       <!-- Pendências -->
       <template #body-cell-pendencies="props">
@@ -192,6 +183,64 @@
       </template>
     </q-table>
   </div>
+
+<q-dialog v-model="resumeDialog">
+  <q-card
+    class="bg-grey-5 text-black"
+    :class="$q.screen.lt.md ? 'q-pa-sm mobile-dialog' : ''"
+    :style="$q.screen.lt.md ? 'width: 100%; max-width: 95vw' : 'min-width: 700px'"
+  >
+    <q-card-section class="text-h6">Tablespaces</q-card-section>
+
+    <q-card-section>
+      <q-table
+        flat
+        bordered
+        dense
+        hide-bottom
+        :rows="tbsRows"
+        :columns="tbsColumns"
+        row-key="name"
+        :pagination="{ rowsPerPage: 0 }"
+      />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Fechar" color="red" v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
+
+<q-dialog v-model="showApiModal">
+  <q-card
+    class="bg-grey-5 text-black"
+    :class="$q.screen.lt.md ? 'q-pa-sm mobile-dialog' : ''"
+    :style="$q.screen.lt.md ? 'width: 100%; max-width: 95vw' : 'width: 700px'"
+  >
+    <q-card-section class="text-h6 text-weight-bold">
+      Endpoints das APIs
+    </q-card-section>
+
+    <q-card-section>
+      <q-table
+        flat
+        bordered
+        dense
+        hide-bottom
+        :rows="apiRows"
+        :columns="apiColumns"
+        row-key="name"
+        :pagination="{ rowsPerPage: 0 }"
+      />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Fechar" color="primary" v-close-popup />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
 </template>
 
 <script setup>
@@ -205,6 +254,68 @@ const filter = ref("");
 const filtroStatus = ref(null);
 const filtroPendencias = ref(null);
 const filtroConsumo = ref("todos");
+
+const resumeDialog = ref(false);
+const resumeTexto = ref("");
+
+const tbsRows = ref([]);
+const tbsColumns = [
+  { name: "name", label: "Tablespace", field: "name", align: "left" },
+  { name: "size", label: "Tamanho", field: "size", align: "center" },
+  { name: "used", label: "Usado", field: "used", align: "center" },
+  { name: "free", label: "Livre", field: "free", align: "center" },
+  { name: "pct", label: "% Livre", field: "pct", align: "center" },
+];
+
+
+
+const showApiModal = ref(false);
+const apiRows = ref([]);
+
+function abrirApis(row) {
+  const texto = row.Resume || row.resume || "";
+  apiRows.value = extractApis(texto);
+  showApiModal.value = true;
+}
+
+const apiColumns = [
+  { name: "name", label: "Nome", field: "name", align: "left" },
+  { name: "url", label: "URL", field: "url", align: "left" },
+];
+
+function extrairTablespaces(resume) {
+  if (!resume) return [];
+
+  const lines = resume
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.includes("|"));
+
+  // Filtra apenas as linhas no formato das tablespaces (5 colunas)
+  const tbs = lines
+    .map((l) => l.split("|").map((p) => p.trim()))
+    .filter((p) => p.length === 5) // garante estrutura correta
+    .map((p) => ({
+      name: p[0],
+      size: p[1],
+      used: p[2],
+      free: p[3],
+      pct: p[4],
+    }));
+
+  return tbs;
+}
+
+
+function abrirResume(row) {
+  const texto = row.Resume || row.resume || "";
+
+  // Extrai TBS
+  tbsRows.value = extrairTablespaces(texto);
+
+  resumeDialog.value = true;
+}
+
 
 const columns = [
   {
@@ -296,8 +407,22 @@ const getModelValue = (model) => {
   return model;
 };
 
+// const apiList = extractApis(item.Resume);
 
+function extractApis(resume) {
+  const regex = /(\S+)\s*\|\s*(?:\[.*?\]|Falha|NotFound)\s*\|\s*(\S+)/g;
+  const apis = [];
+  let match;
 
+  while ((match = regex.exec(resume)) !== null) {
+    apis.push({
+      name: match[1],
+      url: match[2]
+    });
+  }
+
+  return apis;
+}
 
 const filteredRows = computed(() => {
   let rows = [...(props.data || [])];

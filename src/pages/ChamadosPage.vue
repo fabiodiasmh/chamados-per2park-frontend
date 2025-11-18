@@ -184,8 +184,8 @@
                   size="xs"
                   class="q-mr-xs"
                   style="line-height: 1.2; padding: 2px 10px; font-size: 0.8rem"
-                  outline
-                  rounded
+
+
                 >
                   {{ getStatusLabel(chamado.Status) }}
                 </q-badge>
@@ -1257,18 +1257,17 @@ body {
 }
 
 .chamado-card {
-  border-radius: 10px;
-  background: #2c3749;
+  border-radius: 5px 5px 5px 5px;
+  background: #324055;
   /* box-shadow: 10px 10px 10px 10px white; */
   transition: all 0.35s ease;
   cursor: pointer;
-  border: 2px solid silver;
+  border: 1px solid silver;
   display: flex;
   flex-direction: column;
   min-height: 80px; /* ✅ Altura mínima para evitar cards muito curtos */
 
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   /* font-family: 'Poppins', sans-serif; */
 }
 
