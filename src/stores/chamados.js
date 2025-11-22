@@ -244,10 +244,11 @@ export const useChamadosStore = defineStore('chamados', {
     // }
 
     async carregarChamados() {
+      const authStore = useAuthStore()
       try {
         this.loading = true
 
-        const usuarioId = 1798
+        const usuarioId = authStore.usuario.User.Id
         const payload = { id: usuarioId }
 
         //
@@ -271,15 +272,15 @@ export const useChamadosStore = defineStore('chamados', {
           // const completo = this.chamados.find(ch => ch.Id == item.chamadoId)
           const completo = this.chamados.find(ch => ch.Id == item.chamadoId)
 
-
-
-
+          // Se não encontrar os detalhes e NÃO for status 5 (Fechado), ignora.
+          // Chamados fechados (5) podem não estar na lista principal, mas devem aparecer.
+          if (!completo && item.statusId !== 5) return null
 
           return {
             ...item,
             ...(completo || {})
           }
-        })
+        }).filter(item => item !== null)
 
 
         console.log("this.chamados", this.chamados)
