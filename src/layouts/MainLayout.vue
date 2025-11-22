@@ -113,7 +113,7 @@
             v-ripple
             to="/meus-chamados"
             exact
-            disable
+
             active-class="bg-gradient-primary text-white shadow-4"
             class="rounded-borders q-mx-sm"
           >

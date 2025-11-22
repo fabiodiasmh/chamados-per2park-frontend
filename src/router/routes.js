@@ -10,6 +10,7 @@ const routes = [
       { path: 'chamados', component: () => import('pages/ChamadosPage.vue') },
       { path: 'relatorios', component: () => import('pages/RelatoriosPage.vue') },
       { path: 'replicacao', component: () => import('pages/ReplicacaoPendente.vue') },
+      { path: 'meus-chamados', component: () => import('pages/MeusChamados.vue') },
       { path: 'test', component: () => import('pages/TestPage.vue') }
     ]
   },
