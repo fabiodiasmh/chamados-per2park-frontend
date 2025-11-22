@@ -1,0 +1,202 @@
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm.
+npm warn Unknown project config "resolution-mode". This will stop working in the next major version of npm.
+
+ .d88888b.
+d88P" "Y88b
+888     888
+888     888 888  888  8888b.  .d8888b   8888b.  888d888
+888     888 888  888     "88b 88K          "88b 888P"
+888 Y8b 888 888  888 .d888888 "Y8888b. .d888888 888
+Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
+ "Y888888"   "Y88888 "Y888888  88888P' "Y888888 888
+       Y8b
+
+
+ Build mode............. spa
+ Pkg quasar............. v2.18.2
+ Pkg @quasar/app-vite... v2.4.0
+ Pkg vite............... v6.3.6
+ Debugging.............. no
+ Publishing............. no
+
+ App • Using quasar.config.js in "esm" format
+ App •  WAIT  • Compiling of SPA UI with Vite in progress...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+✗ Build failed in 859ms
+[vite:css] [sass] Error: Undefined variable.
+   ╷
+67 │   background: $dark-item;
+   │               ^^^^^^^^^^
+   ╵
+  ../../../../src/css/app.scss 67:15  root stylesheet
+file: /home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/css/app.scss
+
+[sass] Error: Undefined variable.
+   ╷
+67 │   background: $dark-item;
+   │               ^^^^^^^^^^
+   ╵
+  ../../../../src/css/app.scss 67:15  root stylesheet
+
+    at handleCompileResponse (/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/sass-embedded/dist/lib/src/compiler/utils.js:155:15)
+    at AsyncCompiler.compileRequestAsync (/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/sass-embedded/dist/lib/src/compiler/async.js:100:54)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Object.run (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/app-vite/node_modules/vite/dist/node/chunks/dep-M_KD0XSK.js:32908:19)
+    at async process (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/app-vite/node_modules/vite/dist/node/chunks/dep-M_KD0XSK.js:32938:20)
+    at async compileCSSPreprocessors (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/app-vite/node_modules/vite/dist/node/chunks/dep-M_KD0XSK.js:32357:27)
+    at async compileCSS (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/app-vite/node_modules/vite/dist/node/chunks/dep-M_KD0XSK.js:32385:30)
+    at async Object.handler (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/app-vite/node_modules/vite/dist/node/chunks/dep-M_KD0XSK.js:31924:54)
+    at async transform (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/rollup/dist/es/shared/node-entry.js:21141:16)
+    at async ModuleLoader.addModuleSource (file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/node_modules/rollup/dist/es/shared/node-entry.js:21354:36) {
+  sassMessage: 'Undefined variable.',
+  sassStack: '../../../../src/css/app.scss 67:15  root stylesheet\n',
+  span: {
+    text: '$dark-item',
+    start: {
+      '$typeName': 'sass.embedded_protocol.SourceSpan.SourceLocation',
+      offset: 1389,
+      line: 66,
+      column: 14
+    },
+    end: {
+      '$typeName': 'sass.embedded_protocol.SourceSpan.SourceLocation',
+      offset: 1399,
+      line: 66,
+      column: 24
+    },
+    url: URL {
+      href: 'file:///home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/src/css/app.scss',
+      origin: 'null',
+      protocol: 'file:',
+      username: '',
+      password: '',
+      host: '',
+      hostname: '',
+      port: '',
+      pathname: '/home/fabio/%C3%81rea%20de%20Trabalho/Developer/chamados-per2park-frontend/src/css/app.scss',
+      search: '',
+      searchParams: URLSearchParams {},
+      hash: ''
+    },
+    context: '  background: $dark-item;\n'
+  },
+  id: '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/css/app.scss',
+  frame: '[sass] Error: Undefined variable.\n' +
+    '   ╷\n' +
+    '67 │   background: $dark-item;\n' +
+    '   │               ^^^^^^^^^^\n' +
+    '   ╵\n' +
+    '  ../../../../src/css/app.scss 67:15  root stylesheet',
+  line: 67,
+  column: 15,
+  code: 'PLUGIN_ERROR',
+  plugin: 'vite:css',
+  hook: 'transform',
+  watchFiles: [
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/index.html',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/.quasar/prod-spa/client-entry.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/package.json',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/vue/dist/vue.runtime.esm-bundler.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/boot/axios.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/.quasar/prod-spa/app.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/.quasar/prod-spa/quasar-user-options.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/roboto-font.css',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/material-icons/material-icons.css',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fontawesome-v6.css',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/css/app.scss',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/dist/quasar.sass',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/vue-plugin.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/App.vue',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/stores/index.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/router/index.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/plugins/dialog/Dialog.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/plugins/notify/Notify.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/wrappers/index.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/index.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/stores/auth.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@vue/runtime-dom/dist/runtime-dom.esm-bundler.js',
+    'node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabVmUiAw.woff',
+    'node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbFmUiAw.woff',
+    'node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bVmUiAw.woff',
+    'node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiAw.woff',
+    'node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAw.woff',
+    'node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtalmUiAw.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabVmUiAw.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbFmUiAw.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bVmUiAw.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiAw.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAw.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/roboto-font/web-font/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtalmUiAw.woff',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-regular-400.woff2',
+    'node_modules/@quasar/extras/material-icons/web-font/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-brands-400.woff2',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-solid-900.woff2',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-v4compatibility.woff2',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/plugins/dialog/component/DialogPluginComponent.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/utils/private.dialog/create-dialog.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/pinia/dist/pinia.mjs',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/axios.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/install-quasar.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/plugins/lang/Lang.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/plugins/icon-set/IconSet.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/router/routes.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/vue-router/dist/vue-router.mjs',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/avatar/QAvatar.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/icon/QIcon.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/btn/QBtn.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/spinner/QSpinner.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/utils/private.create/create.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/utils/event/event.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/utils/private.config/nodes.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/utils/is/is.js',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-regular-400.ttf',
+    'node_modules/@quasar/extras/material-icons/web-font/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.woff',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/material-icons/web-font/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/material-icons/web-font/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.woff',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-brands-400.ttf',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-solid-900.ttf',
+    'node_modules/@quasar/extras/fontawesome-v6/fa-v4compatibility.ttf',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-regular-400.woff2',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-brands-400.woff2',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-solid-900.woff2',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-v4compatibility.woff2',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-regular-400.ttf',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-brands-400.ttf',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-solid-900.ttf',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@quasar/extras/fontawesome-v6/fa-v4compatibility.ttf',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@vue/shared/dist/shared.esm-bundler.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/@vue/runtime-core/dist/runtime-core.esm-bundler.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/dialog/QDialog.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/card/QCard.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/input/QInput.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/separator/QSeparator.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/card/QCardActions.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/composables/private.use-dark/use-dark.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/card/QCardSection.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/components/option-group/QOptionGroup.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/quasar/src/utils/private.keyboard/key-composition.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/helpers/bind.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/utils.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/core/mergeConfig.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/defaults/index.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/core/Axios.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/helpers/formDataToJSON.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/cancel/CanceledError.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/cancel/CancelToken.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/cancel/isCancel.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/env/data.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/helpers/toFormData.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/core/AxiosError.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/helpers/isAxiosError.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/helpers/spread.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/core/AxiosHeaders.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/adapters/adapters.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/node_modules/axios/lib/helpers/HttpStatusCode.js',
+    '/home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/src/layouts/MainLayout.vue',
+    ... 86 more items
+  ]
+}
+
+ App • ⚠️   FAIL  App build failed (check the log above)
+

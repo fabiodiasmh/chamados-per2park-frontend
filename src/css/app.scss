@@ -1,1 +1,78 @@
 // app global css in SCSS form
+
+body {
+  background-color: $dark-page;
+  color: #E0E0E0;
+  font-family: 'Roboto', sans-serif;
+}
+
+// Global Gradient Utilities
+.bg-gradient-primary {
+  background: $gradient-primary !important;
+}
+
+.bg-gradient-secondary {
+  background: $gradient-secondary !important;
+}
+
+.bg-gradient-dark {
+  background: $gradient-dark !important;
+}
+
+.text-gradient {
+  background: $gradient-primary;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Glassmorphism
+.glass {
+  background: rgba(55, 65, 81, 0.7); // Removed !important to allow overrides
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.1); // Removed !important
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Custom Scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $dark-page;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6B7280; // Hardcoded lighter gray
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF; // Hardcoded even lighter gray
+}
+
+// Card Styling Override
+.q-card {
+  background: $dark-item;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+// Input Styling Override
+.q-field__filled .q-field__control {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.q-field__filled .q-field__control:before {
+  border-bottom: none;
+}

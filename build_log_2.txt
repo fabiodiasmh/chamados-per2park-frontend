@@ -1,0 +1,90 @@
+npm warn Unknown project config "shamefully-hoist". This will stop working in the next major version of npm.
+npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm.
+npm warn Unknown project config "resolution-mode". This will stop working in the next major version of npm.
+
+ .d88888b.
+d88P" "Y88b
+888     888
+888     888 888  888  8888b.  .d8888b   8888b.  888d888
+888     888 888  888     "88b 88K          "88b 888P"
+888 Y8b 888 888  888 .d888888 "Y8888b. .d888888 888
+Y88b.Y8b88P Y88b 888 888  888      X88 888  888 888
+ "Y888888"   "Y88888 "Y888888  88888P' "Y888888 888
+       Y8b
+
+
+ Build mode............. spa
+ Pkg quasar............. v2.18.2
+ Pkg @quasar/app-vite... v2.4.0
+ Pkg vite............... v6.3.6
+ Debugging.............. no
+ Publishing............. no
+
+ App • Using quasar.config.js in "esm" format
+ App •  WAIT  • Compiling of SPA UI with Vite in progress...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+ App •  DONE  • SPA UI compiled with success by Vite • 2746ms
+
+ Build summary with important files:
+ ╔══════════════════════════════════════════════╦══════════════╦══════════════╗
+ ║                                        Asset ║         Size ║      Gzipped ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║              assets/ChamadosPage-nPs8B3Ii.js ║     21.18 KB ║      7.43 KB ║
+ ║                assets/ClosePopup-CX1TRpPl.js ║      4.08 KB ║      1.89 KB ║
+ ║             assets/DashboardPage-CfVMENHq.js ║    180.25 KB ║     63.08 KB ║
+ ║             assets/ErrorNotFound-DfJgEAad.js ║      0.55 KB ║      0.38 KB ║
+ ║                 assets/LoginPage-cSW6aqq_.js ║      5.36 KB ║      2.40 KB ║
+ ║                assets/MainLayout-CQwbggOr.js ║     33.27 KB ║     10.77 KB ║
+ ║                    assets/QBadge-FynCNDys.js ║      0.90 KB ║      0.50 KB ║
+ ║                   assets/QBanner-DmzsBTgJ.js ║      2.53 KB ║      1.16 KB ║
+ ║                     assets/QList-DH4GSS3w.js ║      3.41 KB ║      1.43 KB ║
+ ║                     assets/QPage-Dra3Y_yO.js ║      0.87 KB ║      0.48 KB ║
+ ║                   assets/QSelect-B0tJ9sIN.js ║     41.66 KB ║     14.10 KB ║
+ ║                  assets/QToolbar-B04TIRgG.js ║      0.49 KB ║      0.28 KB ║
+ ║            assets/RelatoriosPage-DgSJQTMW.js ║      3.76 KB ║      1.76 KB ║
+ ║        assets/ReplicacaoPendente-DCxFbcLO.js ║     13.01 KB ║      4.88 KB ║
+ ║                  assets/TestPage-Cp8KC3N_.js ║      5.93 KB ║      1.87 KB ║
+ ║ assets/_plugin-vue_export-helper-DlAUqK2U.js ║      0.09 KB ║      0.10 KB ║
+ ║                      assets/auth-Ajhgxwnm.js ║     37.88 KB ║     15.16 KB ║
+ ║                  assets/chamados-BtCF54Sc.js ║      4.51 KB ║      1.01 KB ║
+ ║                    assets/format-BLPNq8GW.js ║      0.66 KB ║      0.39 KB ║
+ ║                     assets/index-CH3DD_-B.js ║    202.57 KB ║     73.43 KB ║
+ ║     assets/monitoramentoServidor-Deo1YKa4.js ║     26.82 KB ║      8.95 KB ║
+ ║                assets/use-quasar-Bs1eks5L.js ║      0.08 KB ║      0.10 KB ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║             assets/ChamadosPage-Cr6Bn8i_.css ║      1.05 KB ║      0.45 KB ║
+ ║            assets/DashboardPage-87Bc8WIu.css ║      2.90 KB ║      1.03 KB ║
+ ║                assets/LoginPage-DEyst3Td.css ║      0.94 KB ║      0.43 KB ║
+ ║               assets/MainLayout-CZIaxQ2k.css ║      0.15 KB ║      0.13 KB ║
+ ║           assets/RelatoriosPage-DZ_Vp4FB.css ║      0.56 KB ║      0.30 KB ║
+ ║       assets/ReplicacaoPendente-C_3T4f1w.css ║      0.28 KB ║      0.18 KB ║
+ ║                    assets/index-5GgUD7ir.css ║    268.81 KB ║     56.47 KB ║
+ ╟──────────────────────────────────────────────╫──────────────╫──────────────╢
+ ║                                   index.html ║      0.84 KB ║            - ║
+ ╠══════════════════════════════════════════════╬══════════════╬══════════════╣
+ ║                          Total JS (22 files) ║    589.87 KB ║            - ║
+ ║                          Total CSS (7 files) ║    274.70 KB ║            - ║
+ ╚══════════════════════════════════════════════╩══════════════╩══════════════╝
+
+ Build succeeded
+
+ Build mode............. spa
+ Pkg quasar............. v2.18.2
+ Pkg @quasar/app-vite... v2.4.0
+ Pkg vite............... v6.3.6
+ Debugging.............. no
+ Publishing............. no
+ Browser target......... es2019|edge88|firefox78|chrome87|safari13.1
+ =======================
+ Output folder.......... /home/fabio/Área de Trabalho/Developer/chamados-per2park-frontend/dist/spa
+
+ Tip: Built files are meant to be served over an HTTP server
+      Opening index.html over file:// won't work
+
+ Tip: You can use "$ quasar serve" command to create a web server,
+      both for testing or production. Type "$ quasar serve -h" for
+      parameters. Also, an npm script (usually named "start") can
+      be added for deployment environments.
+      If you're using Vue Router "history" mode, don't forget to
+      specify the "--history" parameter: "$ quasar serve --history"
+

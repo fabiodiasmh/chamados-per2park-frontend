@@ -1,12 +1,12 @@
 <template>
-  <q-page class="dashboard-page">
+  <q-page class="dashboard-page q-pa-md">
     <div class="container">
       <!-- Header -->
-      <div class="header-section">
-        <div class="text-h6 text-weight text-white">
-          Painel de Acompanhamento de Chamados
+      <div class="header-section q-mb-md">
+        <div class="text-h5 text-weight-bold text-white">
+          Painel de Acompanhamento
         </div>
-        <div class="text-subtitle3 text-grey-3">
+        <div class="text-caption text-grey-5">
           Atualizado em: {{ lastUpdate }}
         </div>
       </div>
@@ -14,11 +14,11 @@
       <!-- Loading -->
       <div v-if="loading" class="loading-container flex flex-center">
         <q-spinner-hourglass color="primary" size="3em" />
-        <div class="q-mt-md text-subtitle1 text-grey-7">Carregando dados...</div>
+        <div class="q-mt-md text-subtitle1 text-grey-5">Carregando dados...</div>
       </div>
 
       <!-- Error -->
-      <q-banner v-if="error" class="bg-negative text-white q-mb-lg">
+      <q-banner v-if="error" class="bg-negative text-white q-mb-lg rounded-borders">
         <template v-slot:avatar>
           <q-icon name="error" color="white" />
         </template>
@@ -42,25 +42,19 @@
   v-if="!loading && !error && chamadosPorStatus && Object.keys(chamadosPorStatus).length > 0"
   class="stats-grid"
 >
-  <!-- <q-card
-    v-for="status in orderedStatusList"
-    :key="status"
-    class="stat-card"
-    :class="getStatusClass(status)"
-  > -->
   <q-card
   v-for="status in orderedStatusList"
   :key="status"
-  class="stat-card"
+  class="stat-card glass"
   :class="getStatusClass(status)"
   @click="irParaChamadosComStatus(status)"
 >
     <q-card-section class="stat-content">
-      <div class="number-display">{{ chamadosPorStatus[status] || 0 }}</div>
-      <div class="status-label">{{ status }}</div>
+      <div class="number-display text-white">{{ chamadosPorStatus[status] || 0 }}</div>
+      <div class="status-label text-white">{{ status }}</div>
     </q-card-section>
     <q-card-section class="icon-section">
-      <q-icon :name="getIconForStatus(status)" size="24px" color="white" />
+      <q-icon :name="getIconForStatus(status)" size="28px" class="text-white" />
     </q-card-section>
   </q-card>
 </div>
@@ -71,24 +65,16 @@
   class="charts-row q-mt-xl"
 >
   <!-- Gráfico de Distribuição -->
-  <q-card class="chart-card half-width">
-    <q-card-section class="text-center">
-      <div class="text-h6 text-white q-mb-sm">Distribuição de Chamados por Status</div>
+  <q-card class="chart-card half-width glass">
+    <q-card-section class="text-center q-pa-lg">
+      <div class="text-h6 text-white q-mb-md">Distribuição de Chamados</div>
       <div class="chart-container">
         <Doughnut :data="fullChartData" :options="chartOptions" />
       </div>
     </q-card-section>
   </q-card>
 
-
-
-
-      <servidores-offline-card class="q-px-md q-pb-sm"  />
-
-
-
-
-
+      <servidores-offline-card class="q-px-md q-pb-sm glass"  />
 
 </div>
 
@@ -180,9 +166,9 @@ const fullChartData = computed(() => {
     datasets: [{
       data,
       backgroundColor,
-      borderColor: '#1C2B36',
-      borderWidth: 2,
-      hoverOffset: 10
+      borderColor: 'transparent',
+      borderWidth: 0,
+      hoverOffset: 15
     }]
   }
 })
@@ -196,27 +182,17 @@ const chartOptions = computed(() => ({
       display: true,
       position: 'bottom',
       labels: {
-        color: '#fff',
-        font: { size: 10 },
-        padding: 10
+        color: '#B0B0B0',
+        font: { size: 11, family: 'Roboto' },
+        padding: 15,
+        usePointStyle: true
       }
     },
-    // tooltip: {
-    //   callbacks: {
-    //     label: (context) => {
-    //       const label = context.label || ''
-    //       const value = context.raw
-    //       const total = totalChamados.value
-    //       const percent = total ? ((value / total) * 100).toFixed(1) : 0
-    //       return `${label}: ${value} chamados (${percent}%)`
-    //     }
-    //   }
-    // },
     datalabels: {
       color: '#fff',
       font: {
         weight: 'bold',
-        size: 12
+        size: 13
       },
       formatter: (value, context) => {
         const total = totalChamados.value
@@ -227,7 +203,7 @@ const chartOptions = computed(() => ({
       align: 'center'
     }
   },
-  cutout: '50%' // rosca (doughnut). Use '0%' para gráfico de pizza.
+  cutout: '65%' // rosca (doughnut). Use '0%' para gráfico de pizza.
 }))
 
 // Ícones por status — ATUALIZADOS
@@ -271,27 +247,18 @@ const orderedStatusList = computed(() => [
 // .filter(status => chamadosPorStatus.value[status] !== null)) // só mostra se existir
 
 // Classes de cor por status
-var cor = ref(null)
 const getStatusClass = (status) => {
-
-  // console.log(chamadosPorStatus.value['Aberto']);
-
-  if (chamadosPorStatus.value['Aberto'] == null) {
-    cor ='bg-green-8'
-  }else{
-  cor = 'bg-red-7'
-}
   const classes = {
-
-    'Aberto': cor,
-    'Em Atendimento': 'bg-orange-5',
-    'Feedback': 'bg-blue-7',
-    'Encaminhado Nível 2': 'bg-indigo-7',
-    'Encaminhado Nível 3': 'bg-purple-7',
-    'Em Análise': 'bg-amber-10',
-    'Aguardando assistencia': 'bg-blue-grey-6',
+    'Aberto': 'gradient-red',
+    'Em Atendimento': 'gradient-orange',
+    'Em Análise': 'gradient-yellow',
+    'Feedback': 'gradient-blue',
+    'Encaminhado Nível 2': 'gradient-indigo',
+    'Encaminhado Nível 3': 'gradient-purple',
+    'Aguardando assistencia': 'gradient-blue-grey',
+    'Aguardando Resposta': 'gradient-teal'
   }
-  return classes[status] || 'bg-grey-8'
+  return classes[status] || 'gradient-default'
 }
 
 
@@ -339,15 +306,16 @@ const totalChamados = computed(() => {
 
 const getStatusColor = (status) => {
   const colors = {
-    'Aberto': '#F44336',
-    'Em Atendimento': '#FFA500',
-    'Feedback': '#2196F3',
-    'Encaminhado Nível 2': '#3F51B5',
-    'Encaminhado Nível 3': '#9C27B0',
-    'Em Análise': '#FFC107',
-    'Aguardando assistencia': '#607D8B'
+    'Aberto': '#EF5350', // Red (Primary from gradient-red)
+    'Em Atendimento': '#FFA726', // Orange (Primary from gradient-orange)
+    'Feedback': '#42A5F5', // Blue (Primary from gradient-blue)
+    'Encaminhado Nível 2': '#5C6BC0', // Indigo (Primary from gradient-indigo)
+    'Encaminhado Nível 3': '#AB47BC', // Purple (Primary from gradient-purple)
+    'Em Análise': '#FFEE58', // Yellow (Primary from gradient-yellow)
+    'Aguardando assistencia': '#78909C', // Blue Grey (Primary from gradient-blue-grey)
+    'Aguardando Resposta': '#26A69A' // Teal (Primary from gradient-teal)
   }
-  return colors[status] || '#666'
+  return colors[status] || '#4B5563' // Default Gray
 }
 
 let chamadosInterval = null
@@ -373,86 +341,10 @@ onUnmounted(() => {
 
 <style scoped>
 
-.charts-row {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.half-width {
-  flex: 1 1 calc(50% - 12px); /* 50% menos metade do gap */
-  min-width: 300px; /* evita que fique muito estreito em telas pequenas */
-}
-
-.stat-card {
-   cursor: pointer; /* ← Adicione esta linha */
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0;
-  min-height: 110px;
-  position: relative;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
-}
-
-.stat-content {
-  padding: 6px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-}
-
-.number-display {
-  font-size: 2.7rem;
-  font-weight: 700;
-  color: white;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.status-label {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
-
-.icon-section {
-  width: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* background: rgba(0, 0, 0, 0.15); */
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-.chart-container {
-  /* height: 220px;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto; */
-}
-
-
-
-/* ------------------------- */
 .dashboard-page {
-  background: linear-gradient(135deg, #1C2B36 0%, #2C3E50 100%);
+  /* background: linear-gradient(135deg, #1C2B36 0%, #2C3E50 100%); */
+  /* Use global background */
   min-height: 100vh;
-  padding: 24px;
 }
 
 .container {
@@ -461,13 +353,10 @@ onUnmounted(() => {
 }
 
 .header-section {
-  margin-bottom: 16px;
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .loading-container {
@@ -482,34 +371,101 @@ onUnmounted(() => {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px;
-  margin-top: 24px;
 }
 
-
-
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
-}
-
-
-
-
-
-.chart-section {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.chart-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+.stat-card {
+  cursor: pointer;
+  border-radius: 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  height: 160px;
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.stat-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+}
 
+/* Gradients for cards */
+.gradient-red { background: linear-gradient(135deg, #EF5350 0%, #C62828 100%) !important; }
+.gradient-orange { background: linear-gradient(135deg, #FFA726 0%, #EF6C00 100%) !important; }
+.gradient-yellow { background: linear-gradient(135deg, #FFEE58 0%, #F9A825 100%) !important; }
+.gradient-blue { background: linear-gradient(135deg, #42A5F5 0%, #1565C0 100%) !important; }
+.gradient-indigo { background: linear-gradient(135deg, #5C6BC0 0%, #283593 100%) !important; }
+.gradient-purple { background: linear-gradient(135deg, #AB47BC 0%, #6A1B9A 100%) !important; }
+.gradient-blue-grey { background: linear-gradient(135deg, #78909C 0%, #37474F 100%) !important; }
+.gradient-teal { background: linear-gradient(135deg, #26A69A 0%, #00695C 100%) !important; }
+.gradient-default { background: linear-gradient(135deg, #4B5563 0%, #1F2937 100%) !important; }
+
+
+.stat-content {
+  padding: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  z-index: 1;
+}
+
+.number-display {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.status-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.icon-section {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.charts-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.half-width {
+  flex: 1 1 400px;
+}
+
+.chart-card {
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.chart-container {
+  height: 300px;
+  position: relative;
+}
+
+.opacity-80 {
+  opacity: 0.8;
+}
 </style>

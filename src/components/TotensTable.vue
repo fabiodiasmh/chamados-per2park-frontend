@@ -3,7 +3,6 @@
     <!-- Filtros -->
     <div class="row q-gutter-md q-mb-md items-center">
       <q-input
-        dark
         dense
         outlined
         debounce="300"
@@ -11,175 +10,169 @@
         placeholder="Buscar por cliente/unidade"
         clearable
         class="col"
-        :prefix="filter ? '🔎' : ''"
-      />
-
+        bg-color="white"
+        label-color="grey-7"
+        input-class="text-grey-9"
+      >
+        <template v-slot:prepend>
+          <q-icon name="search" color="grey-5" />
+        </template>
+      </q-input>
 
       <q-btn
         label="Limpar Filtros"
         @click="limparFiltros"
         flat
         dense
-        color="white"
-
-        class="q-mt-md"
+        color="primary"
+        class="q-px-md"
       />
     </div>
 
     <q-table
       title="Unidades com servidor local"
-      caption="Lista de Unidade com servidor local"
       :rows="filteredRows"
       :columns="columns"
       row-key="Id"
       flat
       bordered
-      dense
-      :no-data-label="'Nenhum totem encontrado.'"
-      :no-results-label="'Nenhum resultado encontrado.'"
+      :grid="$q.screen.xs"
+      card-class="bg-white text-grey-9 q-pa-sm q-mb-sm shadow-1 rounded-borders"
+      class="bg-white text-grey-9 rounded-borders shadow-1"
       :pagination="{ sortBy: 'pendencies', descending: true, rowsPerPage: 0 }"
+      hide-pagination
     >
-      <!-- Online -->
-      <template #body-cell-online="props">
-        <q-td :props="props" align="center">
-          <q-icon
-            :name="props.row.Status === 1 ? 'check_circle' : 'cancel'"
-            :color="props.row.Status === 1 ? 'green' : 'red'"
-            size="md"
-          />
-          <q-tooltip>
-            Equipamento {{ props.row.Status === 1 ? "Online" : "Offline" }}
-          </q-tooltip>
-        </q-td>
+      <template v-slot:header="props">
+        <q-tr :props="props" class="bg-grey-1 text-uppercase text-grey-7 text-caption">
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            class="text-weight-bold"
+          >
+            {{ col.label }}
+          </q-th>
+        </q-tr>
       </template>
 
-      <!-- Cliente / Estação -->
-    <template #body-cell-client_station="props">
-  <q-td :props="props">
+      <template v-slot:body="props">
+        <q-tr :props="props" class="hover-bg-grey-1 transition-all">
+          <!-- Online -->
+          <q-td key="online" :props="props" align="center">
+            <q-icon
+              :name="props.row.Status === 1 ? 'check_circle' : 'cancel'"
+              :color="props.row.Status === 1 ? 'green-13' : 'red-13'"
+              size="sm"
+              class="drop-shadow-sm"
+            />
+            <q-tooltip content-class="bg-dark text-white">
+              Equipamento {{ props.row.Status === 1 ? "Online" : "Offline" }}
+            </q-tooltip>
+          </q-td>
 
-   <div
-  class="row items-start"
-  :class="$q.screen.lt.md ? 'column' : 'items-center justify-between'"
-  style="width: 100%"
->
+          <!-- Cliente / Estação -->
+          <q-td key="client_station" :props="props">
+            <div
+              class="row items-start"
+              :class="$q.screen.lt.md ? 'column' : 'items-center justify-between'"
+              style="width: 100%"
+            >
+              <div class="column">
+                <span class="text-weight-bold text-grey-9 flex items-center text-subtitle2">
+                  <q-icon name="store" size="16px" color="primary" class="q-mr-xs" />
+                  {{ props.row.ClientName || "—" }}
+                </span>
 
+                <span class="text-grey-6 text-caption flex items-center q-mt-xs">
+                  <q-icon name="computer" size="14px" color="grey-5" class="q-mr-xs" />
+                  {{ props.row.Name || "—" }}
+                </span>
+              </div>
 
-      <!-- Cliente + Estação (mantém em coluna exatamente como está) -->
-      <div class="column">
-        <span class="text-weight-bold text-primary flex items-center">
-          <q-icon name="store" size="16px" color="primary" class="q-mr-xs" />
-          {{ props.row.ClientName || "—" }}
-        </span>
+              <div
+                class="row items-center q-gutter-sm"
+                :class="$q.screen.lt.md ? 'q-mt-sm justify-center full-width' : 'justify-end'"
+              >
+                <q-btn
+                  size="sm"
+                  color="primary"
+                  label="TABLESPACES"
+                  @click="abrirResume(props.row)"
+                  outline
+                  icon="storage"
+                />
 
-        <span class="text-grey-7 text-caption flex items-center">
-          <q-icon name="computer" size="14px" color="grey-6" class="q-mr-xs" />
-          {{ props.row.Name || "—" }}
-        </span>
-      </div>
+                <q-btn
+                  size="sm"
+                  color="secondary"
+                  outline
+                  label="APIs"
+                  icon="link"
+                  @click="abrirApis(props.row)"
+                />
+              </div>
+            </div>
+          </q-td>
 
-      <!-- 🔵 Botões lado direito -->
-    <!-- 🔵 Botões lado direito (desktop) / abaixo (mobile) -->
-<div
-  class="row items-center q-gutter-sm"
-  :class="$q.screen.lt.md ? 'q-mt-sm justify-center full-width' : 'justify-end'"
->
-  <q-btn
-    size="sm"
-    color="primary"
-    label="TABLESPACES"
-    @click="abrirResume(props.row)"
-    outline
-    icon="storage"
-  />
+          <!-- Pendências -->
+          <q-td key="pendencies" :props="props" align="center">
+            <q-badge
+              :color="(props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? 'red-1' : 'green-1'"
+              :text-color="(props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? 'red-9' : 'green-9'"
+              class="q-px-md q-py-xs text-weight-bold shadow-0"
+              rounded
+            >
+              {{ (props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? `${props.row.ReplicationQueue.Pendencies} Pendentes` : 'OK' }}
+            </q-badge>
+          </q-td>
 
-  <q-btn
-    size="sm"
-    color="secondary"
-    outline
-    label="APIs"
-    icon="link"
-    @click="abrirApis(props.row)"
-  />
-</div>
+          <!-- Disco Host (Gauge) -->
+          <q-td key="HostDisk" :props="props" align="center">
+            <q-circular-progress
+              :value="getPercent(props.row.HostDisk) * 100"
+              size="50px"
+              :thickness="0.15"
+              :color="getColor(props.row.HostDisk)"
+              track-color="grey-3"
+              center-color="transparent"
+              angle-start="-90"
+              show-value
+              class="text-weight-bold"
+            >
+              <div class="text-caption text-grey-9" style="font-size: 11px;">{{ props.row.HostDisk || "0%" }}</div>
+            </q-circular-progress>
+          </q-td>
 
-    </div>
+          <!-- Disco BD (Gauge) -->
+          <q-td key="DBDisk" :props="props" align="center">
+            <q-circular-progress
+              :value="getPercent(props.row.DBDisk) * 100"
+              size="50px"
+              :thickness="0.15"
+              :color="getColor(props.row.DBDisk)"
+              track-color="grey-3"
+              center-color="transparent"
+              angle-start="-90"
+              show-value
+              class="text-weight-bold"
+            >
+              <div class="text-caption text-grey-9" style="font-size: 11px;">{{ props.row.DBDisk || "0%" }}</div>
+            </q-circular-progress>
+          </q-td>
 
-  </q-td>
-</template>
-
-
-
-      <!-- Pendências -->
-      <template #body-cell-pendencies="props">
-        <q-td :props="props" align="center">
-          <q-badge
-         flat
-
-            :color="(props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? 'red' : 'green'"
-            class="text-body2"
-          >
-            <!-- {{ props.row.ReplicationQueue?.Pendencies ?? 0 }} -->
-               {{
-        (props.row.ReplicationQueue?.Pendencies ?? 0) > 10
-          ? props.row.ReplicationQueue.Pendencies
-          : 0
-      }}
-
-          </q-badge>
-        </q-td>
-      </template>
-
-
-
-      <!-- Disco Host (Gauge) -->
-      <template #body-cell-HostDisk="props">
-        <q-td :props="props" align="center">
-          <q-circular-progress
-            :value="getPercent(props.row.HostDisk) * 100"
-            size="70px"
-            :thickness="0.2"
-            :color="getColor(props.row.HostDisk)"
-            track-color="grey-4"
-            angle-start="-90"
-            show-value
-            class="q-ma-sm text-weight-bold"
-          >
-            <div class="text-body2">{{ props.row.HostDisk || "0%" }}</div>
-          </q-circular-progress>
-          <q-tooltip
-            >Uso de disco do host: {{ props.row.HostDisk || "0%" }}</q-tooltip
-          >
-        </q-td>
-      </template>
-
-      <!-- Disco BD (Gauge) -->
-      <template #body-cell-DBDisk="props">
-        <q-td :props="props" align="center">
-          <q-circular-progress
-            :value="getPercent(props.row.DBDisk) * 100"
-            size="70px"
-            :thickness="0.2"
-            :color="getColor(props.row.DBDisk)"
-            track-color="grey-4"
-            angle-start="-90"
-            show-value
-            class="q-ma-sm text-weight-bold"
-          >
-            <div class="text-body2">{{ props.row.DBDisk || "0%" }}</div>
-          </q-circular-progress>
-          <q-tooltip
-            >Uso de disco do BD: {{ props.row.DBDisk || "0%" }}</q-tooltip
-          >
-        </q-td>
-      </template>
-
-      <!-- Data formatada -->
-      <template #body-cell-date="props">
-        <q-td :props="props" align="center">
-          <span class="text-caption text-grey-8">
-            {{ formatDate(props.row.UploadDate) }}
-          </span>
-        </q-td>
+          <!-- Data formatada -->
+          <q-td key="date" :props="props" align="center">
+            <span
+              class="text-caption text-weight-bold"
+              :class="getRelativeTimeColor(props.row.UploadDate)"
+            >
+              {{ formatRelativeTime(props.row.UploadDate) }}
+            </span>
+            <q-tooltip content-class="bg-dark text-white">
+              {{ formatDate(props.row.UploadDate) }}
+            </q-tooltip>
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
   </div>
@@ -496,6 +489,44 @@ function formatDate(dateString) {
     dateStyle: "short",
     timeStyle: "short",
   });
+}
+
+// Formata tempo relativo
+function formatRelativeTime(dateString) {
+  if (!dateString || dateString === "-" || dateString === "0001-01-01T00:00:00")
+    return "—";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "—";
+
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 1) return "Agora";
+  if (diffMins < 60) return `Há ${diffMins} min`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `Há ${diffHours} h`;
+
+  return formatDate(dateString); // Retorna data normal se > 24h
+}
+
+// Cor baseada no tempo relativo
+function getRelativeTimeColor(dateString) {
+  if (!dateString || dateString === "-" || dateString === "0001-01-01T00:00:00")
+    return "text-grey-5";
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "text-grey-5";
+
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins > 30) return "text-red-9"; // Crítico > 30 min
+  if (diffMins > 10) return "text-orange-9"; // Alerta > 10 min
+  return "text-green-9"; // OK
 }
 
 // Define cor do gauge

@@ -1,23 +1,23 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-   <q-header elevated class="bg-blue-grey-2 text-black q-px-md">
+   <q-header class="bg-dark-page text-white q-px-md glass" style="border-bottom: 1px solid rgba(255,255,255,0.05)">
   <q-toolbar>
     <q-btn flat dense round icon="menu" @click="toggleLeftDrawer" />
     <q-avatar size="42px" class="q-mr-sm">
       <img src="wpsicone.png" alt="Logo" />
     </q-avatar>
-    <q-toolbar-title>Analistas de Suporte</q-toolbar-title>
+    <!-- <q-toolbar-title class="text-weight-bold text-gradient">Analistas de Suporte</q-toolbar-title> -->
     <q-space />
     <div class="row items-center q-gutter-sm">
-      <span v-if="authStore.userEmail" class="text-caption text-weight-medium">
+      <span v-if="authStore.userEmail" class="text-caption text-weight-medium text-grey-4">
         {{ authStore.userEmail }}
       </span>
       <q-btn
-
         flat
         round
         dense
         icon="logout"
+        color="white"
         @click="logout"
         title="Sair"
       />
@@ -29,31 +29,23 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-
-      class="bg-grey-2 text-grey-9"
+      class="bg-dark-page text-grey-10"
+      :width="260"
     >
       <q-scroll-area style="height: 100%">
-        <q-list padding>
-          <!-- Cabeçalho do usuário -->
-          <div class="column items-center q-py-md">
-            <!-- <q-avatar size="64px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" alt="User" />
-            </q-avatar>
-            <div class="text-weight-bold text-subtitle1 q-mt-sm">
-              {{ authStore.usuario.User.Name || 'Analista' }}
-            </div>
-            <div class="text-caption text-grey-7">Analista Suporte</div> -->
-          </div>
+        <div class="q-pa-md flex flex-center">
+           <!-- Optional: Add a larger logo or user info here -->
+        </div>
 
-          <q-separator spaced />
-
+        <q-list padding class="q-gutter-y-sm">
           <!-- Itens do menu -->
           <q-item
             clickable
             v-ripple
             to="/dashboard"
             exact
-            active-class="bg-blue-6 text-white"
+            active-class="bg-gradient-primary text-white shadow-4"
+            class="rounded-borders q-mx-sm"
           >
             <q-item-section avatar>
               <q-icon name="dashboard" />
@@ -68,14 +60,15 @@
             v-ripple
             to="/chamados"
             exact
-            active-class="bg-blue-6 text-white"
+            active-class="bg-gradient-primary text-white shadow-4"
+            class="rounded-borders q-mx-sm"
           >
             <q-item-section avatar>
               <q-icon name="assignment" />
             </q-item-section>
             <q-item-section>
               <q-item-label>Chamados</q-item-label>
-              <q-item-label caption>Gerenciar chamados</q-item-label>
+              <q-item-label caption class="text-grey-5">Gerenciar chamados</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -84,14 +77,15 @@
             v-ripple
             to="/relatorios"
             exact
-            active-class="bg-blue-6 text-white"
+            active-class="bg-gradient-primary text-white shadow-4"
+            class="rounded-borders q-mx-sm"
           >
             <q-item-section avatar>
               <q-icon name="bar_chart" />
             </q-item-section>
             <q-item-section>
               <q-item-label>Ranking Top-10</q-item-label>
-              <q-item-label caption>Unidades com mais chamados</q-item-label>
+              <q-item-label caption class="text-grey-5">Unidades com mais chamados</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -100,18 +94,19 @@
             v-ripple
             to="/replicacao"
             exact
-            active-class="bg-blue-6 text-white"
+            active-class="bg-gradient-primary text-white shadow-4"
+            class="rounded-borders q-mx-sm"
           >
             <q-item-section avatar>
               <q-icon name="dns" />
             </q-item-section>
             <q-item-section>
               <q-item-label>Unidades</q-item-label>
-              <q-item-label caption>Servidor local</q-item-label>
+              <q-item-label caption class="text-grey-5">Servidor local</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-separator spaced />
+          <q-separator spaced class="bg-grey-8" />
 
           <q-item
             clickable
@@ -119,14 +114,15 @@
             to="/meus-chamados"
             exact
             disable
-            active-class="bg-blue-6 text-white"
+            active-class="bg-gradient-primary text-white shadow-4"
+            class="rounded-borders q-mx-sm"
           >
             <q-item-section avatar>
               <q-icon name="history" />
             </q-item-section>
             <q-item-section>
               <q-item-label>Meus chamados</q-item-label>
-              <q-item-label caption>Histórico de atendimentos</q-item-label>
+              <q-item-label caption class="text-grey-5">Histórico de atendimentos</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -165,11 +161,6 @@ function toggleLeftDrawer () {
 const logout = async () => {
   await authStore.logout()
   router.push('/login')
-  // $q.notify({
-  //   type: 'info',
-  //   message: 'Logout realizado com sucesso',
-  //   position: 'top'
-  // })
 }
 
 onMounted(() => {
@@ -179,9 +170,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.q-item {
+  transition: all 0.3s ease;
+}
 
-.q-item:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-  transition: background-color 0.2s;
+.q-item:hover:not(.q-item--active) {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateX(5px);
 }
 </style>

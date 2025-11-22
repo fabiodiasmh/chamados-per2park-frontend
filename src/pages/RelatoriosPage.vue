@@ -1,24 +1,24 @@
 <template>
-  <q-page class="dashboard-page">
+  <q-page class="dashboard-page q-pa-md">
     <div class="container">
       <!-- Header -->
-      <div class="header-section">
-        <div class="text-h6 text-weight-bold text-white">
-          Ranking de Unidades com Mais Chamados Abertos
+      <div class="header-section q-mb-lg">
+        <div class="text-h5 text-weight-bold text-white">
+          Ranking de Unidades
         </div>
-        <div class="text-subtitle2 text-grey-3">
-          Atualizado em: {{ lastUpdate }}
+        <div class="text-subtitle2 text-grey-4">
+          Unidades com mais chamados abertos • Atualizado: {{ lastUpdate }}
         </div>
       </div>
 
       <!-- Loading -->
       <div v-if="loading" class="loading-container flex flex-center">
         <q-spinner-hourglass color="primary" size="3em" />
-        <div class="q-mt-md text-subtitle1 text-grey-7">Carregando dados...</div>
+        <div class="q-mt-md text-subtitle1 text-grey-5">Carregando dados...</div>
       </div>
 
       <!-- Error -->
-      <q-banner v-if="error" class="bg-negative text-white q-mb-lg">
+      <q-banner v-if="error" class="bg-negative text-white q-mb-lg rounded-borders">
         <template v-slot:avatar>
           <q-icon name="error" color="white" />
         </template>
@@ -33,59 +33,69 @@
         v-if="!loading && !error && (!topLocais || topLocais.length === 0)"
         class="empty-state text-center q-pa-xl"
       >
-        <q-icon name="inbox" size="5em" color="grey-5" />
+        <q-icon name="emoji_events" size="5em" color="grey-6" />
         <div class="text-h6 text-grey-5 q-mt-md">Nenhum dado disponível</div>
       </div>
 
-<!-- Ranking List -->
-<div
-  v-if="!loading && !error && topLocais && topLocais.length > 0"
-  class="ranking-list"
->
-  <q-card
-    v-for="(item, index) in sortedTopLocais.slice(0, 10)"
-    :key="index"
-    class="ranking-item"
-    @click="irParaChamadosPorLocal(item)"
-  >
-    <q-card-section class="ranking-content flex items-center">
-      <!-- Medalha ou Posição -->
-      <div class="position-container flex flex-center">
-        <q-icon
-          v-if="index === 0"
-          name="emoji_events"
-          size="1.5em"
-          color="yellow"
-        />
-        <q-icon
-          v-else-if="index === 1"
-          name="emoji_events"
-          size="1.5em"
-          color="grey"
-        />
-        <q-icon
-          v-else-if="index === 2"
-          name="emoji_events"
-          size="1.5em"
-          color="orange"
-        />
-        <div v-else class="position-number text-white text-weight-bold">
-          {{ index + 1 }}
-        </div>
-      </div>
+      <!-- Ranking List -->
+      <div
+        v-if="!loading && !error && topLocais && topLocais.length > 0"
+        class="row q-col-gutter-md"
+      >
+        <div
+          v-for="(item, index) in sortedTopLocais.slice(0, 12)"
+          :key="index"
+          class="col-12 col-sm-6 col-md-4 col-lg-3"
+        >
+          <q-card
+            class="ranking-item glass-light column items-center text-center q-pa-md"
+            @click="irParaChamadosPorLocal(item)"
+          >
+            <!-- Medalha ou Posição -->
+            <div class="position-badge q-mb-sm">
+              <q-icon
+                v-if="index === 0"
+                name="emoji_events"
+                size="3em"
+                color="yellow-8"
+                class="drop-shadow"
+              />
+              <q-icon
+                v-else-if="index === 1"
+                name="emoji_events"
+                size="3em"
+                color="grey-5"
+                class="drop-shadow"
+              />
+              <q-icon
+                v-else-if="index === 2"
+                name="emoji_events"
+                size="3em"
+                color="orange-8"
+                class="drop-shadow"
+              />
+              <div v-else class="position-circle flex flex-center text-h6 text-white text-weight-bold">
+                {{ index + 1 }}
+              </div>
+            </div>
 
-      <!-- Nome e Chamados -->
-      <div class="details flex column justify-center q-pl-md q-pt-sm">
-        <div class="text-subtitle2 text-white text-weight-medium">
-          {{ extrairLocal(item).nome }}
-        </div>
-        <div class="text-h6 text-white  q-mt-xs">
-          {{ extrairLocal(item).totalChamados }} chamados
+            <!-- Nome e Chamados -->
+            <div class="full-width">
+              <div class="text-subtitle1 text-white text-weight-bold ellipsis-2-lines q-mb-xs" style="min-height: 48px;">
+                {{ extrairLocal(item).nome }}
+              </div>
+              <q-chip
+                color="primary"
+                text-color="white"
+                size="sm"
+                class="text-weight-bold"
+              >
+                {{ extrairLocal(item).totalChamados }} chamados
+              </q-chip>
+            </div>
+          </q-card>
         </div>
       </div>
-    </q-card-section>
-  </q-card>
-</div>
     </div>
   </q-page>
 </template>
@@ -178,7 +188,7 @@ const irParaChamadosPorLocal = (item) => {
 // })
 onMounted(() => {
   fetchData()
-  intervalId = setInterval(fetchData, 180000) // 5 minutos
+  intervalId = setInterval(fetchData, 180000) // 3 minutos
 })
 
 onUnmounted(() => {
@@ -187,121 +197,38 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Layout Geral */
 .dashboard-page {
-  background: linear-gradient(135deg, #1c2b36 0%, #2c3e50 100%);
   min-height: 100vh;
-  padding: 24px;
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-}
-
-/* Cabeçalho */
-.header-section {
-  margin-bottom: 36px;
-  padding: 20px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Estados de carregamento e erro */
-.loading-container {
-  min-height: 300px;
-}
-
-.empty-state {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 16px;
-  border: 1px dashed rgba(255, 255, 255, 0.1);
-}
-
-/* Lista de Ranking */
-.ranking-list {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 }
 
 .ranking-item {
   cursor: pointer;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 70px;
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background-color: #2d3748;
-  border: 1px solid silver;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
 }
 
 .ranking-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-  background-color: #333f50;
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-/* Conteúdo interno do item */
-.ranking-content {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.position-container {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+.position-circle {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.position-number {
-  font-size: 1rem;
-  font-weight: bold;
-  color: white;
-}
-
-.details {
-  flex: 1;
-  overflow: hidden;
-}
-
-.text-subtitle1 {
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-}
-
-.text-h6 {
-  font-size: 1.1rem;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .header-section {
-    padding: 16px;
-    margin-bottom: 24px;
-  }
-
-  .ranking-item {
-    padding: 12px;
-    min-height: auto;
-  }
-
-  .details {
-    q-pl-md: 0;
-  }
+.drop-shadow {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 </style>

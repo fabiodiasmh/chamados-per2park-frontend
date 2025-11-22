@@ -1,3 +1,239 @@
+<!-- <template>
+  <q-page class="login-page flex flex-center">
+    <div class="background-animation">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+
+    <div class="login-container z-top">
+      <q-card class="login-card glass q-pa-lg">
+        <q-card-section class="text-center">
+          <div class="logo-container q-mb-md">
+            <q-avatar size="80px" class="shadow-10">
+              <img src="wpsicone.png" alt="Logo" />
+            </q-avatar>
+          </div>
+          <div class="text-h5 text-white text-weight-bold q-mb-xs">Bem-vindo</div>
+          <div class="text-caption text-grey-4">Faça login para continuar</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-form @submit="onSubmit" class="q-gutter-md">
+            <q-input
+              v-model="formData.Login"
+              label="Email"
+              type="email"
+              dense
+              outlined
+              dark
+              color="primary"
+              class="input-field"
+              :rules="[
+                (val) => !!val || 'E-mail é obrigatório',
+                (val) => /.+@.+\..+/.test(val) || 'E-mail inválido',
+              ]"
+              lazy-rules
+            >
+              <template v-slot:prepend>
+                <q-icon name="email" color="primary" />
+              </template>
+            </q-input>
+
+            <q-input
+              v-model="formData.Password"
+              label="Senha"
+              :type="showPassword ? 'text' : 'password'"
+              dense
+              outlined
+              dark
+              color="primary"
+              class="input-field"
+              :rules="[(val) => !!val || 'Senha é obrigatória']"
+              lazy-rules
+            >
+              <template v-slot:prepend>
+                <q-icon name="lock" color="primary" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  :name="showPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  color="grey-5"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </q-input>
+
+            <div class="q-mt-lg">
+              <q-btn
+                type="submit"
+                class="full-width bg-gradient-primary text-white shadow-3"
+                label="Acessar"
+                rounded
+                size="lg"
+                :loading="authStore.loading"
+                :disable="authStore.loading"
+              />
+            </div>
+          </q-form>
+        </q-card-section>
+
+        <q-card-section class="text-center q-pt-none">
+            <div class="text-caption text-grey-6">Versão 1.0.0</div>
+        </q-card-section>
+      </q-card>
+    </div>
+  </q-page>
+</template>
+
+<script setup>
+import { computed, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "stores/auth";
+import { useQuasar } from "quasar";
+
+defineOptions({
+  name: "LoginPage",
+});
+
+const router = useRouter();
+const authStore = useAuthStore();
+const $q = useQuasar();
+
+const formData = ref({
+  Login: "",
+  Password: "",
+});
+
+const ip_servidor = computed({
+  get: () => authStore.ip_servidor_store,
+  set: (value) => {
+    authStore.ip_servidor_store = value;
+    localStorage.setItem("ip_servidor", value);
+  },
+});
+
+const showPassword = ref(false);
+
+const onSubmit = async () => {
+  localStorage.setItem("ip_servidor", ip_servidor.value);
+
+  const result = await authStore.login(formData.value);
+
+  if (result.success) {
+    $q.notify({
+      type: 'positive',
+      message: 'Login realizado com sucesso!',
+      caption: 'Redirecionando...',
+      position: 'top-right',
+      progress: true,
+      timeout: 1500,
+      icon: 'check_circle',
+    });
+
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 1000);
+
+    const logs={
+      usuario_id: authStore.usuario.User.Id,
+      nome: authStore.usuario.User.Name,
+      email: authStore.usuario.User.Login,
+    }
+
+    try {
+      await authStore.log_user_login(logs)
+    } catch (error) {
+      console.error(error);
+    }
+
+  } else {
+    $q.notify({
+      type: 'negative',
+      message: result.message || 'Falha no login',
+      position: 'top'
+    })
+  }
+};
+
+onMounted(() => {
+    // Init logic if needed
+});
+</script>
+
+<style scoped>
+.login-page {
+  background: #121212;
+  overflow: hidden;
+  position: relative;
+}
+
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.blob {
+  position: absolute;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: float 10s infinite ease-in-out;
+}
+
+.blob-1 {
+  top: -10%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: #1976D2;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  bottom: -10%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: #9C27B0;
+  animation-delay: 2s;
+}
+
+.blob-3 {
+  top: 40%;
+  left: 40%;
+  width: 300px;
+  height: 300px;
+  background: #26A69A;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 50px); }
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+.login-card {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-field :deep(.q-field__control) {
+    border-radius: 12px;
+}
+</style> -->
+
 <template>
   <q-page class="login-page">
     <div class="login-container">

@@ -1,6 +1,6 @@
 <!-- src/components/ServidoresOfflineCard.vue -->
 <template>
-  <q-card class="chart-card half-width">
+  <q-card class="glass half-width">
     <q-card-section class="text-center">
       <div class="text-h6 text-white">Servidores Offline</div>
     </q-card-section>
@@ -21,8 +21,9 @@
         flat
         :no-data-label="'Nenhum servidor offline encontrado.'"
         :no-results-label="'Nenhum resultado encontrado.'"
-        class="q-mt-none"
+        class="bg-transparent text-white"
         table-style="table-layout: fixed; width: 100%;"
+        card-class="bg-transparent"
       >
         <!-- Coluna Cliente -->
         <template v-slot:body-cell-ClientName="props">
@@ -31,13 +32,6 @@
           </q-td>
         </template>
 
-        <!-- Coluna Unidade -->
-        <!-- <template v-slot:body-cell-Name="props">
-          <q-td :props="props" class="text-wrap" style="max-width: 200px;">
-            {{ props.row.Name }}
-          </q-td>
-        </template> -->
-
         <!-- Coluna Data Último Upload -->
         <template v-slot:body-cell-UploadDate="props">
           <q-td :props="props" class="text-wrap">
@@ -45,7 +39,7 @@
               {{ formatDate(props.row.UploadDate) }}
               <div
                 v-if="isOffline(props.row.UploadDate)"
-                class="text-red text-caption"
+                class="text-red-4 text-caption"
               >
                 Offline há {{ getElapsedTime(props.row.UploadDate) }}
               </div>
@@ -117,19 +111,9 @@ const getElapsedTime = (isoString) => {
   if (hours > 0) return `${hours}h ${minutes}min`
   return `${minutes} min`
 }
-
-
-
 </script>
 
 <style scoped>
-.chart-card {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
-
 /* Força quebra de linha e evita overflow horizontal */
 .q-table tbody td {
   word-break: break-word;
@@ -138,25 +122,26 @@ const getElapsedTime = (isoString) => {
 }
 
 /* Estiliza cabeçalho para melhor contraste */
-.q-table thead th {
+:deep(.q-table thead th) {
   font-weight: bold;
   text-align: left;
   background-color: rgba(255, 255, 255, 0.08);
+  color: white;
 }
 
 /* ⬇️ AJUSTE DE PADDING MENOR (denser que dense!) ⬇️ */
-.q-table .q-td,
-.q-table .q-th {
+:deep(.q-table .q-td),
+:deep(.q-table .q-th) {
   padding: 4px 8px !important;
 }
 
 /* Opcional: define altura mínima para linhas */
-.q-table tbody tr {
+:deep(.q-table tbody tr) {
   min-height: 36px;
 }
 
 /* Remove borda superior da primeira linha para ficar mais limpo */
-.q-table tbody tr:first-child td {
+:deep(.q-table tbody tr:first-child td) {
   border-top: none;
 }
 </style>
