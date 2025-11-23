@@ -1,8 +1,11 @@
 <template>
-  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" transition-show="scale" transition-hide="scale" class="backdrop-blur">
-    <q-card style="max-width: 1100px; width: 92vw; max-height: 92vh; background: #ffffff; border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+  <q-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" transition-show="scale"
+    transition-hide="scale" class="backdrop-blur">
+    <q-card
+      style="max-width: 1100px; width: 92vw; max-height: 92vh; background: #ffffff; border-radius: 20px; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
       <!-- Cabeçalho -->
-      <q-card-section class="row items-center q-pb-sm q-pt-md" style="background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);">
+      <q-card-section class="row items-center q-pb-sm q-pt-md"
+        style="background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);">
         <q-icon name="support_agent" color="white" size="md" class="q-mr-sm" />
         <div class="text-h5 text-white">Chamado #{{ chamado?.Id }}</div>
         <q-space />
@@ -19,7 +22,8 @@
             <div class="row q-col-gutter-md">
               <!-- Local -->
               <div class="col-12 col-md-6">
-                <div class="info-card-white q-pa-md rounded-borders" style="min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="info-card-white q-pa-md rounded-borders"
+                  style="min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
                   <div>
                     <div class="row items-center q-gutter-sm q-mb-sm">
                       <q-icon name="place" color="orange" size="sm" />
@@ -30,10 +34,11 @@
 
                   <div class="row items-center q-gutter-md q-mt-sm">
                     <div class="row items-center text-grey-9">
-                       <q-icon name="schedule" size="xs" class="q-mr-xs" />
-                       <span class="text-caption">{{ formatarData(chamado?.OpeningDate) }}</span>
+                      <q-icon name="schedule" size="xs" class="q-mr-xs" />
+                      <span class="text-caption">{{ formatarData(chamado?.OpeningDate) }}</span>
                     </div>
-                    <q-badge :style="{ backgroundColor: getStatusColor(chamado?.Status) }" :text-color="getStatusTextColor(chamado?.Status)">
+                    <q-badge :style="{ backgroundColor: getStatusColor(chamado?.Status) }"
+                      :text-color="getStatusTextColor(chamado?.Status)">
                       {{ getStatusLabel(chamado?.Status) }}
                     </q-badge>
                   </div>
@@ -48,29 +53,14 @@
                     <div class="text-caption text-grey-9">Consultar SAT</div>
                   </div>
                   <div class="row items-center q-gutter-sm">
-                    <q-input
-                      v-model="valor_numero_serie"
-                      outlined
-                      dense
-                      placeholder="Número de série"
-                      class="col"
-                      bg-color="white"
-                      color="indigo"
-                      @keyup.enter="buscar_SAT"
-                    >
+                    <q-input v-model="valor_numero_serie" outlined dense placeholder="Número de série" class="col"
+                      bg-color="white" color="indigo" @keyup.enter="buscar_SAT">
                       <template v-slot:prepend>
                         <q-icon name="search" color="grey-6" size="sm" />
                       </template>
                     </q-input>
-                    <q-btn
-                      color="indigo"
-                      icon="check_circle"
-                      label="Verificar"
-                      @click="buscar_SAT"
-                      :loading="loadingSAT"
-                      unelevated
-                      dense
-                    />
+                    <q-btn color="indigo" icon="check_circle" label="Verificar" @click="buscar_SAT"
+                      :loading="loadingSAT" unelevated dense />
                   </div>
                 </div>
               </div>
@@ -96,7 +86,8 @@
                 <div class="row items-center q-gutter-xs">
                   <q-icon name="phone" color="green" size="sm" />
                   <span class="text-caption text-grey-9">Telefone:</span>
-                  <a v-if="chamado?.ContactPhone" @click.prevent="abrirWhatsApp(chamado.ContactPhone)" class="cursor-pointer text-positive text-body2 text-weight-medium">
+                  <a v-if="chamado?.ContactPhone" @click.prevent="abrirWhatsApp(chamado.ContactPhone)"
+                    class="cursor-pointer text-positive text-body2 text-weight-medium">
                     <q-icon name="fab fa-whatsapp" size="sm" class="q-mr-xs" />
                     {{ chamado.ContactPhone }}
                   </a>
@@ -112,7 +103,8 @@
               <q-icon name="description" color="amber-8" size="md" />
               <div class="text-h6 text-grey-10">Descrição do Problema</div>
             </div>
-            <div class="q-pa-lg rounded-borders text-body1" style="background: #f5f5f5; border-left: 4px solid #FFA726; white-space: pre-wrap; font-size: 16px; line-height: 1.7; color: #212121;">
+            <div class="q-pa-lg rounded-borders text-body1"
+              style="background: #f5f5f5; border-left: 4px solid #FFA726; white-space: pre-wrap; font-size: 16px; line-height: 1.7; color: #212121;">
               {{ chamado?.Description || "Sem descrição" }}
             </div>
           </div>
@@ -124,15 +116,8 @@
               <div class="text-h6 text-grey-10">Equipamentos</div>
             </div>
             <div class="row q-gutter-xs info-card-white q-pa-sm rounded-borders">
-              <q-chip
-                v-for="equip in chamado.Equipments"
-                :key="equip.Id"
-                dense
-                size="sm"
-                icon="router"
-                color="secondary"
-                text-color="white"
-              >
+              <q-chip v-for="equip in chamado.Equipments" :key="equip.Id" dense size="sm" icon="router"
+                color="secondary" text-color="white">
                 {{ equip.Name }}
               </q-chip>
             </div>
@@ -142,12 +127,8 @@
           <div class="col-12" v-if="chamado?.HistoryCalls && chamado.HistoryCalls.length > 0">
             <div class="info-card q-pa-sm rounded-borders">
               <q-timeline color="primary" layout="dense" side="right">
-                <q-timeline-entry
-                  v-for="(hist, index) in chamado.HistoryCalls"
-                  :key="index"
-                  icon="chat"
-                  class="timeline-entry-compact"
-                >
+                <q-timeline-entry v-for="(hist, index) in chamado.HistoryCalls" :key="index" icon="chat"
+                  class="timeline-entry-compact">
                   <!-- Título -->
                   <template #title>
                     <div class="text-black text-weight-medium">
@@ -176,43 +157,16 @@
 
       <!-- Rodapé com Ações -->
       <q-card-actions class="q-pa-md row q-gutter-sm" style="background: white;">
-        <q-btn
-          v-if="chamado?.Status == 0"
-          color="primary"
-          icon="play_arrow"
-          label="Atender"
+        <q-btn v-if="chamado?.Status == 0" color="primary" icon="play_arrow" label="Atender"
           @click="abrirPromptAtualizacao(2, 'Iniciar atendimento', saudacao() + ' o chamado foi recepcionado e está na fila de atendimento.')"
-          unelevated
-          class="col"
-          :loading="loading"
-        />
-        <q-btn
-          color="primary"
-          icon="reply"
-          label="Responder"
-          @click="abrirPromptAtualizacao(9, 'Resposta', '')"
-          unelevated
-          class="col"
-          :loading="loading"
-        />
-        <q-btn
-          color="positive"
-          icon="check_circle"
-          label="Finalizar"
-          @click="abrirPromptAtualizacao(5, 'Chamado resolvido', 'Chamado encerrado.')"
-          unelevated
-          class="col"
-          :loading="loading"
-        />
-        <q-btn-dropdown
-          color="grey-7"
-          label="Mais"
-          icon="more_horiz"
-          unelevated
-          class="col"
-          dropdown-icon="expand_more"
-          :loading="loading"
-        >
+          unelevated class="col" :loading="loading" />
+        <q-btn color="primary" icon="reply" label="Responder" @click="abrirPromptAtualizacao(9, 'Resposta', '')"
+          unelevated class="col" :loading="loading" />
+        <q-btn color="positive" icon="check_circle" label="Finalizar"
+          @click="abrirPromptAtualizacao(5, 'Chamado resolvido', 'Chamado encerrado.')" unelevated class="col"
+          :loading="loading" />
+        <q-btn-dropdown color="grey-7" label="Mais" icon="more_horiz" unelevated class="col" dropdown-icon="expand_more"
+          :loading="loading">
           <q-list class="bg-dark text-white">
             <q-item clickable @click="abrirPromptAtualizacao(9, 'Pedir evidência', 'Favor encaminhar a evidência.')">
               <q-item-section avatar><q-icon name="camera_alt" color="blue-grey" /></q-item-section>
@@ -222,12 +176,14 @@
               <q-item-section avatar><q-icon name="fact_check" color="deep-purple" /></q-item-section>
               <q-item-section>Pedir Validação</q-item-section>
             </q-item>
-            <q-item clickable @click="abrirPromptAtualizacao(9, 'Solicitar número de série', 'Solicito o número de série do(s) equipamento(s).')">
+            <q-item clickable
+              @click="abrirPromptAtualizacao(9, 'Solicitar número de série', 'Solicito o número de série do(s) equipamento(s).')">
               <q-item-section avatar><q-icon name="qr_code" color="indigo" /></q-item-section>
               <q-item-section>Solicitar Nº Série</q-item-section>
             </q-item>
             <q-separator dark />
-            <q-item clickable @click="abrirPromptAtualizacao(11, 'Assistência Técnica', 'Encaminhado para assistência técnica.')">
+            <q-item clickable
+              @click="abrirPromptAtualizacao(11, 'Assistência Técnica', 'Encaminhado para assistência técnica.')">
               <q-item-section avatar><q-icon name="build" color="red" /></q-item-section>
               <q-item-section>Assistência Técnica</q-item-section>
             </q-item>
@@ -241,6 +197,49 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <!-- Modal de Múltiplos SATs -->
+  <q-dialog v-model="showMultipleSatModal">
+    <q-card style="min-width: 700px; max-width: 90vw;">
+      <q-card-section class="bg-warning text-white row items-center">
+        <q-icon name="warning" size="md" class="q-mr-sm" />
+        <div class="text-h6">Múltiplos números de série encontrados</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+
+      <q-card-section class="q-pa-none">
+        <q-table
+          flat
+          bordered
+          :rows="multipleSatResults"
+          :columns="satColumns"
+          row-key="id"
+          :pagination="{ rowsPerPage: 0 }"
+          hide-bottom
+        >
+          <template v-slot:body-cell-ativo="props">
+            <q-td :props="props">
+              <q-badge :color="props.row.indAtivo ? 'green' : 'red'">
+                {{ props.row.indAtivo ? 'Sim' : 'Não' }}
+              </q-badge>
+            </q-td>
+          </template>
+          <template v-slot:body-cell-intervencao="props">
+            <q-td :props="props">
+              <span :class="props.row.indAtivo ? 'text-blue text-weight-bold' : 'text-red text-weight-bold'">
+                {{ props.row.indAtivo ? 'Corretiva' : 'Orçamento' }}
+              </span>
+            </q-td>
+          </template>
+        </q-table>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Fechar" color="primary" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -267,6 +266,17 @@ const loading = ref(false)
 const loadingSAT = ref(false)
 const valor_numero_serie = ref('')
 const valor_saida_sat = ref(null)
+
+const showMultipleSatModal = ref(false)
+const multipleSatResults = ref([])
+
+const satColumns = [
+  { name: 'cliente', label: 'Cliente', field: row => row.cliente?.nomeFantasia, align: 'left' },
+  { name: 'local', label: 'Local', field: row => row.localAtendimento?.nomeLocal, align: 'left' },
+  { name: 'equipamento', label: 'Equipamento', field: row => row.equipamento?.codEEquip, align: 'left' },
+  { name: 'ativo', label: 'Ativo', field: 'indAtivo', align: 'center' },
+  { name: 'intervencao', label: 'Intervenção', field: 'indAtivo', align: 'center' }
+]
 
 const formatarData = (dataString) => {
   if (!dataString) return "—";
@@ -315,9 +325,8 @@ const getStatusTextColor = (status) => {
 };
 
 const copiarChamado = () => {
-  const texto = `Chamado: ${props.chamado?.Id} - ${
-    props.chamado?.Local?.Name || "Local não informado"
-  }`;
+  const texto = `Chamado: ${props.chamado?.Id} - ${props.chamado?.Local?.Name || "Local não informado"
+    }`;
   navigator.clipboard.writeText(texto);
   $q.notify({
     message: "Copiado!",
@@ -336,8 +345,8 @@ const formatarNumeroWhatsApp = (numero) => {
 };
 
 const abrirWhatsApp = (numero) => {
-    const num = formatarNumeroWhatsApp(numero);
-    if(num) window.open(`https://wa.me/${num}`, '_blank');
+  const num = formatarNumeroWhatsApp(numero);
+  if (num) window.open(`https://wa.me/${num}`, '_blank');
 }
 
 const buscar_SAT = async () => {
@@ -356,15 +365,30 @@ const buscar_SAT = async () => {
     if (respostaSAT.data.length === 0) {
       $q.notify({ type: 'negative', message: 'Número de série não encontrado!' });
     } else if (respostaSAT.data.length > 1) {
-      $q.notify({ type: 'warning', message: 'Múltiplos SATs encontrados.' });
+      multipleSatResults.value = respostaSAT.data;
+      showMultipleSatModal.value = true;
       valor_numero_serie.value = "";
     } else {
       const w = respostaSAT.data[0];
       valor_saida_sat.value = w;
+
       $q.dialog({
-          title: "SAT Encontrado",
-          message: `Cliente: ${w.cliente.nomeFantasia}\nLocal: ${w.localAtendimento.nomeLocal}\nEquipamento: ${w.equipamento.codEEquip}`,
-          dark: true
+        title: "SAT Encontrado - N/S: " + w.numSerie,
+        html: true,
+        message: `
+            <ul style="text-align: left; margin: 0; padding-left: 25px;">
+
+              <li><strong>Cliente:</strong> ${w.cliente.nomeFantasia}</li>
+              <li><strong>Local:</strong> ${w.localAtendimento.nomeLocal}</li>
+              <li><strong>Equipamento:</strong> ${w.equipamento.codEEquip}</li>
+              <li><strong>Ativo:</strong> ${w.indAtivo ? "sim" : "não"}</li>
+              <li>
+      <strong>Tipo de intervenção:</strong>
+      ${w.indAtivo ? '<strong><span style="color: blue;">Corretiva</span></strong>' : '<strong><span style="color: red;">Orçamento</span></strong>'}
+</li>
+            </ul>
+          `,
+
       });
     }
   } catch (e) {
@@ -454,12 +478,14 @@ const atualizarStatusChamado = async (novoStatus, descricao) => {
 .info-card-white {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e0e0e0;
 }
+
 .timeline-entry-compact {
   margin-bottom: 8px;
 }
+
 .backdrop-blur :deep(.q-dialog__backdrop) {
   backdrop-filter: blur(10px);
   background: rgba(0, 0, 0, 0.4) !important;

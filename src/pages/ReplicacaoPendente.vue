@@ -11,7 +11,7 @@
         </div>
       </div>
 
-      <div class="q-mb-lg">
+      <div class="q-mb-lg" v-if="!loading && replicacaoData.length > 0">
          <totens-table :data="replicacaoData" />
       </div>
 
@@ -90,7 +90,7 @@ onMounted(() => {
   fetchData()
   intervalId = setInterval(() => {
     fetchData()
-  }, 180000) // 3 min para atualizar dados
+  }, 120000) // 3 min para atualizar dados
 })
 
 onUnmounted(() => {

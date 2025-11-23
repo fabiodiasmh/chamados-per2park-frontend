@@ -61,7 +61,7 @@
           <q-td key="online" :props="props" align="center">
             <q-icon
               :name="props.row.Status === 1 ? 'check_circle' : 'cancel'"
-              :color="props.row.Status === 1 ? 'green-13' : 'red-13'"
+              :color="props.row.Status === 1 ? 'green-7' : 'red-7'"
               size="sm"
               class="drop-shadow-sm"
             />
@@ -109,6 +109,25 @@
                   label="APIs"
                   icon="link"
                   @click="abrirApis(props.row)"
+                />
+
+                <q-btn
+                  size="sm"
+                  color="purple"
+                  outline
+                  label="Localização"
+                  icon="place"
+                  @click="abrirMapa(props.row)"
+                  v-if="props.row.Latitude && props.row.Longitude"
+                />
+                <q-btn
+                  size="sm"
+                  color="grey-5"
+                  outline
+                  label="Localização"
+                  icon="location_off"
+                  disable
+                  v-else
                 />
               </div>
             </div>
@@ -174,6 +193,138 @@
           </q-td>
         </q-tr>
       </template>
+
+
+      <!-- Slot para Grid (Mobile) -->
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4">
+          <q-card class="bg-white text-grey-9 q-mb-sm shadow-1 rounded-borders">
+            <q-card-section class="row items-center justify-between q-pb-none">
+              <div class="text-subtitle2 text-weight-bold flex items-center">
+                <q-icon name="store" color="primary" class="q-mr-xs" />
+                {{ props.row.ClientName || "—" }}
+              </div>
+              <q-icon
+                :name="props.row.Status === 1 ? 'check_circle' : 'cancel'"
+                :color="props.row.Status === 1 ? 'green-7' : 'red-7'"
+                size="sm"
+              />
+            </q-card-section>
+
+            <q-card-section class="q-pt-xs text-caption text-grey-6 flex items-center">
+              <q-icon name="computer" size="xs" class="q-mr-xs" />
+              {{ props.row.Name || "—" }}
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-section class="row items-center justify-around q-py-sm">
+              <!-- Pendências -->
+              <div class="column items-center">
+                <div class="text-caption text-grey-7">Pendências</div>
+                <q-badge
+                  :color="(props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? 'red-1' : 'green-1'"
+                  :text-color="(props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? 'red-9' : 'green-9'"
+                  class="text-weight-bold"
+                  rounded
+                >
+                  {{ (props.row.ReplicationQueue?.Pendencies ?? 0) > 10 ? props.row.ReplicationQueue.Pendencies : 'OK' }}
+                </q-badge>
+              </div>
+
+              <!-- Host Disk -->
+              <div class="column items-center">
+                <div class="text-caption text-grey-7">Host</div>
+                <q-circular-progress
+                  :value="getPercent(props.row.HostDisk) * 100"
+                  size="35px"
+                  :thickness="0.2"
+                  :color="getColor(props.row.HostDisk)"
+                  track-color="grey-3"
+                  center-color="transparent"
+                  show-value
+                  class="text-weight-bold"
+                  style="font-size: 10px;"
+                >
+                  {{ props.row.HostDisk || "0%" }}
+                </q-circular-progress>
+              </div>
+
+              <!-- DB Disk -->
+              <div class="column items-center">
+                <div class="text-caption text-grey-7">DB</div>
+                <q-circular-progress
+                  :value="getPercent(props.row.DBDisk) * 100"
+                  size="35px"
+                  :thickness="0.2"
+                  :color="getColor(props.row.DBDisk)"
+                  track-color="grey-3"
+                  center-color="transparent"
+                  show-value
+                  class="text-weight-bold"
+                  style="font-size: 10px;"
+                >
+                  {{ props.row.DBDisk || "0%" }}
+                </q-circular-progress>
+              </div>
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-section class="q-py-xs text-center">
+              <span
+                class="text-caption text-weight-bold"
+                :class="getRelativeTimeColor(props.row.UploadDate)"
+              >
+                Atualizado: {{ formatRelativeTime(props.row.UploadDate) }}
+              </span>
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="center" class="q-gutter-sm">
+              <q-btn
+                size="sm"
+                color="primary"
+                label="TBS"
+                @click="abrirResume(props.row)"
+                outline
+                icon="storage"
+                dense
+              />
+              <q-btn
+                size="sm"
+                color="secondary"
+                outline
+                label="APIs"
+                icon="link"
+                @click="abrirApis(props.row)"
+                dense
+              />
+              <q-btn
+                v-if="props.row.Latitude && props.row.Longitude"
+                size="sm"
+                color="purple"
+                outline
+                label="Local"
+                icon="place"
+                @click="abrirMapa(props.row)"
+                dense
+              />
+              <q-btn
+                v-else
+                size="sm"
+                color="grey-5"
+                outline
+                label="Local"
+                icon="location_off"
+                disable
+                dense
+              />
+            </q-card-actions>
+          </q-card>
+        </div>
+      </template>
     </q-table>
   </div>
 
@@ -234,6 +385,44 @@
   </q-card>
 </q-dialog>
 
+<q-dialog v-model="showMapModal">
+  <q-card style="width: 60%; max-width: 90vw; height: 70vh" class="column">
+    <q-card-section class="row items-center q-pb-none col-auto">
+      <div class="text-h6">Localização</div>
+      <q-space />
+      <q-btn icon="close" flat round dense v-close-popup />
+    </q-card-section>
+
+    <q-card-section class="q-py-sm col-auto bg-grey-1" v-if="loadingAddress || addressInfo">
+      <div v-if="loadingAddress" class="row items-center text-grey-7">
+        <q-spinner size="1em" class="q-mr-sm" /> Buscando endereço...
+      </div>
+      <div v-else-if="addressInfo" class="text-body2 text-grey-8">
+        <q-icon name="place" color="primary" class="q-mr-xs" />
+        <span class="text-weight-bold">{{ addressInfo.road || 'Rua desconhecida' }}</span>
+        <span v-if="addressInfo.house_number">, {{ addressInfo.house_number }}</span>
+        <br>
+        {{ addressInfo.suburb || addressInfo.neighbourhood || '' }}
+        <span v-if="addressInfo.suburb || addressInfo.neighbourhood"> - </span>
+        {{ addressInfo.city || addressInfo.town || addressInfo.village || '' }} /
+        {{ addressInfo.state || '' }}
+        <span v-if="addressInfo.postcode"> - CEP: {{ addressInfo.postcode }}</span>
+      </div>
+    </q-card-section>
+
+    <q-card-section class="q-pa-none col">
+      <iframe
+        width="100%"
+        height="100%"
+        frameborder="0"
+        style="border:0"
+        :src="mapUrl"
+        allowfullscreen
+      ></iframe>
+    </q-card-section>
+  </q-card>
+</q-dialog>
+
 </template>
 
 <script setup>
@@ -269,6 +458,34 @@ function abrirApis(row) {
   const texto = row.Resume || row.resume || "";
   apiRows.value = extractApis(texto);
   showApiModal.value = true;
+}
+
+const showMapModal = ref(false);
+const mapUrl = ref("");
+const addressInfo = ref(null);
+const loadingAddress = ref(false);
+
+async function abrirMapa(row) {
+  if (row.Latitude && row.Longitude) {
+    mapUrl.value = `https://maps.google.com/maps?q=${row.Latitude},${row.Longitude}&z=15&output=embed`;
+    showMapModal.value = true;
+
+    // Reset and fetch address
+    addressInfo.value = null;
+    loadingAddress.value = true;
+
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${row.Latitude}&lon=${row.Longitude}`);
+      if (response.ok) {
+        const data = await response.json();
+        addressInfo.value = data.address;
+      }
+    } catch (error) {
+      console.error("Erro ao buscar endereço:", error);
+    } finally {
+      loadingAddress.value = false;
+    }
+  }
 }
 
 const apiColumns = [

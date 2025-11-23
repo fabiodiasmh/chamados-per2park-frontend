@@ -18,39 +18,48 @@
     </div>
 
     <!-- Resumo / Estatísticas -->
-    <div class="row q-col-gutter-md q-mb-xl" v-if="!loading && meusChamados.length > 0">
-      <div class="col-12">
-        <q-card class="summary-card text-white shadow-3 rounded-borders">
-          <q-card-section class="q-pa-lg">
-            <div class="row items-center q-mb-lg">
-              <q-icon name="analytics" size="md" class="q-mr-sm" />
-              <div class="text-h6 text-weight-bold">Visão Geral</div>
-            </div>
-
-            <div class="row q-col-gutter-lg">
-              <!-- Total -->
-              <div class="col-6 col-sm-3 col-md-2 text-center border-right">
-                <div class="text-caption text-uppercase opacity-70 q-mb-xs">Total</div>
-                <div class="text-h3 text-weight-bolder">{{ meusChamados.length }}</div>
+    <div class="row q-mb-xl justify-center" v-if="!loading && meusChamados.length > 0">
+      <div class="col-12 col-md-6 col-lg-4">
+        <q-card class="bg-white text-grey-9 shadow-2 rounded-borders overflow-hidden">
+          <q-card-section class="bg-grey-1 q-pa-md border-bottom">
+            <div class="row items-center justify-between">
+              <div class="row items-center">
+                <q-icon name="analytics" size="sm" class="q-mr-sm text-primary" />
+                <div class="text-subtitle1 text-weight-bold">Resumo dos Chamados</div>
               </div>
-
-              <!-- Stats Loop -->
-              <div class="col-6 col-sm-3 col-md-2 text-center" v-for="stat in estatisticas" :key="stat.label">
-                <div class="text-caption text-uppercase opacity-70 q-mb-xs">{{ stat.label }}</div>
-                <div class="text-h4 text-weight-bold" :style="{ color: stat.color === 'white' || stat.color === '#ffffff' ? 'white' : 'white' }">
-                  {{ stat.count }}
-                </div>
-                <!-- Pequena barra de cor para indicar o status visualmente -->
-                <div class="q-mt-sm mx-auto" :style="{ backgroundColor: stat.rawColor, height: '4px', width: '20px', borderRadius: '2px', margin: '8px auto 0' }"></div>
+              <div class="text-subtitle2 text-grey-7">
+                Total: <span class="text-primary text-weight-bolder text-h6">{{ meusChamados.length }}</span>
               </div>
             </div>
           </q-card-section>
+
+          <q-list separator>
+            <q-item v-for="stat in estatisticas" :key="stat.label" class="q-py-md hover-bg-grey-1">
+              <q-item-section avatar>
+                <q-avatar :style="{ backgroundColor: stat.rawColor + '20', color: stat.rawColor }" size="md" font-size="1.2rem">
+                  <q-icon :name="getIconForStatus(stat.label)" />
+                </q-avatar>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label class="text-weight-medium text-grey-9">{{ stat.label }}</q-item-label>
+              </q-item-section>
+
+              <q-item-section side>
+                <div class="row items-center">
+                  <q-badge :style="{ backgroundColor: stat.rawColor }" text-color="white" rounded class="q-px-sm text-weight-bold">
+                    {{ stat.count }}
+                  </q-badge>
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card>
       </div>
     </div>
 
     <!-- Grupos de Chamados por Status -->
-    <div v-for="grupo in chamadosAgrupados" :key="grupo.statusId" class="q-mb-xl">
+    <div v-for="grupo in chamadosAgrupados" :key="grupo.Status" class="q-mb-xl">
       <div class="row items-center q-mb-md">
         <div class="text-h6 text-bold text-grey-9 q-mr-md">
           {{ grupo.statusName }}
@@ -64,7 +73,7 @@
         <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="chamado in grupo.tickets" :key="chamado.chamadoId">
           <q-card
             class="ticket-card bg-white shadow-1 rounded-borders cursor-pointer"
-            :style="{ borderLeft: `5px solid ${getStatusColor(chamado.statusId)}` }"
+            :style="{ borderLeft: `5px solid ${getStatusColor(chamado.Status || chamado.statusId)}` }"
             @click="abrirDetalhes(chamado)"
           >
             <q-card-section class="q-pa-md">
@@ -78,8 +87,16 @@
                 </div>
               </div>
 
+              <!-- Local -->
+              <div class="row items-center q-mb-sm" v-if="chamado.Local?.Name">
+                <q-icon name="place" size="xs" color="primary" class="q-mr-xs" />
+                <div class="text-caption text-grey-8 text-weight-bold">
+                  {{ chamado.Local.Name }}
+                </div>
+              </div>
+
               <div class="text-body2 text-grey-8 ellipsis-3-lines" style="min-height: 4.5em; line-height: 1.5;">
-                {{ chamado.Description || chamado.descricao || 'Sem descrição disponível.' }}
+                {{ chamado.Description || chamado.descricao || '' }}
               </div>
             </q-card-section>
 
@@ -113,7 +130,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed,watch } from 'vue'
 import { useChamadosStore } from 'stores/chamados'
 import { date } from 'quasar'
 import ChamadoDetalhesModal from 'components/ChamadoDetalhesModal.vue'
@@ -123,6 +140,9 @@ const store = useChamadosStore()
 const meusChamados = ref([])
 const loading = ref(false)
 
+
+
+
 // Ordem de exibição dos status
 const statusOrder = [0, 1, 2, 8, 9, 11, 12, 10, 6, 5];
 
@@ -130,10 +150,10 @@ const chamadosAgrupados = computed(() => {
   const grupos = {};
 
   meusChamados.value.forEach(chamado => {
-    const statusId = chamado.statusId;
+    const statusId = chamado.Status || chamado.statusId;
     if (!grupos[statusId]) {
       grupos[statusId] = {
-        statusId: statusId,
+        Status: statusId,
         statusName: getStatusNome(statusId),
         color: getStatusColor(statusId),
         tickets: []
@@ -143,8 +163,8 @@ const chamadosAgrupados = computed(() => {
   });
 
   return Object.values(grupos).sort((a, b) => {
-    const indexA = statusOrder.indexOf(a.statusId);
-    const indexB = statusOrder.indexOf(b.statusId);
+    const indexA = statusOrder.indexOf(a.Status);
+    const indexB = statusOrder.indexOf(b.Status);
     return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
   });
 });
@@ -152,13 +172,13 @@ const chamadosAgrupados = computed(() => {
 const estatisticas = computed(() => {
   const stats = {};
   meusChamados.value.forEach(c => {
-    const nome = getStatusNome(c.statusId);
+    const nome = getStatusNome(c.Status || c.statusId);
     if (!stats[nome]) {
       stats[nome] = {
         label: nome,
         count: 0,
         color: 'white', // Texto sempre branco no card escuro
-        rawColor: getStatusColor(c.statusId) // Cor original para a barra indicadora
+        rawColor: getStatusColor(c.Status || c.statusId) // Cor original para a barra indicadora
       };
     }
     stats[nome].count++;
@@ -184,8 +204,18 @@ async function abrirDetalhes(chamado) {
   } finally {
     loading.value = false
     modal.value = true
-  }
+
+
 }
+}
+
+watch(modal, async (isOpen) => {
+  // Quando o modal FECHAR (false)
+  if (!isOpen) {
+    await store.fetchChamados()
+    await carregarDados()
+  }
+})
 
 function formatDate(d) {
   if (!d) return ''
@@ -233,19 +263,35 @@ async function carregarDados() {
   loading.value = false
 }
 
+function getIconForStatus(label) {
+  const icons = {
+    'Aberto': 'error_outline',
+    'Em Análise': 'search',
+    'Em Atendimento': 'engineering',
+    'Fechado': 'check_circle',
+    'Reaberto': 'replay',
+    'Aguardando Feedback': 'feedback',
+    'Aguardando Resposta': 'pending',
+    'Encaminhado N3': 'dns',
+    'Assistencia Técnica': 'build',
+    'Encaminhado N2': 'computer'
+  }
+  return icons[label] || 'circle'
+}
+
 onMounted(() => {
+  store.fetchChamados()
   carregarDados()
 })
 </script>
 
 <style scoped>
-.summary-card {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  transition: transform 0.3s ease;
+.hover-bg-grey-1:hover {
+  background-color: #f5f5f5;
 }
 
-.summary-card:hover {
-  transform: translateY(-2px);
+.border-bottom {
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .ticket-card {

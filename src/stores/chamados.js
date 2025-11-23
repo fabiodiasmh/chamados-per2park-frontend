@@ -248,7 +248,18 @@ export const useChamadosStore = defineStore('chamados', {
       try {
         this.loading = true
 
-        const usuarioId = authStore.usuario.User.Id
+        // Fallback: se o usuário não estiver carregado, tenta inicializar
+        if (!authStore.usuario) {
+          authStore.initializeAuth()
+        }
+
+        const usuarioId = authStore.usuario?.User?.Id
+
+        if (!usuarioId) {
+          console.error("Usuário não identificado ao carregar chamados")
+          return { success: false, message: "Usuário não identificado" }
+        }
+
         const payload = { id: usuarioId }
 
         //

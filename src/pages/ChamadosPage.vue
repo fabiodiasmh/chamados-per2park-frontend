@@ -2,14 +2,18 @@
   <q-page class="chamados-page q-pa-md">
     <div class="container">
       <!-- Header Compacto -->
-      <div class="header-section q-mb-lg">
-        <div class="text-subtitle1 text-weight-bold text-white column items-center">
-          <span class="text-gradient text-h5 q-mb-xs">{{ chamadosFiltrados.length }} Chamados</span>
+      <div class="header-section q-mb-sm">
+        <div class="row items-center justify-between text-white">
+          <div class="row items-center q-gutter-sm">
+            <span class="text-gradient text-h5">{{ chamadosFiltrados.length }} Chamados</span>
+            <span class="text-h5 text-grey-5">-</span>
+            <span class="text-h6 text-grey-4">{{ filtroStatus !== null ? getStatusLabel(filtroStatus) : 'Todos' }}</span>
+          </div>
           <span class="text-caption text-grey-5">Atualizado: {{ lastUpdate }}</span>
         </div>
       </div>
 
-      <div class="filtros-section q-mb-lg glass q-pa-md rounded-borders">
+      <div class="filtros-section q-mb-lg glass q-pa-sm rounded-borders">
         <div class="row q-gutter-sm q-col-gutter-xs">
           <!-- Busca por número -->
           <q-input
@@ -18,8 +22,8 @@
             outlined
             placeholder="Nº"
             class="col-12 col-sm-2"
-            input-class="text-white"
-            bg-color="transparent"
+            input-class="text-grey-9"
+            bg-color="white"
             color="primary"
           >
             <template v-slot:prepend>
@@ -338,8 +342,10 @@ const formatarData = (dataString) => {
   });
 };
 
-const fetchData = async () => {
-  loading.value = true;
+const fetchData = async (isBackground = false) => {
+  if (!isBackground) {
+    loading.value = true;
+  }
   error.value = null;
   try {
     const res = await chamadosStore.fetchChamados(); // Ajuste conforme sua store
@@ -350,53 +356,41 @@ const fetchData = async () => {
         throw new Error(res.message);
     }
   } catch (err) {
-    // error.value = err.message || "Erro ao carregar chamados";
-    // Mock data for visualization if API fails or is not connected
+    console.error("Erro ao buscar chamados:", err);
+    error.value = "Erro ao carregar chamados.";
+    // Mock data for testing if needed
     chamados.value = [
         {
           Id: 1234,
           OpeningDate: new Date().toISOString(),
           Status: 0,
-          Local: { Name: 'Shopping Center' },
+          Local: { Name: 'Estacionamento A' },
           Category: { Name: 'Hardware' },
-          Description: 'Impressora não liga.',
+          Description: 'Cancela não abre.',
           ContactName: 'João Silva',
           ContactMail: 'joao.silva@example.com',
           ContactPhone: '11987654321',
-          Equipments: [{ Id: 1, Name: 'Impressora HP LaserJet' }],
+          Equipments: [
+            { Name: 'Cancela 1', SerialNumber: 'SN123456' }
+          ],
           HistoryCalls: [
-            {
-              Date: new Date().toISOString(),
-              Status: 0,
-              Description: 'Chamado aberto pelo cliente',
-              User: { Name: 'Sistema' }
-            }
+             { Date: new Date().toISOString(), Description: 'Chamado aberto' }
           ]
         },
         {
           Id: 1235,
-          OpeningDate: new Date().toISOString(),
-          Status: 2,
-          Local: { Name: 'Estacionamento A' },
+          OpeningDate: new Date(Date.now() - 3600000).toISOString(),
+          Status: 1,
+          Local: { Name: 'Estacionamento B' },
           Category: { Name: 'Rede' },
           Description: 'Sem conexão com internet.',
-          ContactName: 'Maria Santos',
-          ContactMail: 'maria.santos@example.com',
-          ContactPhone: '11976543210',
-          Equipments: [{ Id: 2, Name: 'Switch Cisco' }],
+          ContactName: 'Maria Souza',
+          ContactMail: 'maria.souza@example.com',
+          ContactPhone: '11912345678',
+          Equipments: [],
           HistoryCalls: [
-            {
-              Date: new Date(Date.now() - 3600000).toISOString(),
-              Status: 0,
-              Description: 'Chamado aberto',
-              User: { Name: 'Sistema' }
-            },
-            {
-              Date: new Date().toISOString(),
-              Status: 2,
-              Description: 'Técnico a caminho',
-              User: { Name: 'Carlos Técnico' }
-            }
+             { Date: new Date(Date.now() - 3600000).toISOString(), Description: 'Chamado aberto' },
+             { Date: new Date().toISOString(), Description: 'Técnico em deslocamento' }
           ]
         },
         {
@@ -480,6 +474,12 @@ const mostrarDescricaoCompleta = async (chamado) => {
 
 onMounted(() => {
   fetchData();
+
+  // Atualiza a cada 2 minutos (120000 ms)
+  intervalId = setInterval(() => {
+    fetchData(true); // true indica que é background refresh
+  }, 120000);
+
   window.addEventListener("scroll", handleScroll);
   if (route.query.status) {
       filtroStatus.value = parseInt(route.query.status);
@@ -487,6 +487,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  if (intervalId) clearInterval(intervalId);
   window.removeEventListener("scroll", handleScroll);
 });
 </script>
