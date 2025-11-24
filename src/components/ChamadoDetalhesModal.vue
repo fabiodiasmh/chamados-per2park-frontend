@@ -168,7 +168,7 @@
         <q-btn-dropdown color="grey-7" label="Mais" icon="more_horiz" unelevated class="col" dropdown-icon="expand_more"
           :loading="loading">
           <q-list class="bg-dark text-white">
-            <q-item clickable @click="abrirPromptAtualizacao(9, 'Pedir evidência', 'Favor encaminhar a evidência.')">
+            <q-item clickable @click="abrirPromptAtualizacao(9, 'Pedir evidência', `Favor encaminhar a evidência para o whatsapp ${authStore.usuario?.dadosUsuario?.whatsapp || ''}.`)">
               <q-item-section avatar><q-icon name="camera_alt" color="blue-grey" /></q-item-section>
               <q-item-section>Pedir Evidência</q-item-section>
             </q-item>
@@ -183,7 +183,7 @@
             </q-item>
             <q-separator dark />
             <q-item clickable
-              @click="abrirPromptAtualizacao(11, 'Assistência Técnica', 'Encaminhado para assistência técnica.')">
+              @click="abrirPromptAtualizacao(11, 'Assistência Técnica', 'Encaminhado para assistência técnica OS:')">
               <q-item-section avatar><q-icon name="build" color="red" /></q-item-section>
               <q-item-section>Assistência Técnica</q-item-section>
             </q-item>
